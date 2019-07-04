@@ -24,7 +24,7 @@ public class Prescription {
                 "\nDuration of prescription: " + duration +
                 "\nMedicine: " + medicine +
                 "\nDaily doses: " + nDoses +
-                "\nQuantity of medicine for each dose: " + dose +
+                "\nQuantity: " + dose +
                 "\n"
                );
     }
