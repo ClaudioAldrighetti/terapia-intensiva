@@ -14,7 +14,7 @@ public class Model {
     }
 
     // UC1
-    public boolean autenticate(String username, String password) throws IOException {
+    public char autenticate(String username, String password) throws IOException {
         try {
             autenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
             String record;
@@ -22,26 +22,25 @@ public class Model {
             while ((record = autenticationFile.readLine()) != null) {
                 String[] recordData = record.split(",");
 
-                // Get username from File
+                // Get record username and password
                 String recordUsr = recordData[0];
+                String recordPsw = recordData[1];
 
-                // User found
-                if (recordUsr.equals(username)) {
-                    // Get user's password
-                    String recordPsw = recordData[1];
+                // Check with sing in data
+                if ( recordUsr.equals(username) && recordPsw.equals(password) ){
                     autenticationFile.close();
-
-                    // Check password
-                    return recordPsw.equals(password);
+                    // Autentication complete: return user type
+                    return (recordData[2].toCharArray())[0];
                 }
             }
-            // Username isn't registered
+            // Wrong username and/or password
             autenticationFile.close();
-            return false;
+            return 'w';
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return false;
+            // Return error
+            return 'e';
         }
     }
 
