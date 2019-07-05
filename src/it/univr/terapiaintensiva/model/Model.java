@@ -1,14 +1,27 @@
 package it.univr.terapiaintensiva.model;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class Model {
 
-    private BufferedReader autenticationFile;
+    // Paths
     private final String pathAutenticationFile = "../../assets/login.csv";
+    private final String pathPatients = "../../patients/";
+
+    // Macros
+    private final int maxPatients = 10;
+
+    private ArrayList<Patient> patients;
+    private BufferedReader autenticationFile;
 
     // Constructor
     public Model() {
+        patients = new ArrayList<>();
         autenticationFile = null;
         //TODO
     }
@@ -45,8 +58,40 @@ public class Model {
     }
 
     // UC2
-    public boolean createPatient(Patient patient){
-        return true; //TODO
+    public boolean createPatient(Patient patient) throws IOException {
+        // Check if there is a free bed
+        if(patients.size() >= maxPatients)
+            return false;
+
+        else{
+            // Add new patient to list
+            patients.add(patient);
+
+            // Create new patient's medical records
+            String pathNewPatient = pathPatients.concat(patient.getCf());
+            Files.createDirectory(Paths.get(pathNewPatient));
+
+            // Create vitals log file
+            String pathVitals = pathNewPatient.concat("/vitals.csv");
+            Files.createFile(Paths.get(pathVitals));
+
+            // Write vitals on log file
+            FileWriter csvVitalsWriter = new FileWriter(pathVitals);
+
+            ArrayList<String> csvVitalsData = new ArrayList<>();
+            csvVitalsData.add(String.valueOf(patient.getVitals().getHeartBeat()));
+            csvVitalsData.add(String.valueOf(patient.getVitals().getTemperature()));
+            csvVitalsData.add(String.valueOf(patient.getVitals().getSbp()));
+            csvVitalsData.add(String.valueOf(patient.getVitals().getDbp()));
+
+            csvVitalsWriter.append(String.join(",", csvVitalsData));
+            csvVitalsWriter.append("\n");
+
+            csvVitalsWriter.flush();
+            csvVitalsWriter.close();
+
+            return true;
+        }
     }
 
     // UC3
