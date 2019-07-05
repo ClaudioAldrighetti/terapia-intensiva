@@ -4,44 +4,40 @@ import java.io.*;
 
 public class Model {
 
-    private FileInputStream autenticationFile;
-    private String pathAutenticationFile;
+    private BufferedReader autenticationFile;
+    private final String pathAutenticationFile = "../../assets/login.csv";
 
     // Constructor
     public Model() {
         autenticationFile = null;
-        pathAutenticationFile = "../../assets/login.csv";
         //TODO
     }
 
     // UC1
     public boolean autenticate(String username, String password) throws IOException {
         try {
-            autenticationFile = new FileInputStream(pathAutenticationFile);
-            while(true) {
-                // Check if it is possible to read an entry from autenticationFile
-                if(csvEmptyFileInputStream(autenticationFile)) {
-                    autenticationFile.close();
-                    return false;
-                }
+            autenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
+            String record;
+            // Check if there is a record
+            while ((record = autenticationFile.readLine()) != null) {
+                String[] recordData = record.split(",");
 
                 // Get username from File
-                String usr = csvReadStringValue(autenticationFile);
+                String recordUsr = recordData[0];
 
                 // User found
-                if (usr.equals(username)) {
+                if (recordUsr.equals(username)) {
                     // Get user's password
-                    autenticationFile = csvNextValue(autenticationFile);
-                    String pswd = csvReadStringValue(autenticationFile);
+                    String recordPsw = recordData[1];
                     autenticationFile.close();
 
                     // Check password
-                    return pswd.equals(password);
+                    return recordPsw.equals(password);
                 }
-
-                // Next line
-                autenticationFile = csvNextLine(autenticationFile);
             }
+            // Username isn't registered
+            autenticationFile.close();
+            return false;
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -77,41 +73,5 @@ public class Model {
     // UC12
     public void changeVitals(String cf, Vitals vitals){
         //TODO
-    }
-
-    // AUSILIAR CSV FILE FUNCTIONS
-
-    // Checks if csv file has something to read
-    private boolean csvEmptyFileInputStream(FileInputStream readingFile) throws IOException {
-        return (readingFile == null || readingFile.read() == -1);
-    }
-
-    // Reads a value from csv file and returns it as a String
-    private String csvReadStringValue(FileInputStream readingFile) throws IOException {
-        if(csvEmptyFileInputStream(readingFile))
-            return null;
-
-        String valueStr = "";
-        for(char c=(char)readingFile.read(); c!=',' && c!='\n' ;c=(char)readingFile.read())
-            valueStr += c;
-        return valueStr;
-    }
-
-    // Goes to next value in this csv file
-    private FileInputStream csvNextValue(FileInputStream readingFile) throws IOException {
-        if(csvEmptyFileInputStream(readingFile))
-            return null;
-
-        for(char c = (char)readingFile.read(); c!=',' && c!='\n'; c = (char)readingFile.read());
-        return readingFile;
-    }
-
-    // Goes to next line in this csv file
-    private FileInputStream csvNextLine(FileInputStream readingFile) throws IOException {
-        if(csvEmptyFileInputStream(readingFile))
-            return null;
-
-        for(char c = (char)readingFile.read(); c!='\n'; c = (char)readingFile.read());
-        return readingFile;
     }
 }
