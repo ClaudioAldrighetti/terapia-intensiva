@@ -176,13 +176,23 @@ public class Model {
     }
 
     // UC11
-    public void dismissPatient(String cf){
+    public void dischargePatient(String cf){
         //TODO
     }
 
     // UC12
     public void changeVitals(String cf, Vitals vitals){
-        //TODO
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if(pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return;
+        }
+
+        // Change vitals value
+        patients.get(pEntry).setVitals(vitals);
     }
 
     // AUXILIARY METHODS
