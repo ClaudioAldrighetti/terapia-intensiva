@@ -19,8 +19,8 @@ public class Patient extends Person {
         this.cf = cf;
         this.pob = pob;
         this.dob = dob;
+        this.diagnosis = "";
         this.vitals = new Vitals();
-        this.diagnosis = new String();
         this.prescriptions = new ArrayList<>();
         this.administrations = new ArrayList<>();
     }
