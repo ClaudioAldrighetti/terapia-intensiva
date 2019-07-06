@@ -5,13 +5,14 @@ import java.util.ArrayList;
 
 public class Patient extends Person {
 
-    public String cf;
-    public String pob;
-    public LocalDate dob;
+    private String cf;
+    private String pob;
+    private LocalDate dob;
 
-    public Vitals vitals;
-    public ArrayList<Prescription> prescriptions;
-    public ArrayList<Administration> administrations;
+    private Vitals vitals;
+    private String diagnosis;
+    private ArrayList<Prescription> prescriptions;
+    private ArrayList<Administration> administrations;
 
     public Patient(String name, String surname, String cf, String pob, LocalDate dob){
         super(name, surname);
@@ -19,8 +20,9 @@ public class Patient extends Person {
         this.pob = pob;
         this.dob = dob;
         this.vitals = new Vitals();
-        this.prescriptions = new ArrayList<Prescription>();
-        this.administrations = new ArrayList<Administration>();
+        this.diagnosis = new String();
+        this.prescriptions = new ArrayList<>();
+        this.administrations = new ArrayList<>();
     }
 
     public String getCf(){
@@ -41,6 +43,14 @@ public class Patient extends Person {
 
     public void setVitals(Vitals vitals) {
         this.vitals = vitals;
+    }
+
+    public String getDiagnosis(){
+        return this.diagnosis;
+    }
+
+    public void addDiagnosis(String diagnosis){
+        this.diagnosis = diagnosis;
     }
 
     public ArrayList<Prescription> getPrescriptions() {

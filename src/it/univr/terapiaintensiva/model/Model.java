@@ -4,8 +4,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class Model {
 
@@ -28,33 +26,26 @@ public class Model {
 
     // UC1
     public char autenticate(String username, String password) throws IOException {
-        try {
-            autenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
-            String record;
-            // Check if there is a record
-            while ((record = autenticationFile.readLine()) != null) {
-                String[] recordData = record.split(",");
+        autenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
+        String record;
+        // Check if there is a record
+        while ((record = autenticationFile.readLine()) != null) {
+            String[] recordData = record.split(",");
 
-                // Get record username and password
-                String recordUsr = recordData[0];
-                String recordPsw = recordData[1];
+            // Get record username and password
+            String recordUsr = recordData[0];
+            String recordPsw = recordData[1];
 
-                // Check with sing in data
-                if ( recordUsr.equals(username) && recordPsw.equals(password) ){
-                    autenticationFile.close();
-                    // Autentication complete: return user type
-                    return (recordData[2].toCharArray())[0];
-                }
+            // Check with sing in data
+            if ( recordUsr.equals(username) && recordPsw.equals(password) ){
+                autenticationFile.close();
+                // Autentication complete: return user type
+                return (recordData[2].toCharArray())[0];
             }
-            // Wrong username and/or password
-            autenticationFile.close();
-            return 'w';
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            // Return error
-            return 'e';
         }
+        // Wrong username and/or password
+        autenticationFile.close();
+        return 'w';
     }
 
     // UC2
@@ -63,7 +54,7 @@ public class Model {
         if(patients.size() >= maxPatients)
             return false;
 
-        else{
+        else {
             // Add new patient to list
             patients.add(patient);
 
@@ -95,18 +86,93 @@ public class Model {
     }
 
     // UC3
-    public void addDiagnosis(String cf, String diagnosis){
-        //TODO
+    public void addDiagnosis(String cf, String diagnosis) throws IOException {
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if(pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return;
+        }
+
+        // Check if patient already has a diagnosis
+        if(!patients.get(pEntry).getDiagnosis().isEmpty()){
+            System.out.println("Patient already has a diagnosis");
+            return;
+        }
+
+        // Add diagnosis to patient
+        patients.get(pEntry).addDiagnosis(diagnosis);
+
+        // Create diagnosis file in patient's medical records
+        String pathDiagnosis = pathPatients.concat(cf).concat("/diagnosis.txt");
+        Files.createFile(Paths.get(pathDiagnosis));
+
+        // Write diagnosis on it
+        FileWriter diagnosisWriter = new FileWriter(pathDiagnosis);
+        diagnosisWriter.append(diagnosis);
+
+        diagnosisWriter.flush();
+        diagnosisWriter.close();
     }
 
     // UC4
-    public void addPrecription(String cf, Prescription prescription){
-        //TODO
+    public void addPrecription(String cf, Prescription prescription) throws IOException {
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if(pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return;
+        }
+
+        // Add prescription to patient
+        patients.get(pEntry).addPrescription(prescription);
+
+        // Create prescription file in patient's medical records
+        String dirCf = cf.concat("/");
+        String pNum = String.valueOf(patients.get(pEntry).getPrescriptions().size());
+        String prescriptionFile = "prescription_".concat(pNum).concat(".txt");
+        String pathPrescription = pathPatients.concat(dirCf).concat(prescriptionFile);
+        Files.createFile(Paths.get(pathPrescription));
+
+        // Write prescription on it
+        FileWriter prescriptionWriter = new FileWriter(pathPrescription);
+        prescriptionWriter.append(prescription.toString());
+
+        prescriptionWriter.flush();
+        prescriptionWriter.close();
     }
 
     // UC5
-    public void addAdministration(String cf, Administration administration){
-        //TODO
+    public void addAdministration(String cf, Administration administration) throws IOException {
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if(pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return;
+        }
+
+        // Add administration to patient
+        patients.get(pEntry).addAdministration(administration);
+
+        // Create administration file in patient's medical records
+        String dirCf = cf.concat("/");
+        String aNum = String.valueOf(patients.get(pEntry).getAdministrations().size());
+        String administrationFile = "administration_".concat(aNum).concat(".txt");
+        String pathAdministration = pathPatients.concat(dirCf).concat(administrationFile);
+        Files.createFile(Paths.get(pathAdministration));
+
+        // Write prescription on it
+        FileWriter administrationWriter = new FileWriter(pathAdministration);
+        administrationWriter.append(administration.toString());
+
+        administrationWriter.flush();
+        administrationWriter.close();
     }
 
     // UC11
@@ -117,5 +183,17 @@ public class Model {
     // UC12
     public void changeVitals(String cf, Vitals vitals){
         //TODO
+    }
+
+    // AUXILIARY METHODS
+
+    // Return index position of patient in patients, or -1 if patient doesn't exist
+    private int findPatient(String cf){
+        int pEntry;
+        for(pEntry = 0; pEntry < patients.size(); pEntry++)
+            // Check if patient at pEntry has cf equal to passed cf
+            if(patients.get(pEntry).getCf().equals(cf))
+                return pEntry;
+        return -1;
     }
 }
