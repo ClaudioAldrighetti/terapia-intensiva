@@ -7,9 +7,9 @@ public class Prescription {
     private final int duration;
     private final String medicine;
     private final int nDoses;
-    private final float dose;
+    private final double dose;
 
-    public Prescription(LocalDate date, int duration, String medicine, int nDoses, float dose){
+    public Prescription(LocalDate date, int duration, String medicine, int nDoses, double dose){
         this.date = date;
         this.duration = duration;
         this.medicine = medicine;
@@ -20,12 +20,18 @@ public class Prescription {
     public String toString() {
         return
                (
-                "\nDate of prescription: " + date +
-                "\nDuration of prescription: " + duration +
+                "Date of prescription: " + date +
+                "\nDuration of prescription: " + duration + " days" +
                 "\nMedicine: " + medicine +
                 "\nDaily doses: " + nDoses +
-                "\nQuantity: " + dose +
-                "\n"
+                "\nQuantity: " + dose
                );
+    }
+
+    public String toCsv() {
+        return
+                (
+                 date + "," + duration + "," + medicine + "," + nDoses + "," + dose + "\n"
+                );
     }
 }
