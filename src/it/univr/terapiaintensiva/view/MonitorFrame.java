@@ -5,6 +5,7 @@ import java.awt.*;
 
 public class MonitorFrame extends JFrame {
 
+    private static final String title = "Terapia intensiva";
     private static final JPanel[] monitors = new JPanel[10];
     private static final JMenu chiefMenu = new JMenu("Primario");
     private static final JMenuItem dischargeMenuItem = new JMenuItem("Dimetti paziente");
@@ -30,9 +31,10 @@ public class MonitorFrame extends JFrame {
         menuBar.add(chiefMenu);
         this.setJMenuBar(menuBar);
 
+        this.setTitle(title);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setExtendedState(MAXIMIZED_BOTH);
-        this.setMinimumSize(new Dimension(500, 500));
+        this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
