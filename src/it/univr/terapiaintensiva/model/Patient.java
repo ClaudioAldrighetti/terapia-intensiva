@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 public class Patient extends Person {
 
-    private final String cf;
-    private final String pob;
-    private final LocalDate dob;
+    private String cf;
+    private String pob;
+    private LocalDate dob;
 
     private Vitals vitals;
     private String diagnosis;
@@ -24,6 +24,8 @@ public class Patient extends Person {
         this.prescriptions = new ArrayList<>();
         this.administrations = new ArrayList<>();
     }
+
+    public Patient(){}
 
     public String getCf(){
         return cf;
@@ -49,7 +51,7 @@ public class Patient extends Person {
         return this.diagnosis;
     }
 
-    public void addDiagnosis(String diagnosis){
+    public void setDiagnosis(String diagnosis){
         this.diagnosis = diagnosis;
     }
 
@@ -89,9 +91,10 @@ public class Patient extends Person {
     }
 
     public String toCsv() {
-        return
-                (
-                 super.getName() + "," + super.getSurname() + "," + cf + "," + pob + "," + dob + "\n"
-                );
+        return super.getName() + "," + super.getSurname() + "," + cf + "," + pob + "," + dob;
+    }
+
+    public static String csvFormat(){
+        return "name,surname,cf,pob,dop";
     }
 }

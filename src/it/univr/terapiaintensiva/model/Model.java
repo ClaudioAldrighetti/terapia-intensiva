@@ -16,6 +16,7 @@ public class Model {
     private final String pathAdministrationsFile = "administrations.csv";
     private final String pathDiagnosisFile = "diagnosis.txt";
     private final String pathPatients = "./patients/";
+    private final String pathDischarged = "./discharged/";
 
     // Macros
     private final int maxPatients = 10;
@@ -44,15 +45,11 @@ public class Model {
                         String[] patientFiles = medicalRecord.list();
 
                         // Patient's data
-                        String name = "";
-                        String surname = "";
-                        String cf = "";
-                        String pob = "";
-                        LocalDate dob = LocalDate.of(1970,1,1);
-                        String diagnosis = "";
-                        Vitals vitals = new Vitals();
-                        ArrayList<Prescription> prescriptions = new ArrayList<>();
-                        ArrayList<Administration> administrations = new ArrayList<>();
+                        Patient foundPatient = new Patient();
+                        String foundDiagnosis = new String();
+                        Vitals foundVitals = new Vitals();
+                        ArrayList<Prescription> foundPrescriptions = new ArrayList<>();
+                        ArrayList<Administration> foundAdministrations = new ArrayList<>();
 
                         // Get patient's data from each file in medical records
                         for(String patientFile: patientFiles){
@@ -62,19 +59,13 @@ public class Model {
                                 // Registry file
                                 case(pathRegistryFile):
                                     BufferedReader registryFile = new BufferedReader(new FileReader(pathPatientFile));
-                                    String[] registryData = registryFile.readLine().split(",");
 
-                                    // Get name, surname, cf and pob
-                                    name = registryData[0];
-                                    surname = registryData[1];
-                                    cf = registryData[2];
-                                    pob = registryData [3];
+                                    // Skip format line
+                                    FilesEditor.csvSkipRecord(registryFile);
 
-                                    // Get dob
-                                    int bYear = Integer.parseInt(registryData[4].split("-")[0]);
-                                    int bMonth = Integer.parseInt(registryData[4].split("-")[1]);
-                                    int bDay = Integer.parseInt(registryData[4].split("-")[2]);
-                                    dob = LocalDate.of(bYear, bMonth, bDay);
+                                    // Get patient
+                                    String[] registryRecord = FilesEditor.csvReadRecord(registryFile);
+                                    foundPatient = FilesEditor.csvGetPatient(registryRecord);
 
                                     registryFile.close();
                                     break;
@@ -83,22 +74,12 @@ public class Model {
                                 case(pathVitalsFile):
                                     BufferedReader vitalsFile = new BufferedReader(new FileReader(pathPatientFile));
 
-                                    // Find last log
-                                    String lastRecord = "";
-                                    String vRecord;
-                                    while( (vRecord = vitalsFile.readLine()) != null ){
-                                        lastRecord = vRecord;
-                                    }
+                                    // Skip format line
+                                    FilesEditor.csvSkipRecord(vitalsFile);
 
                                     // Get vitals
-                                    String[] vitalsData = lastRecord.split(",");
-
-                                    int vHeartBeat = Integer.parseInt(vitalsData[0]);
-                                    double vTemperature = Double.parseDouble(vitalsData[1]);
-                                    int vSbp = Integer.parseInt(vitalsData[2]);
-                                    int vDbp = Integer.parseInt(vitalsData[3]);
-
-                                    vitals = new Vitals(vHeartBeat, vTemperature, vSbp, vDbp);
+                                    String[] vitalsRecord = FilesEditor.csvReadLastRecord(vitalsFile);
+                                    foundVitals = FilesEditor.csvGetVitals(vitalsRecord);
 
                                     vitalsFile.close();
                                     break;
@@ -110,7 +91,7 @@ public class Model {
                                     // Get diagnosis
                                     String line;
                                     while( (line = diagnosisFile.readLine()) != null ){
-                                        diagnosis = diagnosis.concat(line);
+                                        foundDiagnosis = foundDiagnosis.concat(line);
                                     }
 
                                     diagnosisFile.close();
@@ -120,23 +101,17 @@ public class Model {
                                 case(pathPrescriptionsFile):
                                     BufferedReader prescriptionsFile = new BufferedReader(new FileReader(pathPatientFile));
 
-                                    String pRecord;
-                                    while( (pRecord = prescriptionsFile.readLine()) != null ){
-                                        // Get prescription
-                                        String[] prescriptionData = pRecord.split(",");
+                                    // Skip format line
+                                    FilesEditor.csvSkipRecord(prescriptionsFile);
 
-                                        int pDuration = Integer.parseInt(prescriptionData[1]);
-                                        String pMedicine = prescriptionData[2];
-                                        int pNDoses = Integer.parseInt(prescriptionData[3]);
-                                        double pDose = Double.parseDouble(prescriptionData[4]);
+                                    String[] prescriptionRecord = FilesEditor.csvReadRecord(prescriptionsFile);
+                                    while( prescriptionRecord != null ){
+                                        // Get prescription from record
+                                        Prescription prescription = FilesEditor.csvGetPrescription(prescriptionRecord);
+                                        foundPrescriptions.add(prescription);
 
-                                        // Prescription date
-                                        int pYear = Integer.parseInt(prescriptionData[0].split("-")[0]);
-                                        int pMonth = Integer.parseInt(prescriptionData[0].split("-")[1]);
-                                        int pDay = Integer.parseInt(prescriptionData[0].split("-")[2]);
-                                        LocalDate pDate = LocalDate.of(pYear, pMonth, pDay);
-
-                                        prescriptions.add(new Prescription(pDate, pDuration, pMedicine, pNDoses, pDose));
+                                        // Next record
+                                        prescriptionRecord = FilesEditor.csvReadRecord(prescriptionsFile);
                                     }
 
                                     prescriptionsFile.close();
@@ -146,27 +121,17 @@ public class Model {
                                 case(pathAdministrationsFile):
                                     BufferedReader administrationsFile = new BufferedReader(new FileReader(pathPatientFile));
 
-                                    String aRecord;
-                                    while( (aRecord = administrationsFile.readLine()) != null ){
-                                        // Get administration
-                                        String[] administrationData = aRecord.split(",");
+                                    // Skip format line
+                                    FilesEditor.csvSkipRecord(administrationsFile);
 
-                                        String aMedicine = administrationData[2];
-                                        double aDose = Double.parseDouble(administrationData[3]);
-                                        String aNotes = (administrationData.length == 5)? administrationData[4] : "";
+                                    String[] administrationRecord = FilesEditor.csvReadRecord(administrationsFile);
+                                    while( administrationRecord != null ){
+                                        // Get administration from record
+                                        Administration administration = FilesEditor.csvGetAdministration(administrationRecord);
+                                        foundAdministrations.add(administration);
 
-                                        // Administration date
-                                        int aYear = Integer.parseInt(administrationData[0].split("-")[0]);
-                                        int aMonth = Integer.parseInt(administrationData[0].split("-")[1]);
-                                        int aDay = Integer.parseInt(administrationData[0].split("-")[2]);
-                                        LocalDate aDate = LocalDate.of(aYear, aMonth, aDay);
-
-                                        // Administration time
-                                        int aHour = Integer.parseInt(administrationData[1].split(":")[0]);
-                                        int aMinute = Integer.parseInt(administrationData[1].split(":")[1]);
-                                        LocalTime aTime = LocalTime.of(aHour, aMinute);
-
-                                        administrations.add(new Administration(aDate, aTime, aMedicine, aDose, aNotes));
+                                        // Next record
+                                        administrationRecord = FilesEditor.csvReadRecord(administrationsFile);
                                     }
 
                                     administrationsFile.close();
@@ -180,11 +145,10 @@ public class Model {
                         }
 
                         // Found patient
-                        Patient foundPatient = new Patient(name, surname, cf, pob, dob);
-                        foundPatient.setVitals(vitals);
-                        foundPatient.addDiagnosis(diagnosis);
-                        foundPatient.setPrescriptions(prescriptions);
-                        foundPatient.setAdministrations(administrations);
+                        foundPatient.setVitals(foundVitals);
+                        foundPatient.setDiagnosis(foundDiagnosis);
+                        foundPatient.setPrescriptions(foundPrescriptions);
+                        foundPatient.setAdministrations(foundAdministrations);
 
                         // Add found patient to list
                         patients.add(foundPatient);
@@ -198,21 +162,22 @@ public class Model {
     // UC1
     public char autenticate(String username, String password) throws IOException {
         autenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
-        String record;
+
+        // Skip format line
+        FilesEditor.csvSkipRecord(autenticationFile);
+
+        String[] recordData = FilesEditor.csvReadRecord(autenticationFile);
         // Check if there is a record
-        while ((record = autenticationFile.readLine()) != null) {
-            String[] recordData = record.split(",");
+        while (recordData != null) {
 
-            // Get record username and password
-            String recordUsr = recordData[0];
-            String recordPsw = recordData[1];
-
-            // Check with sing in data
-            if ( recordUsr.equals(username) && recordPsw.equals(password) ){
+            // Check record username and password with sing in username and password
+            if ( recordData[0].equals(username) && recordData[1].equals(password) ){
                 autenticationFile.close();
                 // Autentication complete: return user type
-                return (recordData[2].toCharArray())[0];
+                return recordData[2].charAt(0);
             }
+
+            recordData = FilesEditor.csvReadRecord(autenticationFile);
         }
         // Wrong username and/or password
         autenticationFile.close();
@@ -220,7 +185,7 @@ public class Model {
     }
 
     // UC2
-    public boolean createPatient(Patient patient) throws IOException {
+    public boolean hospitalizePatient(Patient patient) throws IOException {
         // Check if there is a free bed
         if(patients.size() >= maxPatients)
             return false;
@@ -229,7 +194,7 @@ public class Model {
             // Check if patient isn't hospitalized yet
             int pEntry = findPatient(patient.getCf());
 
-            // Wrong cf or patient isn't hospitalized
+            // Wrong cf or patient is already hospitalized
             if(pEntry != -1) {
                 System.out.println("Patient is already hospitalized");
                 return false;
@@ -242,120 +207,126 @@ public class Model {
             String pathNewPatient = pathPatients.concat(patient.getCf() + "/");
             Files.createDirectory(Paths.get(pathNewPatient));
 
-            // Create registry file
+            // Create registry csv file
             String pathRegistry = pathNewPatient.concat(pathRegistryFile);
-            Files.createFile(Paths.get(pathRegistry));
+            FilesEditor.csvCreateFile(pathRegistry, Patient.csvFormat());
+
+            // Create vitals csv file
+            String pathVitals = pathNewPatient.concat(pathVitalsFile);
+            FilesEditor.csvCreateFile(pathVitals, Vitals.csvFormat());
+
+            // Create prescriptions csv file
+            String pathPrescriptions = pathNewPatient.concat(pathPrescriptionsFile);
+            FilesEditor.csvCreateFile(pathPrescriptions, Prescription.csvFormat());
+
+            // Create administrations csv file
+            String pathAdministrations = pathNewPatient.concat(pathAdministrationsFile);
+            FilesEditor.csvCreateFile(pathAdministrations, Administration.csvFormat());
+
+            // Create diagnosis txt file
+            String pathDiagnosis = pathNewPatient.concat(pathDiagnosisFile);
+            Files.createFile(Paths.get(pathDiagnosis));
 
             // Write patient's data on registry file
-            FileWriter csvWriter = new FileWriter(pathRegistry);
-            csvWriter.write(patient.toCsv());
-            csvWriter.flush();
-
-            // Create vitals log file
-            String pathVitals = pathNewPatient.concat(pathVitalsFile);
-            Files.createFile(Paths.get(pathVitals));
+            FilesEditor.csvWriteRecord(pathRegistry, patient);
 
             // Write vitals on log file
-            csvWriter = new FileWriter(pathVitals);
-            csvWriter.write(patient.getVitals().toCsv());
-            csvWriter.flush();
-
-            csvWriter.close();
+            FilesEditor.csvWriteRecord(pathVitals, patient.getVitals());
 
             return true;
         }
     }
 
     // UC3
-    public void addDiagnosis(String cf, String diagnosis) throws IOException {
+    public boolean setDiagnosis(String cf, String diagnosis) throws IOException {
         // Find patient
         int pEntry = findPatient(cf);
 
         // Wrong cf or patient isn't hospitalized
         if(pEntry == -1) {
             System.out.println("Patient not found: invalid cf");
-            return;
+            return false;
         }
 
-        // Check if patient already has a diagnosis
-        if(!patients.get(pEntry).getDiagnosis().isEmpty()){
-            System.out.println("Patient has already a diagnosis");
-            return;
-        }
+        // set patient's diagnosis
+        patients.get(pEntry).setDiagnosis(diagnosis);
 
-        // Add diagnosis to patient
-        patients.get(pEntry).addDiagnosis(diagnosis);
-
-        // Create diagnosis file in patient's medical records
+        // Check diagnosis file
         String pathDiagnosis = pathPatients.concat(cf + "/" + pathDiagnosisFile);
-        Files.createFile(Paths.get(pathDiagnosis));
+        if(!Files.exists(Paths.get(pathDiagnosis)))
+            // Create diagnosis file if it doesn't exist
+            Files.createFile(Paths.get(pathDiagnosis));
 
         // Write diagnosis on it
-        FileWriter diagnosisWriter = new FileWriter(pathDiagnosis);
-        diagnosisWriter.write(diagnosis + "\n");
+        FilesEditor.write(pathDiagnosis, diagnosis, false);
 
-        diagnosisWriter.flush();
-        diagnosisWriter.close();
+        return true;
     }
 
     // UC4
-    public void addPrecription(String cf, Prescription prescription) throws IOException {
+    public boolean addPrescription(String cf, Prescription prescription) throws IOException {
         // Find patient
         int pEntry = findPatient(cf);
 
         // Wrong cf or patient isn't hospitalized
         if(pEntry == -1) {
             System.out.println("Patient not found: invalid cf");
-            return;
+            return false;
         }
 
         // Add prescription to patient
-        patients.get(pEntry).addPrescription(prescription);
+        Patient patient = patients.get(pEntry);
+        patient.addPrescription(prescription);
 
-        // Get prescriptions file path
+        // Check prescriptions file
         String pathPrescriptions = pathPatients.concat(cf + "/" + pathPrescriptionsFile);
+        // File doesn't exist
+        if(!Files.exists(Paths.get(pathPrescriptions))) {
+            // Create prescriptions csv file
+            FilesEditor.csvCreateFile(pathPrescriptions, Prescription.csvFormat());
+            // Write list of patient's prescriptions on it
+            for(Prescription p: patient.getPrescriptions())
+                FilesEditor.csvWriteRecord(pathPrescriptions, p);
+        }
+        // File exist
+        else
+            // Write prescription
+            FilesEditor.csvWriteRecord(pathPrescriptions, prescription);
 
-        // If prescriptions file doesn't exist
-        if(!Files.exists(Paths.get(pathPrescriptions)))
-            // Create prescription file in patient's medical records
-            Files.createFile(Paths.get(pathPrescriptions));
-
-        // Write prescription on it
-        FileWriter prescriptionsWriter = new FileWriter(pathPrescriptions, true);
-        prescriptionsWriter.write(prescription.toCsv());
-
-        prescriptionsWriter.flush();
-        prescriptionsWriter.close();
+        return true;
     }
 
     // UC5
-    public void addAdministration(String cf, Administration administration) throws IOException {
+    public boolean addAdministration(String cf, Administration administration) throws IOException {
         // Find patient
         int pEntry = findPatient(cf);
 
         // Wrong cf or patient isn't hospitalized
         if(pEntry == -1) {
             System.out.println("Patient not found: invalid cf");
-            return;
+            return false;
         }
 
         // Add administration to patient
-        patients.get(pEntry).addAdministration(administration);
+        Patient patient = patients.get(pEntry);
+        patient.addAdministration(administration);
 
-        // Get administrations file path
+        // Check administrations file
         String pathAdministrations = pathPatients.concat(cf + "/" + pathAdministrationsFile);
+        // File doesn't exist
+        if(!Files.exists(Paths.get(pathAdministrations))) {
+            // Create administrations csv file
+            FilesEditor.csvCreateFile(pathAdministrations, Administration.csvFormat());
+            // Write list of patient's administrations on it
+            for(Administration a: patient.getAdministrations())
+                FilesEditor.csvWriteRecord(pathAdministrationsFile, a);
+        }
+        // File exist
+        else
+            // Write administration
+            FilesEditor.csvWriteRecord(pathAdministrations, administration);
 
-        // If administrations file doesn't exist
-        if(!Files.exists(Paths.get(pathAdministrations)))
-            // Create administrations file in patient's medical records
-            Files.createFile(Paths.get(pathAdministrations));
-
-        // Write administration on it
-        FileWriter administrationsWriter = new FileWriter(pathAdministrations, true);
-        administrationsWriter.write(administration.toCsv());
-
-        administrationsWriter.flush();
-        administrationsWriter.close();
+        return true;
     }
 
     // UC11
@@ -370,16 +341,27 @@ public class Model {
         }
 
         // Get discharged patient's medical records
-        File dirDischarged = new File(pathPatients.concat(cf));
+        String pathSrc = pathPatients.concat(cf + "/");
 
-        // Remove it
-        String[] filesList = dirDischarged.list();
-        for(String pathFile: filesList){
-            File file = new File(dirDischarged.getPath() ,pathFile);
-            file.delete();
+        // Check if it doesn't exist in discharged/
+        String pathDest = pathDischarged.concat(cf + "/");
+        if(Files.exists(Paths.get(pathDest)) && Files.isDirectory(Paths.get(pathDest))){
+            // If it already exist
+            File dirOld = new File(pathDest);
+            // Remove previous files
+            String[] filesList = dirOld.list();
+            for(String pathFile: filesList){
+                File file = new File(dirOld.getPath() ,pathFile);
+                file.delete();
+            }
+            // Remove previous directory
+            dirOld.delete();
         }
-        dirDischarged.delete();
 
+        Files.move(Paths.get(pathSrc), Paths.get(pathDest));
+
+/*        // Remove it
+*/
         // Remove patient from patients list
         patients.remove(pEntry);
 
@@ -387,29 +369,41 @@ public class Model {
     }
 
     // UC12
-    public void changeVitals(String cf, Vitals vitals) throws IOException {
+    public boolean changeVitals(String cf, Vitals vitals) throws IOException {
         // Find patient
         int pEntry = findPatient(cf);
 
         // Wrong cf or patient isn't hospitalized
         if(pEntry == -1) {
             System.out.println("Patient not found: invalid cf");
-            return;
+            return false;
         }
 
         // Change vitals value
-        patients.get(pEntry).setVitals(vitals);
+        Patient patient = patients.get(pEntry);
+        patient.setVitals(vitals);
 
-        // Add log
-        File pathVitals = new File(pathPatients.concat(cf + "/" + pathVitalsFile));
-        FileWriter vitalsWriter = new FileWriter(pathVitals, true);
-        vitalsWriter.write(vitals.toCsv());
+        // Check vitals csv file
+        String pathVitals = pathPatients.concat(cf + "/" + pathVitalsFile);
+        // File doesn't exist
+        if(!Files.exists(Paths.get(pathVitals)))
+            // Create vitals csv file
+            FilesEditor.csvCreateFile(pathVitals, Vitals.csvFormat());
 
-        vitalsWriter.flush();
-        vitalsWriter.close();
+        // Write vitals
+        FilesEditor.csvWriteRecord(pathVitals, vitals);
+
+        return true;
     }
 
-    // AUXILIARY METHODS
+    // PUBLIC METHODS
+
+    // Return patients ArrayList
+    public ArrayList<Patient> getPatients(){
+        return patients;
+    }
+
+    // AUXILIARY PRIVATE METHODS
 
     // Return index position of patient in patients, or -1 if patient doesn't exist
     private int findPatient(String cf){
@@ -420,92 +414,4 @@ public class Model {
                 return pEntry;
         return -1;
     }
-/*
-    // TEST MAIN
-    public static void main(String[] args){
-        try {
-            Model model = new Model();
-            System.out.println("Model model: creato!");
-
-            String cf1 = "ASDF";
-            String pathDir1 = model.pathPatients.concat(cf1 + "/");
-            if(Files.exists(Paths.get(pathDir1))){
-                // Print found patient
-                System.out.println("Model model: paziente gia' ricoverato:");
-                Patient patient1 = model.patients.get(0);
-                System.out.println(patient1);
-
-                // Print vitals
-                System.out.println("Model model: parametri vitali:");
-                System.out.println(patient1.getVitals());
-
-                // Print diagnosis
-                System.out.println("Model model: diagnosi:");
-                System.out.println(patient1.getDiagnosis());
-
-                // Print prescriptions
-                System.out.println("Model model: prescrizioni:");
-                System.out.println(patient1.getPrescriptions().get(0));
-                System.out.println(patient1.getPrescriptions().get(1));
-
-                // Print administrations
-                System.out.println("Model model: somministrazioni:");
-                System.out.println(patient1.getAdministrations().get(0));
-
-                model.dischargePatient(cf1);
-                System.out.println("Patient patient1: dimesso!");
-
-            } else {
-                Patient patient1 = new Patient("Claudio", "Aldrighetti", cf1, "Verona", LocalDate.of(1998, 02, 25));
-                System.out.println("Patient patient1: creato:");
-                System.out.println(patient1);
-
-                model.createPatient(patient1);
-                int pEntry1 = model.patients.indexOf(patient1);
-                System.out.println("Patient patient1: ricoverato!");
-                System.out.println(model.patients.get(pEntry1));
-
-                model.addDiagnosis(cf1, "La Febbra");
-                System.out.println("Patient patient1: aggiunta diagnosi:");
-                System.out.println(model.patients.get(pEntry1).getDiagnosis());
-
-                System.out.println("Patient patient1: aggiunta seconda diagnosi:");
-                model.addDiagnosis(cf1, "La Febbra 2");
-                System.out.println("Patient patient1: diagnosi finale:");
-                System.out.println(model.patients.get(pEntry1).getDiagnosis());
-
-                Prescription prs1 = new Prescription(LocalDate.now(), 120, "To mare", 3, 0.9);
-                model.addPrecription(cf1, prs1);
-                System.out.println("Patient patient1: aggiunta prescrizione 1!");
-                System.out.println(model.patients.get(pEntry1).getPrescriptions().get(0));
-
-                Prescription prs2 = new Prescription(LocalDate.now(), 90, "To sorella", 3, 0.9);
-                model.addPrecription(cf1, prs2);
-                System.out.println("Patient patient1: aggiunta prescrizione 2!");
-                System.out.println(model.patients.get(pEntry1).getPrescriptions().get(1));
-                System.out.println("Patient patient1: prescrizione precedente:");
-                System.out.println(model.patients.get(pEntry1).getPrescriptions().get(0));
-
-                Administration adm1 = new Administration(LocalDate.now(), LocalTime.now(), "To mare", 0.9);
-                model.addAdministration(cf1, adm1);
-                System.out.println("Patient patient1: aggiunta somministrazione 1!");
-                System.out.println(model.patients.get(pEntry1).getAdministrations().get(0));
-
-                Vitals vit1 = new Vitals(80, 36.5, 130, 85);
-                model.changeVitals(cf1, vit1);
-                System.out.println("Patient patient1: valori vitali cambiati!");
-                System.out.println(model.patients.get(pEntry1).getVitals());
-
-                Vitals vit2 = new Vitals(85, 37.1, 125, 90);
-                model.changeVitals(cf1, vit2);
-                System.out.println("Patient patient1: valori vitali cambiati!");
-                System.out.println(model.patients.get(pEntry1).getVitals());
-            }
-
-        } catch (IOException e) {
-            System.out.println("IOException");
-            e.printStackTrace();
-        }
-    }
-*/
 }

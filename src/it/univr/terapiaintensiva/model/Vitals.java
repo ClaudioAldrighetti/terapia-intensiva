@@ -1,6 +1,6 @@
 package it.univr.terapiaintensiva.model;
 
-public class Vitals {
+public class Vitals implements CsvWritable {
     public int heartBeat;
     public double temperature;
     public int sbp;
@@ -60,9 +60,10 @@ public class Vitals {
     }
 
     public String toCsv() {
-        return
-                (
-                 heartBeat + "," + temperature + "," + sbp + "," + dbp + "\n"
-                );
+        return heartBeat + "," + temperature + "," + sbp + "," + dbp;
+    }
+
+    public static String csvFormat() {
+        return "heartBeat,temperature,sbp,dbp";
     }
 }

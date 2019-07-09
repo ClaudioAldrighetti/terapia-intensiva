@@ -2,7 +2,7 @@ package it.univr.terapiaintensiva.model;
 
 import java.time.LocalDate;
 
-public class Prescription {
+public class Prescription implements CsvWritable {
     private final LocalDate date;
     private final int duration;
     private final String medicine;
@@ -29,9 +29,10 @@ public class Prescription {
     }
 
     public String toCsv() {
-        return
-                (
-                 date + "," + duration + "," + medicine + "," + nDoses + "," + dose + "\n"
-                );
+        return date + "," + duration + "," + medicine + "," + nDoses + "," + dose;
+    }
+
+    public static String csvFormat() {
+        return "date,duration,medicine,nDoses,dose";
     }
 }
