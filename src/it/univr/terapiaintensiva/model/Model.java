@@ -20,7 +20,6 @@ public class Model {
     private final int maxPatients = 10;
 
     private ArrayList<Patient> patients;
-    private BufferedReader authenticationFile;
 
     // Constructor
     public Model() throws IOException {
@@ -161,7 +160,7 @@ public class Model {
 
     // UC1
     public char authenticate(String username, String password) throws IOException {
-        authenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
+        BufferedReader authenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
 
         // Skip format line
         FilesEditor.csvSkipRecord(authenticationFile);
