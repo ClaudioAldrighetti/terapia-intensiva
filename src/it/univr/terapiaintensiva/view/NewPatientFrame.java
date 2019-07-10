@@ -45,8 +45,11 @@ public class NewPatientFrame extends JFrame {
         c.gridy++;
         centerPanel.add(surnameTextField, c);
         c.gridy++;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
         dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, "dd/MM/yyyy"));
         centerPanel.add(dateSpinner, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy++;
         centerPanel.add(pobTextField, c);
         c.gridy++;
@@ -61,6 +64,7 @@ public class NewPatientFrame extends JFrame {
         contentPane.add(southPanel, BorderLayout.SOUTH);
 
         this.setSize(580, 270);
+        this.setResizable(false);
         this.setTitle(title);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);

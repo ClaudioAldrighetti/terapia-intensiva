@@ -24,8 +24,8 @@ public class DiagnosisFrame extends JFrame {
 
         this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         this.setTitle(title);
-        this.setPreferredSize(new Dimension(960, 540));
-        this.setMinimumSize(new Dimension(960, 540));
+        this.setPreferredSize(new Dimension(540, 250));
+        this.setMinimumSize(new Dimension(540, 250));
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }

@@ -2,8 +2,10 @@ package it.univr.terapiaintensiva.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class MonitorPanel extends JPanel {
+public class MonitorPanel extends JPanel implements MouseListener {
 
     GridBagConstraints c = new GridBagConstraints();
 
@@ -77,6 +79,7 @@ public class MonitorPanel extends JPanel {
 
         // South
         southCenterPanel.add(diagnosisButton);
+        diagnosisButton.addMouseListener(this);
         southCenterPanel.add(newPrescriptionButton);
         southCenterPanel.add(newAdministrationButton);
         southCenterPanel.add(prescriptionLogButton);
@@ -89,5 +92,39 @@ public class MonitorPanel extends JPanel {
         this.add(centerPanel, BorderLayout.CENTER);
 
         this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+    }
+
+    DiagnosisFrame dFrame = null;
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+        if(e.getSource().equals(diagnosisButton)){
+            if (dFrame == null) {
+                dFrame = new DiagnosisFrame();
+            } else {
+                dFrame.setVisible(true);
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
