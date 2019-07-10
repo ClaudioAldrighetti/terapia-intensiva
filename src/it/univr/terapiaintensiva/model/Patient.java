@@ -25,7 +25,9 @@ public class Patient extends Person {
         this.administrations = new ArrayList<>();
     }
 
-    public Patient(){}
+    public Patient(){
+        new Patient(null, null, null, null, null);
+    }
 
     public String getCf(){
         return cf;
@@ -77,6 +79,15 @@ public class Patient extends Person {
 
     public void setAdministrations(ArrayList<Administration> administrations) {
         this.administrations = administrations;
+    }
+
+    public boolean noRegistry(){
+        return
+                (super.getName() == null) &&
+                (super.getSurname() == null) &&
+                (cf == null) &&
+                (pob == null) &&
+                (dob == null);
     }
 
     public String toString(){

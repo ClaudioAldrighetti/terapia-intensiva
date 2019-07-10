@@ -2,8 +2,6 @@ package it.univr.terapiaintensiva.model;
 
 import java.io.*;
 import java.nio.file.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Model {
@@ -22,7 +20,7 @@ public class Model {
     private final int maxPatients = 10;
 
     private ArrayList<Patient> patients;
-    private BufferedReader autenticationFile;
+    private BufferedReader authenticationFile;
 
     // Constructor
     public Model() throws IOException {
@@ -144,43 +142,45 @@ public class Model {
                             }
                         }
 
-                        // Found patient
-                        foundPatient.setVitals(foundVitals);
-                        foundPatient.setDiagnosis(foundDiagnosis);
-                        foundPatient.setPrescriptions(foundPrescriptions);
-                        foundPatient.setAdministrations(foundAdministrations);
+                        // Without registry file it's impossible to register foundPatient
+                        if(foundPatient.noRegistry()){
+                            // Found patient
+                            foundPatient.setVitals(foundVitals);
+                            foundPatient.setDiagnosis(foundDiagnosis);
+                            foundPatient.setPrescriptions(foundPrescriptions);
+                            foundPatient.setAdministrations(foundAdministrations);
 
-                        // Add found patient to list
-                        patients.add(foundPatient);
+                            // Add found patient to list
+                            patients.add(foundPatient);
+                        }
                     }
                 }
             }
         }
-        //TODO
     }
 
     // UC1
-    public char autenticate(String username, String password) throws IOException {
-        autenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
+    public char authenticate(String username, String password) throws IOException {
+        authenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
 
         // Skip format line
-        FilesEditor.csvSkipRecord(autenticationFile);
+        FilesEditor.csvSkipRecord(authenticationFile);
 
-        String[] recordData = FilesEditor.csvReadRecord(autenticationFile);
+        String[] recordData = FilesEditor.csvReadRecord(authenticationFile);
         // Check if there is a record
         while (recordData != null) {
 
             // Check record username and password with sing in username and password
             if ( recordData[0].equals(username) && recordData[1].equals(password) ){
-                autenticationFile.close();
-                // Autentication complete: return user type
+                authenticationFile.close();
+                // Authentication complete: return user type
                 return recordData[2].charAt(0);
             }
 
-            recordData = FilesEditor.csvReadRecord(autenticationFile);
+            recordData = FilesEditor.csvReadRecord(authenticationFile);
         }
         // Wrong username and/or password
-        autenticationFile.close();
+        authenticationFile.close();
         return 'w';
     }
 

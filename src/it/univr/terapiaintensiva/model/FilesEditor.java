@@ -10,6 +10,11 @@ import java.time.LocalTime;
 
 public final class FilesEditor {
 
+    // DEFAULT SEPARATORS
+    private static String csvSeparator = ",";
+    private static String dateSeparator = "-";
+    private static String timeSeparator = ":";
+
     // CSV INTERACTIONS
 
     // Create csv file and write in first line record fields
@@ -23,7 +28,7 @@ public final class FilesEditor {
         try {
             String line = csvFile.readLine();
             return (line != null)?
-                    line.split(",") : null;
+                    line.split(csvSeparator) : null;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -33,9 +38,9 @@ public final class FilesEditor {
 
     // Return last record of csvFile
     public static String[] csvReadLastRecord(BufferedReader csvFile) {
-        String lastRecord[] = null;
+        String[] lastRecord= null;
 
-        String record[] = csvReadRecord(csvFile);
+        String[] record = csvReadRecord(csvFile);
         while( record != null ){
             lastRecord = record;
             record = csvReadRecord(csvFile);
@@ -48,7 +53,6 @@ public final class FilesEditor {
     public static void csvSkipRecord(BufferedReader csvFile) throws IOException {
         csvFile.readLine();
     }
-
 
     public static Patient csvGetPatient(String[] registryData){
         String name = registryData[0];
@@ -122,17 +126,16 @@ public final class FilesEditor {
 
     private static LocalDate strToLocalDate(String dateStr) {
         return LocalDate.of(
-            Integer.parseInt(dateStr.split("-")[0]),
-            Integer.parseInt(dateStr.split("-")[1]),
-            Integer.parseInt(dateStr.split("-")[2])
+            Integer.parseInt(dateStr.split(dateSeparator)[0]),
+            Integer.parseInt(dateStr.split(dateSeparator)[1]),
+            Integer.parseInt(dateStr.split(dateSeparator)[2])
         );
     }
 
     private static LocalTime strToLocalTime(String timeStr) {
         return LocalTime.of(
-            Integer.parseInt(timeStr.split(":")[0]),
-            Integer.parseInt(timeStr.split(":")[1])
+            Integer.parseInt(timeStr.split(timeSeparator)[0]),
+            Integer.parseInt(timeStr.split(timeSeparator)[1])
         );
     }
-
 }
