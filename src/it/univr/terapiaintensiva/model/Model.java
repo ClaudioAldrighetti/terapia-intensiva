@@ -23,6 +23,14 @@ public class Model {
 
     // Constructor
     public Model() throws IOException {
+        // Check directory patients/
+        if(!Files.exists(Paths.get(pathPatients)))
+            Files.createDirectory(Paths.get(pathPatients));
+
+        // Check directory discharged/
+        if(!Files.exists(Paths.get(pathDischarged)))
+            Files.createDirectory(Paths.get(pathDischarged));
+
         // Search if there are patients already hospitalized
         File patientsDir = new File(pathPatients);
         if(patientsDir.isDirectory()){
