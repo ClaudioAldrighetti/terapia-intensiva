@@ -360,12 +360,8 @@ public class Model {
 
         Files.move(Paths.get(pathSrc), Paths.get(pathDest));
 
-/*        // Remove it
-*/
         // Remove patient from patients list
         patients.remove(pEntry);
-
-        //TODO
     }
 
     // UC12
