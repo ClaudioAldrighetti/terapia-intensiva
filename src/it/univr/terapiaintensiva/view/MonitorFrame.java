@@ -34,7 +34,6 @@ public class MonitorFrame extends JFrame {
         this.setTitle(title);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setExtendedState(MAXIMIZED_BOTH);
-        this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
