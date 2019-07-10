@@ -1,6 +1,6 @@
 package it.univr.terapiaintensiva.model;
 
-public class Person {
+public class Person implements CsvWritable {
     private String name;
     private String surname;
 
@@ -8,6 +8,8 @@ public class Person {
         this.name = name;
         this.surname = surname;
     }
+
+    public Person(){}
 
     public String getName(){
         return this.name;
@@ -19,5 +21,13 @@ public class Person {
 
     public String toString(){
         return (this.name + " " + this.surname);
+    }
+
+    public String toCsv() {
+        return name + "," + surname;
+    }
+
+    public static String csvFormat() {
+        return "name,surname";
     }
 }
