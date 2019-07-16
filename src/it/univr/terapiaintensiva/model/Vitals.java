@@ -1,10 +1,12 @@
 package it.univr.terapiaintensiva.model;
 
 public class Vitals implements CsvWritable {
-    public int heartBeat;
-    public double temperature;
-    public int sbp;
-    public int dbp;
+    private static final int nullVital = -1;
+
+    private int heartBeat;
+    private double temperature;
+    private int sbp;
+    private int dbp;
 
     public Vitals(int heartBeat, double temperature, int sbp, int dbp){
         this.heartBeat = heartBeat;
@@ -48,6 +50,9 @@ public class Vitals implements CsvWritable {
         this.dbp = dbp;
     }
 
+    public static final int getNullVital() {
+        return nullVital;
+    }
 
     public String toString() {
         return
