@@ -151,7 +151,7 @@ public class Model {
                             }
 
                             // Without registry file it's impossible to register foundPatient
-                            if (foundPatient.noRegistry()) {
+                            if (!foundPatient.noRegistry()) {
                                 // Found patient
                                 foundPatient.setVitals(foundVitals);
                                 foundPatient.setDiagnosis(foundDiagnosis);
@@ -248,9 +248,6 @@ public class Model {
 
                 // Write patient's data on registry file
                 FilesEditor.csvWriteRecord(pathRegistry, patient);
-
-                // Write vitals on log file
-                FilesEditor.csvWriteRecord(pathVitals, patient.getVitals());
 
                 // Add new patient to list
                 patients.add(patient);
