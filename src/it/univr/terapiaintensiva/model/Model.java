@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public class Model {
 
+    private static Model istance = null;
+
     public static final char DOCTOR = 'd';
     public static final char NURSE = 'n';
     public static final char CHIEF = 'c';
@@ -27,7 +29,7 @@ public class Model {
     private ArrayList<Patient> patients;
 
     // Constructor
-    public Model() {
+    private Model() {
         maxPatients = 10;
 
         try {
@@ -177,6 +179,12 @@ public class Model {
             System.out.println("Model() catch IOException!");
             e.printStackTrace();
         }
+    }
+
+    public static Model getIstance(){
+        if (istance == null)
+            istance = new Model();
+        return istance;
     }
 
     // UC1
