@@ -1,17 +1,19 @@
 package it.univr.terapiaintensiva.view;
 
+import it.univr.terapiaintensiva.model.Model;
+import it.univr.terapiaintensiva.model.Patient;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-public class MonitorPanel extends JPanel implements MouseListener {
+public class MonitorPanel extends JPanel {
 
-    GridBagConstraints c = new GridBagConstraints();
-
+    private final Model model = Model.getIstance();
+    private final GridBagConstraints c = new GridBagConstraints();
     // North panel
-    private final JLabel bedNumberLabel = new JLabel();
-    private final JLabel nameLabel = new JLabel("Mario Rossi");
+    //private final JLabel bedNumberLabel = new JLabel();
+    private final JLabel nameLabel = new JLabel();
+    private Patient patient = null;
     private final JPanel northPanel = new JPanel(new BorderLayout());
 
     // Center panel
@@ -32,17 +34,18 @@ public class MonitorPanel extends JPanel implements MouseListener {
     private final JPanel southCenterPanel = new JPanel(new FlowLayout());
     private final JPanel centerPanel = new JPanel(new GridLayout(2, 1));
 
-    public MonitorPanel(int bedNumber) {
+    public MonitorPanel(char type) {
 
         this.setLayout(new BorderLayout());
 
         // Name and bed in top panel
-        bedNumberLabel.setText(String.valueOf(bedNumber));
-        bedNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        bedNumberLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        nameLabel.setText("-");
+//        bedNumberLabel.setText(String.valueOf(bedNumber));
+//        bedNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//        bedNumberLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         nameLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.black));
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        northPanel.add(bedNumberLabel, BorderLayout.WEST);
+//        northPanel.add(bedNumberLabel, BorderLayout.WEST);
         northPanel.add(nameLabel, BorderLayout.CENTER);
         northPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.black));
         this.add(northPanel, BorderLayout.NORTH);
@@ -79,7 +82,6 @@ public class MonitorPanel extends JPanel implements MouseListener {
 
         // South
         southCenterPanel.add(diagnosisButton);
-        diagnosisButton.addMouseListener(this);
         southCenterPanel.add(newPrescriptionButton);
         southCenterPanel.add(newAdministrationButton);
         southCenterPanel.add(prescriptionLogButton);
@@ -92,39 +94,38 @@ public class MonitorPanel extends JPanel implements MouseListener {
         this.add(centerPanel, BorderLayout.CENTER);
 
         this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
-    }
 
-    DiagnosisFrame dFrame = null;
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-        if(e.getSource().equals(diagnosisButton)){
-            if (dFrame == null) {
-                dFrame = new DiagnosisFrame();
-            } else {
-                dFrame.setVisible(true);
-            }
+        switch (type) {
+            case Model.GUEST:
+                diagnosisButton.setVisible(false);
+                prescriptionLogButton.setVisible(false);
+                newPrescriptionButton.setVisible(false);
+                newAdministrationButton.setVisible(false);
+                administrationLogButton.setVisible(false);
+                break;
+            case Model.DOCTOR:
+            case Model.CHIEF:
+                newAdministrationButton.setVisible(false);
+                break;
+            case Model.NURSE:
+                diagnosisButton.setVisible(false);
+                newPrescriptionButton.setVisible(false);
+                break;
         }
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-
+    public boolean isEmpty() {
+        return (this.patient == null);
     }
 
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+        this.nameLabel.setText(patient.getName() + " " + patient.getSurname());
+        this.setVisible(true);
     }
 
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+    public void removePatient() {
+        this.patient = null;
+        this.setVisible(false);
     }
 }

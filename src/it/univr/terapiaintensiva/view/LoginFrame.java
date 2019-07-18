@@ -9,26 +9,21 @@ import java.awt.event.MouseListener;
 
 public class LoginFrame extends JFrame implements MouseListener {
 
-    private final Model model;
-
     private static final String title = "Log in";
-
     // Center panel
     private static final JLabel unameLabel = new JLabel("Username ");
-    private static final JLabel passLabel  = new JLabel(("Password "));
+    private static final JLabel passLabel = new JLabel(("Password "));
     private static final JTextField unameTField = new JTextField();
-    private static final JTextField passField  = new JPasswordField();
+    private static final JTextField passField = new JPasswordField();
     private static final JPanel centerPanel = new JPanel(new GridBagLayout());
-    private static GridBagConstraints c = new GridBagConstraints();
-
     // South panel
     private static final JButton loginButton = new JButton("Log in");
     private static final JButton guestButton = new JButton("Guest");
     private static final JPanel southPanel = new JPanel();
+    private static GridBagConstraints c = new GridBagConstraints();
+    private final Model model = Model.getIstance();
 
-    public LoginFrame (Model model) {
-
-        this.model = model;
+    public LoginFrame() {
 
         loginButton.addMouseListener(this);
         guestButton.addMouseListener(this);
@@ -65,7 +60,7 @@ public class LoginFrame extends JFrame implements MouseListener {
 
         this.setTitle(title);
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        this.setSize(300,150);
+        this.setSize(300, 150);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
@@ -77,11 +72,11 @@ public class LoginFrame extends JFrame implements MouseListener {
             String user = unameTField.getText();
             String psw = passField.getText();
             if (model.authenticate(user, psw) != Model.GUEST) {
-                MonitorFrame monitorFrame = new MonitorFrame(model, model.authenticate(user, psw));
+                MonitorFrame monitorFrame = MonitorFrame.getIstance(model.authenticate(user, psw));
                 this.dispose();
             }
         } else if (e.getSource().equals((guestButton))) {
-            MonitorFrame monitorFrame = new MonitorFrame(model, Model.GUEST);
+            MonitorFrame monitorFrame = MonitorFrame.getIstance(Model.GUEST);
             this.dispose();
         }
     }
