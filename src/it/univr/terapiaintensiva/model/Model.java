@@ -17,12 +17,14 @@ public class Model {
     private final String pathDischarged = "./discharged/";
 
     // Macros
-    private final int maxPatients = 10;
+    private final int maxPatients;
 
     private ArrayList<Patient> patients;
 
     // Constructor
     public Model() {
+        maxPatients = 10;
+
         try {
             // Check directory patients/
             if (!Files.exists(Paths.get(pathPatients)))
@@ -248,6 +250,10 @@ public class Model {
 
                 // Write patient's data on registry file
                 FilesEditor.csvWriteRecord(pathRegistry, patient);
+
+                // Write patient's data on vitals file
+                Vitals nullVitals = new Vitals(Vitals.nullVital, Vitals.nullVital, Vitals.nullVital, Vitals.nullVital);
+                FilesEditor.csvWriteRecord(pathVitals, nullVitals);
 
                 // Add new patient to list
                 patients.add(patient);

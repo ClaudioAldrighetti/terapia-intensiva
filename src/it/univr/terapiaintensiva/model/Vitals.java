@@ -1,7 +1,7 @@
 package it.univr.terapiaintensiva.model;
 
 public class Vitals implements CsvWritable {
-    private static final int nullVital = -1;
+    public static final int nullVital = -1;
 
     private int heartBeat;
     private double temperature;
@@ -48,10 +48,6 @@ public class Vitals implements CsvWritable {
 
     public void setDbp(int dbp) {
         this.dbp = dbp;
-    }
-
-    public static final int getNullVital() {
-        return nullVital;
     }
 
     public String toString() {
