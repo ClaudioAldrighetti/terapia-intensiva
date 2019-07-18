@@ -6,6 +6,11 @@ import java.util.ArrayList;
 
 public class Model {
 
+    public static final char DOCTOR = 'd';
+    public static final char NURSE = 'n';
+    public static final char CHIEF = 'c';
+    public static final char GUEST = 'g';
+
     // Paths
     private final String pathAutenticationFile = "./assets/login.csv";
     private final String pathRegistryFile = "registry.csv";
@@ -197,7 +202,7 @@ public class Model {
             }
             // Wrong username and/or password
             authenticationFile.close();
-            return 'w';
+            return Model.GUEST;
 
         } catch (IOException e){
             System.out.println("autenticate() catch IOException!");

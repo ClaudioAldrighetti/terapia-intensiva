@@ -1,9 +1,16 @@
 package it.univr.terapiaintensiva.view;
 
+import it.univr.terapiaintensiva.model.Model;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class LoginFrame extends JFrame {
+public class LoginFrame extends JFrame implements MouseListener {
+
+    private final Model model;
+
     private static final String title = "Log in";
 
     // Center panel
@@ -19,7 +26,12 @@ public class LoginFrame extends JFrame {
     private static final JButton guestButton = new JButton("Guest");
     private static final JPanel southPanel = new JPanel();
 
-    public LoginFrame () {
+    public LoginFrame (Model model) {
+
+        this.model = model;
+
+        loginButton.addMouseListener(this);
+        guestButton.addMouseListener(this);
 
         // Fill center panel
         c.gridx = 0;
@@ -52,11 +64,45 @@ public class LoginFrame extends JFrame {
         contentPane.add(southPanel, BorderLayout.SOUTH);
 
         this.setTitle(title);
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.setSize(300,150);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getSource().equals(loginButton)) {
+            String user = unameTField.getText();
+            String psw = passField.getText();
+            if (model.authenticate(user, psw) != Model.GUEST) {
+                MonitorFrame monitorFrame = new MonitorFrame(model, model.authenticate(user, psw));
+                this.dispose();
+            }
+        } else if (e.getSource().equals((guestButton))) {
+            MonitorFrame monitorFrame = new MonitorFrame(model, Model.GUEST);
+            this.dispose();
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
 }
