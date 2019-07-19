@@ -8,7 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class NewPrescriptionFrame extends JFrame implements ActionListener {
 
@@ -23,7 +26,7 @@ public class NewPrescriptionFrame extends JFrame implements ActionListener {
     private static final JTextField medicineTextField = new JTextField();
     private static final SpinnerNumberModel durationModel = new SpinnerNumberModel();
     private static final JSpinner durationSpinner = new JSpinner(durationModel);
-    private static final SpinnerNumberModel doseModel = new SpinnerNumberModel();
+    private static final SpinnerNumberModel doseModel = new SpinnerNumberModel(0.0, 0.0, null, 0.1);
     private static final JSpinner doseSpinner = new JSpinner(doseModel);
     private static final SpinnerNumberModel nDosesModel = new SpinnerNumberModel();
     private static final JSpinner nDosesSpinner = new JSpinner(nDosesModel);
@@ -98,8 +101,11 @@ public class NewPrescriptionFrame extends JFrame implements ActionListener {
     }
 
     private Prescription getPrescription() {
+        Instant instant = Instant.ofEpochMilli(dateModel.getDate().getTime());
+        LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        LocalDate localdate = ldt.toLocalDate();
         return new Prescription(
-                LocalDate.now(),
+                localdate,
                 durationModel.getNumber().intValue(),
                 medicineTextField.getText(),
                 nDosesModel.getNumber().intValue(),
