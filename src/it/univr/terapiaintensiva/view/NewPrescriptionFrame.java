@@ -8,10 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 
 /**
  * A form used to acquire all the data about a new {@link Prescription}
@@ -26,20 +23,20 @@ public class NewPrescriptionFrame extends JFrame implements ActionListener {
     private static final JLabel doseLabel = new JLabel("Dose");
     private static final JLabel nDosesLabel = new JLabel("Numero di dosi");
     private static final JLabel dateLabel = new JLabel("Data");
-    private static final JTextField medicineTextField = new JTextField();
-    private static final SpinnerNumberModel durationModel = new SpinnerNumberModel();
-    private static final JSpinner durationSpinner = new JSpinner(durationModel);
-    private static final SpinnerNumberModel doseModel = new SpinnerNumberModel(0.0, 0.0, null, 0.1);
-    private static final JSpinner doseSpinner = new JSpinner(doseModel);
-    private static final SpinnerNumberModel nDosesModel = new SpinnerNumberModel();
-    private static final JSpinner nDosesSpinner = new JSpinner(nDosesModel);
-    private static final SpinnerDateModel dateModel = new SpinnerDateModel();
-    private static final JSpinner dateSpinner = new JSpinner(dateModel);
-    private static final JButton okButton = new JButton("Ok");
-    private static final JButton cancelButton = new JButton("Annulla");
-    private static final JPanel centerPanel = new JPanel(new GridBagLayout());
-    private static final JPanel southPanel = new JPanel(new FlowLayout());
-    private static final GridBagConstraints c = new GridBagConstraints();
+    private final JTextField medicineTextField = new JTextField();
+    private final SpinnerNumberModel durationModel = new SpinnerNumberModel();
+    private final JSpinner durationSpinner = new JSpinner(durationModel);
+    private final SpinnerNumberModel doseModel = new SpinnerNumberModel(0.0, 0.0, null, 0.1);
+    private final JSpinner doseSpinner = new JSpinner(doseModel);
+    private final SpinnerNumberModel nDosesModel = new SpinnerNumberModel();
+    private final JSpinner nDosesSpinner = new JSpinner(nDosesModel);
+    private final SpinnerDateModel dateModel = new SpinnerDateModel();
+    private final JSpinner dateSpinner = new JSpinner(dateModel);
+    private final JButton okButton = new JButton("Ok");
+    private final JButton cancelButton = new JButton("Annulla");
+    private final JPanel centerPanel = new JPanel(new GridBagLayout());
+    private final JPanel southPanel = new JPanel(new FlowLayout());
+    private final GridBagConstraints c = new GridBagConstraints();
 
     public NewPrescriptionFrame(Patient patient) {
 
@@ -111,19 +108,22 @@ public class NewPrescriptionFrame extends JFrame implements ActionListener {
     private Prescription getPrescription() {
         Instant instant = Instant.ofEpochMilli(dateModel.getDate().getTime());
         LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-        LocalDate localdate = ldt.toLocalDate();
+        LocalDate localDate = ldt.toLocalDate();
+        LocalTime localTime = LocalTime.now();
         return new Prescription(
-                localdate,
                 durationModel.getNumber().intValue(),
-                medicineTextField.getText(),
+                medicineTextField.getText().trim(),
                 nDosesModel.getNumber().intValue(),
-                doseModel.getNumber().doubleValue());
+                doseModel.getNumber().doubleValue(),
+                localDate,
+                localTime
+        );
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton))
-            Model.getIstance().addPrescription(patient.getCf(), getPrescription());
+            Model.getInstance().addPrescription(patient.getCf(), getPrescription());
         this.dispose();
     }
 }

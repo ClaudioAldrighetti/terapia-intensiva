@@ -20,18 +20,18 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
     private static final JLabel doseLabel = new JLabel("Dose");
     private static final JLabel dateLabel = new JLabel("Data e ora");
     private static final JLabel notesLabel = new JLabel("Note");
-    private static final JTextField medicineTextField = new JTextField();
-    private static final SpinnerNumberModel doseModel = new SpinnerNumberModel(0.0, 0.0, null, 0.1);
-    private static final JSpinner doseSpinner = new JSpinner(doseModel);
-    private static final SpinnerDateModel dateModel = new SpinnerDateModel();
-    private static final JSpinner dateSpinner = new JSpinner(dateModel);
-    private static final JButton okButton = new JButton("Ok");
-    private static final JButton cancelButton = new JButton("Annulla");
-    private static final JTextPane notesPane = new JTextPane();
-    private static final JScrollPane scrollPane = new JScrollPane(notesPane);
-    private static final JPanel centerPanel = new JPanel(new GridBagLayout());
-    private static final JPanel southPanel = new JPanel(new FlowLayout());
-    private static final GridBagConstraints c = new GridBagConstraints();
+    private final JTextField medicineTextField = new JTextField();
+    private final SpinnerNumberModel doseModel = new SpinnerNumberModel(0.0, 0.0, null, 0.1);
+    private final JSpinner doseSpinner = new JSpinner(doseModel);
+    private final SpinnerDateModel dateModel = new SpinnerDateModel();
+    private final JSpinner dateSpinner = new JSpinner(dateModel);
+    private final JButton okButton = new JButton("Ok");
+    private final JButton cancelButton = new JButton("Annulla");
+    private final JTextPane notesPane = new JTextPane();
+    private final JScrollPane scrollPane = new JScrollPane(notesPane);
+    private final JPanel centerPanel = new JPanel(new GridBagLayout());
+    private final JPanel southPanel = new JPanel(new FlowLayout());
+    private final GridBagConstraints c = new GridBagConstraints();
     private final Patient patient;
 
     public NewAdministrationFrame(Patient patient) {
@@ -101,18 +101,18 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
         LocalDate localDate = ldt.toLocalDate();
         LocalTime localTime = ldt.toLocalTime();
         return new Administration(
-                localDate,
-                localTime,
-                medicineTextField.getText(),
+                medicineTextField.getText().trim(),
                 doseModel.getNumber().doubleValue(),
-                notesPane.getText()
+                notesPane.getText(),
+                localDate,
+                localTime
         );
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton))
-            Model.getIstance().addAdministration(patient.getCf(), getAdministration());
+            Model.getInstance().addAdministration(patient.getCf(), getAdministration());
         this.dispose();
     }
 }

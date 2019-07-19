@@ -13,7 +13,7 @@ public class TerapiaIntensiva {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Model model = Model.getIstance();
+        Model model = Model.getInstance();
         LoginFrame loginFrame = new LoginFrame();
     }
 }

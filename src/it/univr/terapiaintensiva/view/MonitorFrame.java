@@ -24,10 +24,10 @@ public class MonitorFrame extends JFrame implements ActionListener {
     private static final JMenuItem dischargeMenuItem = new JMenuItem("Dimetti paziente");
     private static final JMenuItem reportMenuItem = new JMenuItem("Visualizza report");
     private static final JMenuBar menuBar = new JMenuBar();
-    private static MonitorFrame istance = null;
+    private static MonitorFrame instance = null;
     private final ArrayList<MonitorPanel> monitors = new ArrayList<>();
     private final Container contentPane = this.getContentPane();
-    private final Model model = Model.getIstance();
+    private final Model model = Model.getInstance();
     private final char type = model.getType();
 
     private MonitorFrame() {
@@ -67,10 +67,10 @@ public class MonitorFrame extends JFrame implements ActionListener {
      *
      * @return a new instance of this class if there is not one present, or the only instance already present
      */
-    public static MonitorFrame getIstance() {
-        if (istance == null)
-            istance = new MonitorFrame();
-        return istance;
+    public static MonitorFrame getInstance() {
+        if (instance == null)
+            instance = new MonitorFrame();
+        return instance;
     }
 
     /**

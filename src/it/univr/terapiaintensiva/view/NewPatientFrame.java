@@ -24,17 +24,17 @@ public class NewPatientFrame extends JFrame implements ActionListener {
     private static final JLabel dobLabel = new JLabel("Data di nascita");
     private static final JLabel pobLabel = new JLabel("Luogo di nascita");
     private static final JLabel cfLabel = new JLabel("Codice fiscale");
-    private static final JTextField nameTextField = new JTextField();
-    private static final JTextField surnameTextField = new JTextField();
-    private static final SpinnerDateModel dateModel = new SpinnerDateModel();
-    private static final JSpinner dateSpinner = new JSpinner(dateModel);
-    private static final JTextField pobTextField = new JTextField();
-    private static final JTextField cfTextField = new JTextField();
-    private static final JButton okButton = new JButton("Ok");
-    private static final JButton cancelButton = new JButton("Annulla");
-    private static final JPanel centerPanel = new JPanel(new GridBagLayout());
-    private static final JPanel southPanel = new JPanel(new FlowLayout());
-    private static final GridBagConstraints c = new GridBagConstraints();
+    private final JTextField nameTextField = new JTextField();
+    private final JTextField surnameTextField = new JTextField();
+    private final SpinnerDateModel dateModel = new SpinnerDateModel();
+    private final JSpinner dateSpinner = new JSpinner(dateModel);
+    private final JTextField pobTextField = new JTextField();
+    private final JTextField cfTextField = new JTextField();
+    private final JButton okButton = new JButton("Ok");
+    private final JButton cancelButton = new JButton("Annulla");
+    private final JPanel centerPanel = new JPanel(new GridBagLayout());
+    private final JPanel southPanel = new JPanel(new FlowLayout());
+    private final GridBagConstraints c = new GridBagConstraints();
 
     public NewPatientFrame() {
 
@@ -109,8 +109,8 @@ public class NewPatientFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton)) {
-            if (Model.getIstance().hospitalizePatient(getPatient()))
-                MonitorFrame.getIstance().addPatient(getPatient());
+            if (Model.getInstance().hospitalizePatient(getPatient()))
+                MonitorFrame.getInstance().addPatient(getPatient());
             else
                 JOptionPane.showMessageDialog(
                         null,

@@ -13,18 +13,16 @@ import java.awt.event.ActionListener;
 public class LoginFrame extends JFrame implements ActionListener {
 
     private static final String title = "Log in";
-    // Center panel
     private static final JLabel unameLabel = new JLabel("Username ");
     private static final JLabel passLabel = new JLabel(("Password "));
     private static final JTextField unameTField = new JTextField();
     private static final JTextField passField = new JPasswordField();
     private static final JPanel centerPanel = new JPanel(new GridBagLayout());
-    // South panel
     private static final JButton loginButton = new JButton("Log in");
     private static final JButton guestButton = new JButton("Guest");
     private static final JPanel southPanel = new JPanel();
     private static GridBagConstraints c = new GridBagConstraints();
-    private final Model model = Model.getIstance();
+    private final Model model = Model.getInstance();
 
     public LoginFrame() {
 
@@ -75,14 +73,14 @@ public class LoginFrame extends JFrame implements ActionListener {
             String user = unameTField.getText();
             String psw = passField.getText();
             if (model.authenticate(user.trim(), psw.trim()) != Model.GUEST) {
-                MonitorFrame monitorFrame = MonitorFrame.getIstance();
+                MonitorFrame monitorFrame = MonitorFrame.getInstance();
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Credenziali errate", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             model.authenticate("guestUser", "guestPassword");
-            MonitorFrame monitorFrame = MonitorFrame.getIstance();
+            MonitorFrame monitorFrame = MonitorFrame.getInstance();
             this.dispose();
         }
     }

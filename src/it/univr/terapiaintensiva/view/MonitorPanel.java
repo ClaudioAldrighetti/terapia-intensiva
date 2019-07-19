@@ -13,18 +13,15 @@ import java.awt.event.ActionListener;
  */
 public class MonitorPanel extends JPanel implements ActionListener {
 
-    private final Model model = Model.getIstance();
+    private static final JLabel dash = new JLabel("-");
+    private final Model model = Model.getInstance();
     private final char type = model.getType();
     private final GridBagConstraints c = new GridBagConstraints();
-    // North panel
-    //private final JLabel bedNumberLabel = new JLabel();
     private final JLabel nameLabel = new JLabel();
     private final JPanel northPanel = new JPanel(new BorderLayout());
-    // Center panel
     private final JLabel bpmLabel = new JLabel("60");
     private final JLabel tempLabel = new JLabel("36");
     private final JLabel sbpLabel = new JLabel("120");
-    private final JLabel dash = new JLabel("-");
     private final JLabel dbpLabel = new JLabel("80");
     private final JButton tempButton = new JButton(new ImageIcon("./icons/health-thermometer.png"));
     private final JButton pressButton = new JButton(new ImageIcon("./icons/blood-pressure-control-tool.png"));
@@ -48,14 +45,10 @@ public class MonitorPanel extends JPanel implements ActionListener {
 
         this.setLayout(new BorderLayout());
 
-        // Name and bed in top panel
+        // Name in top panel
         nameLabel.setText("-");
-//        bedNumberLabel.setText(String.valueOf(bedNumber));
-//        bedNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//        bedNumberLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         nameLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.black));
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//        northPanel.add(bedNumberLabel, BorderLayout.WEST);
         northPanel.add(nameLabel, BorderLayout.CENTER);
         northPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.black));
         this.add(northPanel, BorderLayout.NORTH);
@@ -135,6 +128,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
 
     /**
      * Associates the panel with a patient.
+     *
      * @param patient the patient to associate
      */
     public void setPatient(Patient patient) {
