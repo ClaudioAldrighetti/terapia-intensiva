@@ -20,15 +20,16 @@ public class MonitorFrame extends JFrame {
     private final ArrayList<MonitorPanel> monitors = new ArrayList<>();
     private final Container contentPane = this.getContentPane();
     private final Model model = Model.getIstance();
+    private final char type = model.getType();
 
-    private MonitorFrame(char type) {
+    private MonitorFrame() {
 
         newPatientMenuItem.addActionListener(new NewPatientController());
 
         contentPane.setLayout(new GridLayout(2, 5));
 
         for (int i = 0; i < 10; i++) {
-            monitors.add(new MonitorPanel(type));
+            monitors.add(new MonitorPanel());
             contentPane.add(monitors.get(i));
             monitors.get(i).setVisible(false);
         }
@@ -53,9 +54,9 @@ public class MonitorFrame extends JFrame {
         this.setVisible(true);
     }
 
-    public static MonitorFrame getIstance(char type) {
+    public static MonitorFrame getIstance() {
         if (istance == null)
-            istance = new MonitorFrame(type);
+            istance = new MonitorFrame();
         return istance;
     }
 

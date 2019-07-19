@@ -20,7 +20,7 @@ public class NewPatientController implements ActionListener {
         } else if ((e.getSource()).equals(f.getOkButton())) {
             Patient p = f.getPatient();
             if (Model.getIstance().hospitalizePatient(p)) {
-                MonitorFrame.getIstance(Model.NURSE).addPatient(p);
+                MonitorFrame.getIstance().addPatient(p);
             } else {
                 JOptionPane.showMessageDialog(null, "Il paziente con il codice fiscale inserito è già presente" +
                         "oppure è stato raggiunto il numero massimo di posti", "Errore", JOptionPane.ERROR_MESSAGE);
@@ -28,7 +28,7 @@ public class NewPatientController implements ActionListener {
             f.resetFields();
             f.dispose();
             f = null;
-            MonitorFrame.getIstance(Model.NURSE).revalidate();
+            MonitorFrame.getIstance().revalidate();
         } else {
             f.dispose();
         }

@@ -9,6 +9,7 @@ import java.awt.*;
 public class MonitorPanel extends JPanel {
 
     private final Model model = Model.getIstance();
+    private final char type = model.getType();
     private final GridBagConstraints c = new GridBagConstraints();
     // North panel
     //private final JLabel bedNumberLabel = new JLabel();
@@ -34,7 +35,7 @@ public class MonitorPanel extends JPanel {
     private final JPanel southCenterPanel = new JPanel(new FlowLayout());
     private final JPanel centerPanel = new JPanel(new GridLayout(2, 1));
 
-    public MonitorPanel(char type) {
+    public MonitorPanel() {
 
         this.setLayout(new BorderLayout());
 
