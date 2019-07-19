@@ -1,9 +1,6 @@
 package it.univr.terapiaintensiva.model;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -544,6 +541,40 @@ public class Model {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * @param cf odice fiscale of the patient
+     * @return the most recent instance of {@link Vitals}. Null in case of error.
+     * @author ecavicc
+     * Returns the current parameters of the given patient.
+     */
+    public Vitals getCurrentVitals(String cf) {
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if (pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return null;
+        }
+
+        // Check valid userType
+        if (type != GUEST && type != NURSE && type != DOCTOR && type != CHIEF) {
+            System.out.println("Invalid user type");
+            return null;
+        }
+
+        String pathVitals = pathPatients.concat(cf + "/" + pathVitalsFile);
+        if (Files.exists(Paths.get(pathVitals))) {
+            try {
+                BufferedReader vitalsFile = new BufferedReader(new FileReader(pathVitals));
+                return FilesEditor.csvGetVitals(FilesEditor.csvReadLastRecord(vitalsFile));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     // PUBLIC METHODS
