@@ -74,29 +74,33 @@ public final class FilesEditor {
     }
 
     public  static Prescription csvGetPrescription(String[] prescriptionData) {
-        LocalDate date = strToLocalDate(prescriptionData[0]);
-        int duration = Integer.parseInt(prescriptionData[1]);
-        String medicine = prescriptionData[2];
-        int nDoses = Integer.parseInt(prescriptionData[3]);
-        double dose = Double.parseDouble(prescriptionData[4]);
+        int duration = Integer.parseInt(prescriptionData[0]);
+        String medicine = prescriptionData[1];
+        int nDoses = Integer.parseInt(prescriptionData[2]);
+        double dose = Double.parseDouble(prescriptionData[3]);
+        LocalDate date = strToLocalDate(prescriptionData[4]);
+        LocalTime time = strToLocalTime(prescriptionData[5]);
 
-        return new Prescription(date, duration, medicine, nDoses, dose);
+        return new Prescription(duration, medicine, nDoses, dose, date, time);
     }
 
     public static Administration csvGetAdministration(String[] administrationData) {
-        LocalDate date = strToLocalDate(administrationData[0]);
-        LocalTime time = strToLocalTime(administrationData[1]);
-        String medicine = administrationData[2];
-        double dose = Double.parseDouble(administrationData[3]);
-        String notes = (administrationData.length == 5)? administrationData[4] : "";
+        String medicine = administrationData[0];
+        double dose = Double.parseDouble(administrationData[1]);
+        String notes = (administrationData.length == 5)? administrationData[2] : "";
+        LocalDate date = strToLocalDate(administrationData[3]);
+        LocalTime time = strToLocalTime(administrationData[4]);
 
-        return new Administration(date, time, medicine, dose, notes);
+        return new Administration(medicine, dose, notes, date, time);
     }
 
     // Write CsvWritable object on csvFile using path
     public static void csvWriteRecord(String pathCsvFile, CsvWritable csvObject, boolean append) throws IOException {
         FileWriter csvFileWriter = new FileWriter(pathCsvFile, append);
-        csvFileWriter.write(csvObject.toCsv().concat("\n"));
+        String endLine = "\n";
+        if(csvObject instanceof Vitals)
+            endLine = "," + LocalDate.now().toString() + "," + LocalTime.now().toString() + endLine;
+        csvFileWriter.write(csvObject.toCsv().concat(endLine));
         csvFileWriter.flush();
         csvFileWriter.close();
     }
@@ -105,10 +109,10 @@ public final class FilesEditor {
     }
 
     // Write CsvWritable object on csvFile using fileWriter
-    public static void csvWriteRecord(FileWriter csvFileWriter, CsvWritable csvObject) throws IOException {
+/*    public static void csvWriteRecord(FileWriter csvFileWriter, CsvWritable csvObject) throws IOException {
         csvFileWriter.write(csvObject.toCsv().concat("\n"));
     }
-
+*/
     // GENERIC TEXT FILE INTERACTIONS
 
     // Write string on file using path
