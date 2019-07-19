@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Model {
 
-    private static Model istance = null;
+    private static Model instance = null;
 
     public static final char DOCTOR = 'd';
     public static final char NURSE = 'n';
@@ -18,7 +18,7 @@ public class Model {
     public static final char GUEST = 'g';
 
     // Paths
-    private final String pathAutenticationFile = "./assets/login.csv";
+    private final String pathAuthenticationFile = "./assets/login.csv";
     private final String pathRegistryFile = "registry.csv";
     private final String pathVitalsFile = "vitals.csv";
     private final String pathPrescriptionsFile = "prescriptions.csv";
@@ -187,16 +187,16 @@ public class Model {
         }
     }
 
-    public static Model getIstance(){
-        if (istance == null)
-            istance = new Model();
-        return istance;
+    public static Model getInstance(){
+        if (instance == null)
+            instance = new Model();
+        return instance;
     }
 
     // UC1
     public char authenticate(String username, String password) {
         try {
-            BufferedReader authenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
+            BufferedReader authenticationFile = new BufferedReader(new FileReader(pathAuthenticationFile));
 
             // Skip format line
             FilesEditor.csvSkipRecord(authenticationFile);
@@ -219,7 +219,7 @@ public class Model {
             return this.type = Model.GUEST;
 
         } catch (IOException e){
-            System.out.println("autenticate() catch IOException!");
+            System.out.println("authenticate() catches IOException!");
             e.printStackTrace();
             // Error
             return 'e';
@@ -257,7 +257,7 @@ public class Model {
 
                 // Create vitals csv file
                 String pathVitals = pathNewPatient.concat(pathVitalsFile);
-                FilesEditor.csvCreateFile(pathVitals, Vitals.csvFormat());
+                FilesEditor.csvCreateFile(pathVitals, Vitals.csvFormat().concat(",date,time"));
 
                 // Create prescriptions csv file
                 String pathPrescriptions = pathNewPatient.concat(pathPrescriptionsFile);
@@ -286,23 +286,6 @@ public class Model {
             } catch (IOException e){
                 System.out.println("hospitalizePatient() catch IOException!");
                 e.printStackTrace();
-/*
-                String pathDirToDelete = pathPatients.concat(patient.getCf() + "/");
-                if( Files.exists(Paths.get(pathDirToDelete)) &&
-                    Files.isDirectory(Paths.get(pathDirToDelete)) &&
-                    Files.isReadable((Paths.get(pathDirToDelete)))
-                ) {
-                    File dirToDelete = new File(pathDirToDelete);
-
-                    // Remove each file inside
-                    for(File fileToDelete: dirToDelete.listFiles()){
-                        fileToDelete.delete();
-                    }
-
-                    // Remove medical record's
-                    dirToDelete.delete();
-                }
-*/
                 return false;
             }
         }
@@ -365,10 +348,9 @@ public class Model {
                 for (Prescription p : patient.getPrescriptions())
                     FilesEditor.csvWriteRecord(pathPrescriptions, p);
             }
-            // File exist
-            else
-                // Write prescription
-                FilesEditor.csvWriteRecord(pathPrescriptions, prescription);
+
+            // Write prescription
+            FilesEditor.csvWriteRecord(pathPrescriptions, prescription);
 
             // Add prescription to patient
             patient.addPrescription(prescription);
@@ -406,10 +388,9 @@ public class Model {
                 for(Administration a: patient.getAdministrations())
                     FilesEditor.csvWriteRecord(pathAdministrationsFile, a);
             }
-            // File exist
-            else
-                // Write administration
-                FilesEditor.csvWriteRecord(pathAdministrations, administration);
+
+            // Write administration
+            FilesEditor.csvWriteRecord(pathAdministrations, administration);
 
             // Add administration to patient
             patient.addAdministration(administration);
