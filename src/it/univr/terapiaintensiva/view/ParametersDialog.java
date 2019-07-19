@@ -22,14 +22,14 @@ public class ParametersDialog extends JDialog {
         this.patient = patient;
         this.parameterType = parameterType;
         this.setTitle(title);
-        this.setLocationRelativeTo(null);
         this.setModal(true);
         this.setResizable(false);
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.getContentPane().setLayout(new BorderLayout());
         JTable parametersTable = getParametersTable();
-        this.add(parametersTable, BorderLayout.CENTER);
-        this.pack();
+        JScrollPane scrollPane = new JScrollPane(parametersTable);
+        this.add(scrollPane, BorderLayout.CENTER);
+        this.setLocationRelativeTo(null);
     }
 
     private JTable getParametersTable() {
@@ -39,6 +39,7 @@ public class ParametersDialog extends JDialog {
 
         switch (parameterType) {
             case HEARTBEAT:
+                this.setMinimumSize(new Dimension(150, 300));
                 rowData = new String[vitalsList.size()][2];
                 columnNames = new String[2];
                 columnNames[0] = "Ora";
@@ -49,6 +50,7 @@ public class ParametersDialog extends JDialog {
                 }
                 break;
             case PRESSURE:
+                this.setMinimumSize(new Dimension(250, 300));
                 rowData = new String[vitalsList.size()][3];
                 columnNames = new String[3];
                 columnNames[0] = "Ora";
@@ -61,6 +63,7 @@ public class ParametersDialog extends JDialog {
                 }
                 break;
             case TEMPERATURE:
+                this.setMinimumSize(new Dimension(200, 300));
                 rowData = new String[vitalsList.size()][2];
                 columnNames = new String[2];
                 columnNames[0] = "Ora";
@@ -71,6 +74,7 @@ public class ParametersDialog extends JDialog {
                 }
                 break;
             default:
+                this.setMinimumSize(new Dimension(250, 300));
                 rowData = new String[vitalsList.size()][3];
                 columnNames = new String[3];
                 columnNames[0] = "Ora";

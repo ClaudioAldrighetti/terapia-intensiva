@@ -59,7 +59,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
         bpmLabel.setOpaque(true);
         bpmLabel.setBackground(Color.black);
         bpmLabel.setForeground(Color.green);
-        bpmLabel.setFont(new Font("sansserif", Font.PLAIN, 80));
+        bpmLabel.setFont(new Font("sansserif", Font.PLAIN, 50));
         bpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
         northCenterPanel.add(bpmLabel);
 
@@ -177,7 +177,13 @@ public class MonitorPanel extends JPanel implements ActionListener {
             newAdministrationFrame = new NewAdministrationFrame(this.patient);
             newAdministrationFrame.setVisible(true);
         } else if (e.getSource().equals(bpmLabel)) {
-            parametersDialog = new ParametersDialog(this.patient, "Log battito caridaco", ParametersDialog.HEARTBEAT);
+            parametersDialog = new ParametersDialog(this.patient, "Battito", ParametersDialog.HEARTBEAT);
+            parametersDialog.setVisible(true);
+        } else if (e.getSource().equals(pressButton)) {
+            parametersDialog = new ParametersDialog(this.patient, "Pressione", ParametersDialog.PRESSURE);
+            parametersDialog.setVisible(true);
+        } else if (e.getSource().equals(tempButton)) {
+            parametersDialog = new ParametersDialog(this.patient, "Temperatura", ParametersDialog.TEMPERATURE);
             parametersDialog.setVisible(true);
         }
     }
