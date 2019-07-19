@@ -407,7 +407,7 @@ public class Model {
     }
 
     // UC7, UC8
-    public ArrayList<Vitals> getLastParameters(String cf, char type){
+    public ArrayList<Vitals> getLastParameters(String cf) {
         // Find patient
         int pEntry = findPatient(cf);
 
