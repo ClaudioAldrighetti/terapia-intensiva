@@ -449,6 +449,8 @@ public class Model {
                         int diffHours = (24 - maxTime.getHour()) - logTime.getHour();
                     }
 */
+                    // Ho aggiunto questo, ora dovrebbe funzionare :)
+                    vitalsLog = FilesEditor.csvReadRecord(vitalsFile);
                 }
 
             }
