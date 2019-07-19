@@ -40,6 +40,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
         // Listener
         diagnosisButton.addActionListener(this);
         newPrescriptionButton.addActionListener(this);
+        newAdministrationButton.addActionListener(this);
 
         this.setLayout(new BorderLayout());
 
@@ -139,6 +140,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
         JButton source = (JButton) e.getSource();
         DiagnosisFrame diagnosisFrame;
         NewPrescriptionFrame newPrescriptionFrame;
+        NewAdministrationFrame newAdministrationFrame;
         if (source.equals(diagnosisButton)) {
             diagnosisFrame = new DiagnosisFrame(this.patient);
             diagnosisFrame.setDiagnosis(patient.getDiagnosis());
@@ -146,6 +148,9 @@ public class MonitorPanel extends JPanel implements ActionListener {
         } else if (source.equals(newPrescriptionButton)) {
             newPrescriptionFrame = new NewPrescriptionFrame(this.patient);
             newPrescriptionFrame.setVisible(true);
+        } else if (source.equals(newAdministrationButton)) {
+            newAdministrationFrame = new NewAdministrationFrame(this.patient);
+            newAdministrationFrame.setVisible(true);
         }
     }
 }
