@@ -108,11 +108,6 @@ public final class FilesEditor {
         csvWriteRecord(pathCsvFile, csvObject, true);
     }
 
-    // Write CsvWritable object on csvFile using fileWriter
-/*    public static void csvWriteRecord(FileWriter csvFileWriter, CsvWritable csvObject) throws IOException {
-        csvFileWriter.write(csvObject.toCsv().concat("\n"));
-    }
-*/
     // GENERIC TEXT FILE INTERACTIONS
 
     // Write string on file using path
@@ -126,9 +121,9 @@ public final class FilesEditor {
         write(pathFile, str, true);
     }
 
-    // AUXILIARY PRIVATE METHODS
+    // AUXILIARY METHODS
 
-    private static LocalDate strToLocalDate(String dateStr) {
+    public static LocalDate strToLocalDate(String dateStr) {
         return LocalDate.of(
             Integer.parseInt(dateStr.split(dateSeparator)[0]),
             Integer.parseInt(dateStr.split(dateSeparator)[1]),
@@ -136,7 +131,7 @@ public final class FilesEditor {
         );
     }
 
-    private static LocalTime strToLocalTime(String timeStr) {
+    public static LocalTime strToLocalTime(String timeStr) {
         return LocalTime.of(
             Integer.parseInt(timeStr.split(timeSeparator)[0]),
             Integer.parseInt(timeStr.split(timeSeparator)[1])

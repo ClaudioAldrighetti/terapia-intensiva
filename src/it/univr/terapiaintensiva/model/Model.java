@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Model {
@@ -404,8 +406,68 @@ public class Model {
         }
     }
 
+    // UC7, UC8
+    public ArrayList<Vitals> getLastParameters(String cf, char type){
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if(pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return null;
+        }
+
+        // Check valid userType
+        if(type!=GUEST && type!=NURSE && type!=DOCTOR && type!=CHIEF) {
+            System.out.println("Invalid user type");
+            return null;
+        }
+
+        LocalTime maxTime = LocalTime.now();
+        if(type == GUEST)
+            maxTime = maxTime.minusMinutes(15);
+        else
+            maxTime = maxTime.minusHours(2);
+
+        try {
+            // List of vital parameters returned
+            ArrayList<Vitals> vitalsLogs = new ArrayList<>();
+
+            // Search vitals log
+            String pathVitals = pathPatients.concat(cf + "/" + pathVitalsFile);
+            if (Files.exists(Paths.get(pathVitals))) {
+                BufferedReader vitalsFile = new BufferedReader(new FileReader(pathVitals));
+                FilesEditor.csvSkipRecord(vitalsFile);
+
+                LocalDate today = LocalDate.now();
+
+                String[] vitalsLog = FilesEditor.csvReadRecord(vitalsFile);
+                while (vitalsLog != null) {
+                    LocalTime logTime = FilesEditor.strToLocalTime(vitalsLog[5]);
+                    LocalDate logDate = FilesEditor.strToLocalDate(vitalsLog[4]);
+                    // Check time
+                    if(maxTime.isBefore(logTime) || maxTime.equals(logTime))
+                        vitalsLogs.add(FilesEditor.csvGetVitals(vitalsLog));
+/*                    else if(maxTime.isAfter(logTime) && isTomorrow(today, logDate)){
+                        int diffHours = (24 - maxTime.getHour()) - logTime.getHour();
+                    }
+*/
+                }
+
+            }
+
+            return vitalsLogs;
+
+        } catch (IOException e) {
+            System.out.println("getLastParameters() catches IOException");
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     // UC11
-    public boolean dischargePatient(String cf) throws IOException {
+    public boolean dischargePatient(String cf) {
         // Find patient
         int pEntry = findPatient(cf);
 
@@ -501,5 +563,60 @@ public class Model {
             if(patients.get(pEntry).getCf().equals(cf))
                 return pEntry;
         return -1;
+    }
+
+    // Check if thisDate is tomorrow of thatDate
+    private boolean isTomorrow(LocalDate thisDate, LocalDate thatDate){
+        int thisYear = thisDate.getYear();
+        int thatYear = thatDate.getYear();
+
+        // Last of year
+        if(thisYear - thatYear == 1)
+            return (thisDate.getMonthValue() == 1 &&
+                    thisDate.getDayOfMonth() == 1 &&
+                    thatDate.getMonthValue() == 12 &&
+                    thatDate.getDayOfMonth() == 31);
+
+        // It must be the same year
+        else if(thisYear - thatYear == 0) {
+            int thisMonth = thisDate.getMonthValue();
+            int thatMonth = thatDate.getMonthValue();
+
+            int thatDay = thatDate.getDayOfMonth();
+
+            // Last of month
+            if(thisMonth - thatMonth == 1)
+                return (thatDay == 1 &&
+                        lastDayOfMonth(thisDate));
+
+            // It must be the same month
+            else if(thisMonth - thatMonth == 0) {
+                int thisDay = thisDate.getDayOfMonth();
+                return (thisDay - thatDay == 1);
+            }
+
+        }
+
+        return false;
+    }
+
+    private boolean lastDayOfMonth(LocalDate date){
+        int month = date.getMonthValue();
+        switch (month){
+
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                return (date.getDayOfMonth() == 30);
+
+            case 2:
+                if(date.isLeapYear())
+                    return (date.getDayOfMonth() == 29);
+                return (date.getDayOfMonth() == 28);
+
+            default:
+                return (date.getDayOfMonth() == 31);
+        }
     }
 }
