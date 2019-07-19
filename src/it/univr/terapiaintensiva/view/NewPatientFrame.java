@@ -1,5 +1,6 @@
 package it.univr.terapiaintensiva.view;
 
+import com.sun.xml.internal.ws.util.StringUtils;
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
 
@@ -12,6 +13,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+/**
+ * A form in which to put all the informations about a new patient
+ */
 public class NewPatientFrame extends JFrame implements ActionListener {
 
     private static final String title = "Nuovo paziente";
@@ -85,26 +89,20 @@ public class NewPatientFrame extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
-    public void resetFields() {
-        nameTextField.setText("");
-        surnameTextField.setText("");
-        pobTextField.setText("");
-        cfTextField.setText("");
-    }
-
-    public JButton getOkButton() {
-        return okButton;
-    }
-
-    public Patient getPatient() {
+    /**
+     * Read all the {@link JTextField} and {@link JSpinner} of the form
+     *
+     * @return a new patient
+     */
+    private Patient getPatient() {
         Instant instant = Instant.ofEpochMilli(dateModel.getDate().getTime());
         LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         LocalDate localdate = ldt.toLocalDate();
         return new Patient(
-                nameTextField.getText(),
-                surnameTextField.getText(),
-                cfTextField.getText().toUpperCase(),
-                pobTextField.getText(),
+                StringUtils.capitalize(nameTextField.getText()).trim(),
+                StringUtils.capitalize(surnameTextField.getText()).trim(),
+                cfTextField.getText().toUpperCase().trim(),
+                StringUtils.capitalize(pobTextField.getText()).trim(),
                 localdate);
     }
 

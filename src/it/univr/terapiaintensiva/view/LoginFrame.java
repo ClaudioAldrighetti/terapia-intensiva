@@ -7,6 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * A frame used for authentication.
+ */
 public class LoginFrame extends JFrame implements ActionListener {
 
     private static final String title = "Log in";
@@ -71,7 +74,7 @@ public class LoginFrame extends JFrame implements ActionListener {
         if (e.getSource().equals(loginButton)) {
             String user = unameTField.getText();
             String psw = passField.getText();
-            if (model.authenticate(user, psw) != Model.GUEST) {
+            if (model.authenticate(user.trim(), psw.trim()) != Model.GUEST) {
                 MonitorFrame monitorFrame = MonitorFrame.getIstance();
                 this.dispose();
             } else {

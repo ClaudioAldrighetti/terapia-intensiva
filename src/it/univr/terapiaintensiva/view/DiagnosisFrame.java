@@ -8,6 +8,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * A form in which to write and modify the diagnosis of a patient.
+ */
 public class DiagnosisFrame extends JFrame implements ActionListener {
 
     private final Patient patient;
@@ -44,8 +47,13 @@ public class DiagnosisFrame extends JFrame implements ActionListener {
         this.setLocationRelativeTo(null);
     }
 
+    /**
+     * Writes a String to the JTextPane.
+     *
+     * @param s the string to write
+     */
     public void setDiagnosis(String s) {
-        diagnosisPane.setText(s);
+        diagnosisPane.setText(s.trim());
     }
 
     @Override

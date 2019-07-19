@@ -9,6 +9,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+/**
+ * The main frame of the application, made using the Singleton pattern. It displays several
+ * {@link it.univr.terapiaintensiva.view.MonitorPanel} to perform several operations on patients and to display
+ * their status.
+ * Its design varies depending on the type of user logged in.
+ */
 public class MonitorFrame extends JFrame implements ActionListener {
 
     private static final String title = "Terapia intensiva";
@@ -56,12 +62,21 @@ public class MonitorFrame extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
+    /**
+     * Used to make this object a Singleton.
+     *
+     * @return a new instance of this class if there is not one present, or the only instance already present
+     */
     public static MonitorFrame getIstance() {
         if (istance == null)
             istance = new MonitorFrame();
         return istance;
     }
 
+    /**
+     * Adds a new {@link it.univr.terapiaintensiva.view.MonitorPanel}.
+     * @param patient the Patient to link to the monitor
+     */
     public void addPatient(Patient patient) {
         for (int i = 0; i < 10; i++) {
             if (monitors.get(i).isEmpty()) {

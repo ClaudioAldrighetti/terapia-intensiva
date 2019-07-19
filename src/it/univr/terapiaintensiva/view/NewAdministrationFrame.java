@@ -10,6 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.*;
 
+/**
+ * A form use to add a new {@link Administration} to the file of the patient.
+ */
 public class NewAdministrationFrame extends JFrame implements ActionListener {
 
     private static final String title = "Nuova somministrazione";
@@ -87,6 +90,11 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
+    /**
+     * Read all the {@link JTextField}, {@link JSpinner} and {@link JTextPane}
+     *
+     * @return a new administration
+     */
     private Administration getAdministration() {
         Instant instant = Instant.ofEpochMilli(dateModel.getDate().getTime());
         LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());

@@ -8,6 +8,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * A {@link JPanel} representing a patient.
+ */
 public class MonitorPanel extends JPanel implements ActionListener {
 
     private final Model model = Model.getIstance();
@@ -35,6 +38,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
     private final JPanel southCenterPanel = new JPanel(new FlowLayout());
     private final JPanel centerPanel = new JPanel(new GridLayout(2, 1));
     private Patient patient = null;
+
     public MonitorPanel() {
 
         // Listener
@@ -120,16 +124,28 @@ public class MonitorPanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Checks if the panel is not associated with a patient.
+     *
+     * @return true if the panel is not associated with any patient, false if it is
+     */
     public boolean isEmpty() {
         return (this.patient == null);
     }
 
+    /**
+     * Associates the panel with a patient.
+     * @param patient the patient to associate
+     */
     public void setPatient(Patient patient) {
         this.patient = patient;
         this.nameLabel.setText(patient.getName() + " " + patient.getSurname());
         this.setVisible(true);
     }
 
+    /**
+     * Removes the association between the panel and the patient stored
+     */
     public void removePatient() {
         this.patient = null;
         this.setVisible(false);

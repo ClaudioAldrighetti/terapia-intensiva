@@ -13,6 +13,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+/**
+ * A form used to acquire all the data about a new {@link Prescription}
+ */
 public class NewPrescriptionFrame extends JFrame implements ActionListener {
 
     private final Patient patient;
@@ -100,6 +103,11 @@ public class NewPrescriptionFrame extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
+    /**
+     * Read all the {@link JTextField} and {@link JSpinner}
+     *
+     * @return a new Prescription
+     */
     private Prescription getPrescription() {
         Instant instant = Instant.ofEpochMilli(dateModel.getDate().getTime());
         LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
