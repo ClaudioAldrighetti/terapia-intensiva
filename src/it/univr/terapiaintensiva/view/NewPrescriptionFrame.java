@@ -114,9 +114,8 @@ public class NewPrescriptionFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(okButton)) {
+        if (e.getSource().equals(okButton))
             Model.getIstance().addPrescription(patient.getCf(), getPrescription());
-        }
         this.dispose();
     }
 }
