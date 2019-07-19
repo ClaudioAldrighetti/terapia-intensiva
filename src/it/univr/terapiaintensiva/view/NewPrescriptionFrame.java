@@ -1,9 +1,18 @@
 package it.univr.terapiaintensiva.view;
 
+import it.univr.terapiaintensiva.model.Model;
+import it.univr.terapiaintensiva.model.Patient;
+import it.univr.terapiaintensiva.model.Prescription;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
 
-public class NewPrescriptionFrame extends JFrame {
+public class NewPrescriptionFrame extends JFrame implements ActionListener {
+
+    private final Patient patient;
 
     private static final String title = "Nuova prescrizione";
     private static final JLabel medicineLabel = new JLabel("Farmaco");
@@ -26,7 +35,13 @@ public class NewPrescriptionFrame extends JFrame {
     private static final JPanel southPanel = new JPanel(new FlowLayout());
     private static final GridBagConstraints c = new GridBagConstraints();
 
-    public NewPrescriptionFrame() {
+    public NewPrescriptionFrame(Patient patient) {
+
+        this.patient = patient;
+
+        // Listener
+        okButton.addActionListener(this);
+        cancelButton.addActionListener(this);
 
         durationSpinner.setPreferredSize(new Dimension(60, 27));
         doseSpinner.setPreferredSize(new Dimension(60, 27));
@@ -79,7 +94,23 @@ public class NewPrescriptionFrame extends JFrame {
         this.setResizable(false);
         this.setTitle(title);
         this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(HIDE_ON_CLOSE);
-        this.setVisible(true);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    }
+
+    private Prescription getPrescription() {
+        return new Prescription(
+                LocalDate.now(),
+                durationModel.getNumber().intValue(),
+                medicineTextField.getText(),
+                nDosesModel.getNumber().intValue(),
+                doseModel.getNumber().doubleValue());
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource().equals(okButton)) {
+            Model.getIstance().addPrescription(patient.getCf(), getPrescription());
+        }
+        this.dispose();
     }
 }

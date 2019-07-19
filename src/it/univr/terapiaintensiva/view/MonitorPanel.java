@@ -144,7 +144,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
             diagnosisFrame.setDiagnosis(patient.getDiagnosis());
             diagnosisFrame.setVisible(true);
         } else if (source.equals(newPrescriptionButton)) {
-            newPrescriptionFrame = new NewPrescriptionFrame();
+            newPrescriptionFrame = new NewPrescriptionFrame(this.patient);
             newPrescriptionFrame.setVisible(true);
         }
     }
