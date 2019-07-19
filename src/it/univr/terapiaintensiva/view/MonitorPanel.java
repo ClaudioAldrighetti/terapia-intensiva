@@ -151,7 +151,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
      */
     public void updateVitals() {
         if (patient != null) {
-            Vitals vitals = model.getLastParameters(patient.getCf()).get(0);
+            Vitals vitals = model.getCurrentVitals(patient.getCf());
             System.out.println(vitals.toString());
             this.bpmLabel.setText(String.valueOf(vitals.getHeartBeat()));
             this.dbpLabel.setText(String.valueOf(vitals.getDbp()));
