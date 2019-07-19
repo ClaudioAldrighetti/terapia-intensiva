@@ -29,6 +29,7 @@ public class MonitorFrame extends JFrame implements ActionListener {
     private final Container contentPane = this.getContentPane();
     private final Model model = Model.getInstance();
     private final char type = model.getType();
+    private Timer timer = new Timer(100, this);
 
     private MonitorFrame() {
 
@@ -59,6 +60,9 @@ public class MonitorFrame extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setExtendedState(MAXIMIZED_BOTH);
         this.setLocationRelativeTo(null);
+
+        timer.start();
+
         this.setVisible(true);
     }
 
@@ -92,6 +96,11 @@ public class MonitorFrame extends JFrame implements ActionListener {
         if (e.getSource().equals(newPatientMenuItem)) {
             newPatientFrame = new NewPatientFrame();
             newPatientFrame.setVisible(true);
+        } else if (e.getSource().equals(timer)) {
+            for (MonitorPanel monitor : monitors) {
+                monitor.updateVitals();
+                revalidate();
+            }
         }
     }
 }
