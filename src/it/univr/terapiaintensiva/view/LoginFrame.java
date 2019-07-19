@@ -60,7 +60,7 @@ public class LoginFrame extends JFrame implements ActionListener {
         contentPane.add(southPanel, BorderLayout.SOUTH);
 
         this.setTitle(title);
-        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(300, 150);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
@@ -73,14 +73,14 @@ public class LoginFrame extends JFrame implements ActionListener {
             String user = unameTField.getText();
             String psw = passField.getText();
             if (model.authenticate(user.trim(), psw.trim()) != Model.GUEST) {
-                MonitorFrame monitorFrame = MonitorFrame.getInstance();
+                MonitorFrame.getInstance().setVisible(true);
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Credenziali errate", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             model.authenticate("guestUser", "guestPassword");
-            MonitorFrame monitorFrame = MonitorFrame.getInstance();
+            MonitorFrame.getInstance().setVisible(true);
             this.dispose();
         }
     }

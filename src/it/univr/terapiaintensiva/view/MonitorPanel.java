@@ -2,6 +2,7 @@ package it.univr.terapiaintensiva.view;
 
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
+import it.univr.terapiaintensiva.model.Vitals;
 
 import javax.swing.*;
 import java.awt.*;
@@ -143,6 +144,21 @@ public class MonitorPanel extends JPanel implements ActionListener {
     public void removePatient() {
         this.patient = null;
         this.setVisible(false);
+    }
+
+    /**
+     * Updates the vitals labels
+     */
+    public void updateVitals() {
+        if (patient != null) {
+            Vitals vitals = model.getLastParameters(patient.getCf()).get(0);
+            System.out.println(vitals.toString());
+            this.bpmLabel.setText(String.valueOf(vitals.getHeartBeat()));
+            this.dbpLabel.setText(String.valueOf(vitals.getDbp()));
+            this.sbpLabel.setText(String.valueOf(vitals.getSbp()));
+            this.tempLabel.setText(String.valueOf(vitals.getTemperature()));
+            this.revalidate();
+        }
     }
 
     @Override
