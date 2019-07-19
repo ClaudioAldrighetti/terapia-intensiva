@@ -1,7 +1,11 @@
 package it.univr.terapiaintensiva.model;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Model {
@@ -27,6 +31,8 @@ public class Model {
     private final int maxPatients;
 
     private ArrayList<Patient> patients;
+
+    private char type;
 
     // Constructor
     private Model() {
@@ -61,7 +67,7 @@ public class Model {
 
                             // Patient's data
                             Patient foundPatient = new Patient();
-                            String foundDiagnosis = new String();
+                            String foundDiagnosis = "";
                             Vitals foundVitals = new Vitals();
                             ArrayList<Prescription> foundPrescriptions = new ArrayList<>();
                             ArrayList<Administration> foundAdministrations = new ArrayList<>();
@@ -203,14 +209,14 @@ public class Model {
                 if (recordData[0].equals(username) && recordData[1].equals(password)) {
                     authenticationFile.close();
                     // Authentication complete: return user type
-                    return recordData[2].charAt(0);
+                    return this.type = recordData[2].charAt(0);
                 }
 
                 recordData = FilesEditor.csvReadRecord(authenticationFile);
             }
             // Wrong username and/or password
             authenticationFile.close();
-            return Model.GUEST;
+            return this.type = Model.GUEST;
 
         } catch (IOException e){
             System.out.println("autenticate() catch IOException!");
@@ -218,6 +224,10 @@ public class Model {
             // Error
             return 'e';
         }
+    }
+
+    public char getType() {
+        return type;
     }
 
     // UC2
