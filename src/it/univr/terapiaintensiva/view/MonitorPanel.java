@@ -162,20 +162,23 @@ public class MonitorPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JButton source = (JButton) e.getSource();
         DiagnosisFrame diagnosisFrame;
         NewPrescriptionFrame newPrescriptionFrame;
         NewAdministrationFrame newAdministrationFrame;
-        if (source.equals(diagnosisButton)) {
+        ParametersDialog parametersDialog;
+        if (e.getSource().equals(diagnosisButton)) {
             diagnosisFrame = new DiagnosisFrame(this.patient);
             diagnosisFrame.setDiagnosis(patient.getDiagnosis());
             diagnosisFrame.setVisible(true);
-        } else if (source.equals(newPrescriptionButton)) {
+        } else if (e.getSource().equals(newPrescriptionButton)) {
             newPrescriptionFrame = new NewPrescriptionFrame(this.patient);
             newPrescriptionFrame.setVisible(true);
-        } else if (source.equals(newAdministrationButton)) {
+        } else if (e.getSource().equals(newAdministrationButton)) {
             newAdministrationFrame = new NewAdministrationFrame(this.patient);
             newAdministrationFrame.setVisible(true);
+        } else if (e.getSource().equals(bpmLabel)) {
+            parametersDialog = new ParametersDialog(this.patient, "Log battito caridaco", ParametersDialog.HEARTBEAT);
+            parametersDialog.setVisible(true);
         }
     }
 }
