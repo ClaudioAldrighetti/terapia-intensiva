@@ -78,6 +78,7 @@ public class LoginFrame extends JFrame implements MouseListener {
                 JOptionPane.showMessageDialog(this, "Credenziali errate", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         } else if (e.getSource().equals((guestButton))) {
+            model.authenticate("guestUser", "guestPassword");
             MonitorFrame monitorFrame = MonitorFrame.getIstance();
             this.dispose();
         }
