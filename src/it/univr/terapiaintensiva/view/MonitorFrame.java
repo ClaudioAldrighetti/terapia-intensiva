@@ -1,14 +1,15 @@
 package it.univr.terapiaintensiva.view;
 
-import controller.NewPatientController;
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class MonitorFrame extends JFrame {
+public class MonitorFrame extends JFrame implements ActionListener {
 
     private static final String title = "Terapia intensiva";
     private static final JMenu chiefMenu = new JMenu("Primario");
@@ -25,7 +26,7 @@ public class MonitorFrame extends JFrame {
 
     private MonitorFrame() {
 
-        newPatientMenuItem.addActionListener(new NewPatientController());
+        newPatientMenuItem.addActionListener(this);
 
         contentPane.setLayout(new GridLayout(2, 5));
 
@@ -67,6 +68,15 @@ public class MonitorFrame extends JFrame {
                 monitors.get(i).setPatient(patient);
                 break;
             }
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        NewPatientFrame newPatientFrame;
+        if (e.getSource().equals(newPatientMenuItem)) {
+            newPatientFrame = new NewPatientFrame();
+            newPatientFrame.setVisible(true);
         }
     }
 }

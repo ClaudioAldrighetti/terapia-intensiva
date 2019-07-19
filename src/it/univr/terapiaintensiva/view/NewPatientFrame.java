@@ -1,17 +1,18 @@
 package it.univr.terapiaintensiva.view;
 
-import controller.NewPatientController;
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-public class NewPatientFrame extends JFrame {
+public class NewPatientFrame extends JFrame implements ActionListener {
 
     private static final String title = "Nuovo paziente";
     private static final JLabel nameLabel = new JLabel("Nome");
@@ -30,14 +31,12 @@ public class NewPatientFrame extends JFrame {
     private static final JPanel centerPanel = new JPanel(new GridBagLayout());
     private static final JPanel southPanel = new JPanel(new FlowLayout());
     private static final GridBagConstraints c = new GridBagConstraints();
-    private final Model model = Model.getIstance();
-    private final NewPatientController listener = new NewPatientController();
 
     public NewPatientFrame() {
 
         // Listener
-        okButton.addActionListener(listener);
-        cancelButton.addActionListener(listener);
+        okButton.addActionListener(this);
+        cancelButton.addActionListener(this);
 
         c.insets.set(5, 5, 5, 5);
         c.anchor = GridBagConstraints.EAST;
@@ -107,5 +106,21 @@ public class NewPatientFrame extends JFrame {
                 cfTextField.getText().toUpperCase(),
                 pobTextField.getText(),
                 localdate);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource().equals(okButton)) {
+            if (Model.getIstance().hospitalizePatient(getPatient()))
+                MonitorFrame.getIstance().addPatient(getPatient());
+            else
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Il paziente con il codice fiscale inserito è già presente\n" +
+                                "oppure è stato raggiunto il numero massimo di posti",
+                        "Errore", JOptionPane.ERROR_MESSAGE
+                );
+        }
+        this.dispose();
     }
 }

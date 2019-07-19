@@ -4,10 +4,10 @@ import it.univr.terapiaintensiva.model.Model;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class LoginFrame extends JFrame implements MouseListener {
+public class LoginFrame extends JFrame implements ActionListener {
 
     private static final String title = "Log in";
     // Center panel
@@ -25,8 +25,8 @@ public class LoginFrame extends JFrame implements MouseListener {
 
     public LoginFrame() {
 
-        loginButton.addMouseListener(this);
-        guestButton.addMouseListener(this);
+        loginButton.addActionListener(this);
+        guestButton.addActionListener(this);
 
         // Fill center panel
         c.gridx = 0;
@@ -67,7 +67,7 @@ public class LoginFrame extends JFrame implements MouseListener {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(loginButton)) {
             String user = unameTField.getText();
             String psw = passField.getText();
@@ -77,29 +77,10 @@ public class LoginFrame extends JFrame implements MouseListener {
             } else {
                 JOptionPane.showMessageDialog(this, "Credenziali errate", "Errore", JOptionPane.ERROR_MESSAGE);
             }
-        } else if (e.getSource().equals((guestButton))) {
+        } else {
+            model.authenticate("guestUser", "guestPassword");
             MonitorFrame monitorFrame = MonitorFrame.getIstance();
             this.dispose();
         }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
     }
 }
