@@ -54,6 +54,8 @@ public class MonitorFrame extends JFrame implements ActionListener {
             menuBar.add(chiefMenu);
         else if (type == Model.NURSE)
             menuBar.add(nurseMenu);
+        else
+            menuBar.setVisible(false);
         this.setJMenuBar(menuBar);
 
         this.setTitle(title);
