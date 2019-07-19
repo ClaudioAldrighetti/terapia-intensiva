@@ -1,7 +1,9 @@
-package it.univr.terapiaintensiva.view;
+package controller;
 
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
+import it.univr.terapiaintensiva.view.MonitorFrame;
+import it.univr.terapiaintensiva.view.NewPatientFrame;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

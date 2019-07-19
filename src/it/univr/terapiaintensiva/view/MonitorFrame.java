@@ -1,5 +1,6 @@
 package it.univr.terapiaintensiva.view;
 
+import controller.NewPatientController;
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
 

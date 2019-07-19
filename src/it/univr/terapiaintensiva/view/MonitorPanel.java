@@ -5,8 +5,10 @@ import it.univr.terapiaintensiva.model.Patient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class MonitorPanel extends JPanel {
+public class MonitorPanel extends JPanel implements ActionListener {
 
     private final Model model = Model.getIstance();
     private final char type = model.getType();
@@ -14,9 +16,7 @@ public class MonitorPanel extends JPanel {
     // North panel
     //private final JLabel bedNumberLabel = new JLabel();
     private final JLabel nameLabel = new JLabel();
-    private Patient patient = null;
     private final JPanel northPanel = new JPanel(new BorderLayout());
-
     // Center panel
     private final JLabel bpmLabel = new JLabel("60");
     private final JLabel tempLabel = new JLabel("36");
@@ -34,8 +34,12 @@ public class MonitorPanel extends JPanel {
     private final JPanel northEastCenterPanel = new JPanel(new GridBagLayout());
     private final JPanel southCenterPanel = new JPanel(new FlowLayout());
     private final JPanel centerPanel = new JPanel(new GridLayout(2, 1));
-
+    private Patient patient = null;
     public MonitorPanel() {
+
+        // Listener
+        diagnosisButton.addActionListener(this);
+        newPrescriptionButton.addActionListener(this);
 
         this.setLayout(new BorderLayout());
 
@@ -128,5 +132,20 @@ public class MonitorPanel extends JPanel {
     public void removePatient() {
         this.patient = null;
         this.setVisible(false);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton source = (JButton) e.getSource();
+        DiagnosisFrame diagnosisFrame;
+        NewPrescriptionFrame newPrescriptionFrame;
+        if (source.equals(diagnosisButton)) {
+            diagnosisFrame = new DiagnosisFrame(this.patient);
+            diagnosisFrame.setDiagnosis(patient.getDiagnosis());
+            diagnosisFrame.setVisible(true);
+        } else if (source.equals(newPrescriptionButton)) {
+            newPrescriptionFrame = new NewPrescriptionFrame();
+            newPrescriptionFrame.setVisible(true);
+        }
     }
 }
