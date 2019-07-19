@@ -4,27 +4,26 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Administration implements CsvWritable {
-    private final LocalDate date;
-    private final LocalTime time;
     private final String medicine;
     private final double dose;
     private final String notes;
+    private final LocalDate date;
+    private final LocalTime time;
 
-    public Administration(LocalDate date, LocalTime time, String medicine, double dose, String notes){
-        this.date = date;
-        this.time = time;
+    public Administration(String medicine, double dose, String notes, LocalDate date, LocalTime time){
         this.medicine = medicine;
         this.dose = dose;
         this.notes = notes;
-    }
-
-    public Administration(LocalDate date, LocalTime time, String medicine, double dose){
-//        this.Administration(date, time, medicine, dose, "");
         this.date = date;
         this.time = time;
+    }
+
+    public Administration(String medicine, double dose, LocalDate date, LocalTime time){
         this.medicine = medicine;
         this.dose = dose;
         this.notes = "";
+        this.date = date;
+        this.time = time;
     }
 
     public String toString() {
@@ -32,19 +31,19 @@ public class Administration implements CsvWritable {
         String noteStr = ( notes.equals("") ? "" : "\n" + notes + "\n");
         return
                 (
-                 "Date of administration: " + date +
-                 "\nTime of administration: " + timeStr +
-                 "\nMedicine: " + medicine +
+                 "Medicine: " + medicine +
                  "\nDose: " + dose +
-                 noteStr
+                 "\nNotes: " + noteStr +
+                 "\nDate of administration: " + date +
+                 "\nTime of administration: " + timeStr
                 );
     }
 
     public String toCsv() {
-        return date + "," + time + "," + medicine + "," + dose + "," + notes;
+        return medicine + "," + dose + "," + notes + "," + date + "," + time;
     }
 
     public static String csvFormat() {
-        return "date,time,medicine,dose,notes";
+        return "medicine,dose,notes,date,time";
     }
 }

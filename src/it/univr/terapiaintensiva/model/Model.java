@@ -1,13 +1,26 @@
 package it.univr.terapiaintensiva.model;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Model {
 
+    private static Model instance = null;
+
+    public static final char DOCTOR = 'd';
+    public static final char NURSE = 'n';
+    public static final char CHIEF = 'c';
+    public static final char GUEST = 'g';
+
     // Paths
-    private final String pathAutenticationFile = "./assets/login.csv";
+    private final String pathAuthenticationFile = "./assets/login.csv";
     private final String pathRegistryFile = "registry.csv";
     private final String pathVitalsFile = "vitals.csv";
     private final String pathPrescriptionsFile = "prescriptions.csv";
@@ -21,8 +34,10 @@ public class Model {
 
     private ArrayList<Patient> patients;
 
+    private char type;
+
     // Constructor
-    public Model() {
+    private Model() {
         maxPatients = 10;
 
         try {
@@ -54,7 +69,7 @@ public class Model {
 
                             // Patient's data
                             Patient foundPatient = new Patient();
-                            String foundDiagnosis = new String();
+                            String foundDiagnosis = "";
                             Vitals foundVitals = new Vitals();
                             ArrayList<Prescription> foundPrescriptions = new ArrayList<>();
                             ArrayList<Administration> foundAdministrations = new ArrayList<>();
@@ -174,10 +189,16 @@ public class Model {
         }
     }
 
+    public static Model getInstance(){
+        if (instance == null)
+            instance = new Model();
+        return instance;
+    }
+
     // UC1
     public char authenticate(String username, String password) {
         try {
-            BufferedReader authenticationFile = new BufferedReader(new FileReader(pathAutenticationFile));
+            BufferedReader authenticationFile = new BufferedReader(new FileReader(pathAuthenticationFile));
 
             // Skip format line
             FilesEditor.csvSkipRecord(authenticationFile);
@@ -190,21 +211,25 @@ public class Model {
                 if (recordData[0].equals(username) && recordData[1].equals(password)) {
                     authenticationFile.close();
                     // Authentication complete: return user type
-                    return recordData[2].charAt(0);
+                    return this.type = recordData[2].charAt(0);
                 }
 
                 recordData = FilesEditor.csvReadRecord(authenticationFile);
             }
             // Wrong username and/or password
             authenticationFile.close();
-            return 'w';
+            return this.type = Model.GUEST;
 
         } catch (IOException e){
-            System.out.println("autenticate() catch IOException!");
+            System.out.println("authenticate() catches IOException!");
             e.printStackTrace();
             // Error
             return 'e';
         }
+    }
+
+    public char getType() {
+        return type;
     }
 
     // UC2
@@ -234,7 +259,7 @@ public class Model {
 
                 // Create vitals csv file
                 String pathVitals = pathNewPatient.concat(pathVitalsFile);
-                FilesEditor.csvCreateFile(pathVitals, Vitals.csvFormat());
+                FilesEditor.csvCreateFile(pathVitals, Vitals.csvFormat().concat(",date,time"));
 
                 // Create prescriptions csv file
                 String pathPrescriptions = pathNewPatient.concat(pathPrescriptionsFile);
@@ -263,23 +288,6 @@ public class Model {
             } catch (IOException e){
                 System.out.println("hospitalizePatient() catch IOException!");
                 e.printStackTrace();
-/*
-                String pathDirToDelete = pathPatients.concat(patient.getCf() + "/");
-                if( Files.exists(Paths.get(pathDirToDelete)) &&
-                    Files.isDirectory(Paths.get(pathDirToDelete)) &&
-                    Files.isReadable((Paths.get(pathDirToDelete)))
-                ) {
-                    File dirToDelete = new File(pathDirToDelete);
-
-                    // Remove each file inside
-                    for(File fileToDelete: dirToDelete.listFiles()){
-                        fileToDelete.delete();
-                    }
-
-                    // Remove medical record's
-                    dirToDelete.delete();
-                }
-*/
                 return false;
             }
         }
@@ -342,10 +350,9 @@ public class Model {
                 for (Prescription p : patient.getPrescriptions())
                     FilesEditor.csvWriteRecord(pathPrescriptions, p);
             }
-            // File exist
-            else
-                // Write prescription
-                FilesEditor.csvWriteRecord(pathPrescriptions, prescription);
+
+            // Write prescription
+            FilesEditor.csvWriteRecord(pathPrescriptions, prescription);
 
             // Add prescription to patient
             patient.addPrescription(prescription);
@@ -383,10 +390,9 @@ public class Model {
                 for(Administration a: patient.getAdministrations())
                     FilesEditor.csvWriteRecord(pathAdministrationsFile, a);
             }
-            // File exist
-            else
-                // Write administration
-                FilesEditor.csvWriteRecord(pathAdministrations, administration);
+
+            // Write administration
+            FilesEditor.csvWriteRecord(pathAdministrations, administration);
 
             // Add administration to patient
             patient.addAdministration(administration);
@@ -400,8 +406,68 @@ public class Model {
         }
     }
 
+    // UC7, UC8
+    public ArrayList<Vitals> getLastParameters(String cf) {
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if(pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return null;
+        }
+
+        // Check valid userType
+        if(type!=GUEST && type!=NURSE && type!=DOCTOR && type!=CHIEF) {
+            System.out.println("Invalid user type");
+            return null;
+        }
+
+        LocalTime maxTime = LocalTime.now();
+        if(type == GUEST)
+            maxTime = maxTime.minusMinutes(15);
+        else
+            maxTime = maxTime.minusHours(2);
+
+        try {
+            // List of vital parameters returned
+            ArrayList<Vitals> vitalsLogs = new ArrayList<>();
+
+            // Search vitals log
+            String pathVitals = pathPatients.concat(cf + "/" + pathVitalsFile);
+            if (Files.exists(Paths.get(pathVitals))) {
+                BufferedReader vitalsFile = new BufferedReader(new FileReader(pathVitals));
+                FilesEditor.csvSkipRecord(vitalsFile);
+
+                LocalDate today = LocalDate.now();
+
+                String[] vitalsLog = FilesEditor.csvReadRecord(vitalsFile);
+                while (vitalsLog != null) {
+                    LocalTime logTime = FilesEditor.strToLocalTime(vitalsLog[5]);
+                    LocalDate logDate = FilesEditor.strToLocalDate(vitalsLog[4]);
+                    // Check time
+                    if(maxTime.isBefore(logTime) || maxTime.equals(logTime))
+                        vitalsLogs.add(FilesEditor.csvGetVitals(vitalsLog));
+/*                    else if(maxTime.isAfter(logTime) && isTomorrow(today, logDate)){
+                        int diffHours = (24 - maxTime.getHour()) - logTime.getHour();
+                    }
+*/
+                }
+
+            }
+
+            return vitalsLogs;
+
+        } catch (IOException e) {
+            System.out.println("getLastParameters() catches IOException");
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     // UC11
-    public boolean dischargePatient(String cf) throws IOException {
+    public boolean dischargePatient(String cf) {
         // Find patient
         int pEntry = findPatient(cf);
 
@@ -497,5 +563,60 @@ public class Model {
             if(patients.get(pEntry).getCf().equals(cf))
                 return pEntry;
         return -1;
+    }
+
+    // Check if thisDate is tomorrow of thatDate
+    private boolean isTomorrow(LocalDate thisDate, LocalDate thatDate){
+        int thisYear = thisDate.getYear();
+        int thatYear = thatDate.getYear();
+
+        // Last of year
+        if(thisYear - thatYear == 1)
+            return (thisDate.getMonthValue() == 1 &&
+                    thisDate.getDayOfMonth() == 1 &&
+                    thatDate.getMonthValue() == 12 &&
+                    thatDate.getDayOfMonth() == 31);
+
+        // It must be the same year
+        else if(thisYear - thatYear == 0) {
+            int thisMonth = thisDate.getMonthValue();
+            int thatMonth = thatDate.getMonthValue();
+
+            int thatDay = thatDate.getDayOfMonth();
+
+            // Last of month
+            if(thisMonth - thatMonth == 1)
+                return (thatDay == 1 &&
+                        lastDayOfMonth(thisDate));
+
+            // It must be the same month
+            else if(thisMonth - thatMonth == 0) {
+                int thisDay = thisDate.getDayOfMonth();
+                return (thisDay - thatDay == 1);
+            }
+
+        }
+
+        return false;
+    }
+
+    private boolean lastDayOfMonth(LocalDate date){
+        int month = date.getMonthValue();
+        switch (month){
+
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                return (date.getDayOfMonth() == 30);
+
+            case 2:
+                if(date.isLeapYear())
+                    return (date.getDayOfMonth() == 29);
+                return (date.getDayOfMonth() == 28);
+
+            default:
+                return (date.getDayOfMonth() == 31);
+        }
     }
 }

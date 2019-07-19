@@ -1,24 +1,28 @@
 package it.univr.terapiaintensiva.view;
 
+import it.univr.terapiaintensiva.model.Model;
+import it.univr.terapiaintensiva.model.Patient;
+import it.univr.terapiaintensiva.model.Vitals;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class MonitorPanel extends JPanel implements MouseListener {
+/**
+ * A {@link JPanel} representing a patient.
+ */
+public class MonitorPanel extends JPanel implements ActionListener {
 
-    GridBagConstraints c = new GridBagConstraints();
-
-    // North panel
-    private final JLabel bedNumberLabel = new JLabel();
-    private final JLabel nameLabel = new JLabel("Mario Rossi");
+    private static final JLabel dash = new JLabel("-");
+    private final Model model = Model.getInstance();
+    private final char type = model.getType();
+    private final GridBagConstraints c = new GridBagConstraints();
+    private final JLabel nameLabel = new JLabel();
     private final JPanel northPanel = new JPanel(new BorderLayout());
-
-    // Center panel
     private final JLabel bpmLabel = new JLabel("60");
     private final JLabel tempLabel = new JLabel("36");
     private final JLabel sbpLabel = new JLabel("120");
-    private final JLabel dash = new JLabel("-");
     private final JLabel dbpLabel = new JLabel("80");
     private final JButton tempButton = new JButton(new ImageIcon("./icons/health-thermometer.png"));
     private final JButton pressButton = new JButton(new ImageIcon("./icons/blood-pressure-control-tool.png"));
@@ -31,18 +35,21 @@ public class MonitorPanel extends JPanel implements MouseListener {
     private final JPanel northEastCenterPanel = new JPanel(new GridBagLayout());
     private final JPanel southCenterPanel = new JPanel(new FlowLayout());
     private final JPanel centerPanel = new JPanel(new GridLayout(2, 1));
+    private Patient patient = null;
 
-    public MonitorPanel(int bedNumber) {
+    public MonitorPanel() {
+
+        // Listener
+        diagnosisButton.addActionListener(this);
+        newPrescriptionButton.addActionListener(this);
+        newAdministrationButton.addActionListener(this);
 
         this.setLayout(new BorderLayout());
 
-        // Name and bed in top panel
-        bedNumberLabel.setText(String.valueOf(bedNumber));
-        bedNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        bedNumberLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Name in top panel
+        nameLabel.setText("-");
         nameLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.black));
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        northPanel.add(bedNumberLabel, BorderLayout.WEST);
         northPanel.add(nameLabel, BorderLayout.CENTER);
         northPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.black));
         this.add(northPanel, BorderLayout.NORTH);
@@ -79,7 +86,6 @@ public class MonitorPanel extends JPanel implements MouseListener {
 
         // South
         southCenterPanel.add(diagnosisButton);
-        diagnosisButton.addMouseListener(this);
         southCenterPanel.add(newPrescriptionButton);
         southCenterPanel.add(newAdministrationButton);
         southCenterPanel.add(prescriptionLogButton);
@@ -92,39 +98,85 @@ public class MonitorPanel extends JPanel implements MouseListener {
         this.add(centerPanel, BorderLayout.CENTER);
 
         this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+
+        switch (type) {
+            case Model.GUEST:
+                diagnosisButton.setVisible(false);
+                prescriptionLogButton.setVisible(false);
+                newPrescriptionButton.setVisible(false);
+                newAdministrationButton.setVisible(false);
+                administrationLogButton.setVisible(false);
+                break;
+            case Model.DOCTOR:
+            case Model.CHIEF:
+                newAdministrationButton.setVisible(false);
+                break;
+            case Model.NURSE:
+                diagnosisButton.setVisible(false);
+                newPrescriptionButton.setVisible(false);
+                break;
+        }
     }
 
-    DiagnosisFrame dFrame = null;
+    /**
+     * Checks if the panel is not associated with a patient.
+     *
+     * @return true if the panel is not associated with any patient, false if it is
+     */
+    public boolean isEmpty() {
+        return (this.patient == null);
+    }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
+    /**
+     * Associates the panel with a patient.
+     *
+     * @param patient the patient to associate
+     */
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+        this.nameLabel.setText(patient.getName() + " " + patient.getSurname());
+        this.setVisible(true);
+    }
 
-        if(e.getSource().equals(diagnosisButton)){
-            if (dFrame == null) {
-                dFrame = new DiagnosisFrame();
-            } else {
-                dFrame.setVisible(true);
-            }
+    /**
+     * Removes the association between the panel and the patient stored
+     */
+    public void removePatient() {
+        this.patient = null;
+        this.setVisible(false);
+    }
+
+    /**
+     * Updates the vitals labels
+     */
+    public void updateVitals() {
+        if (patient != null) {
+            Vitals vitals = model.getLastParameters(patient.getCf()).get(0);
+            System.out.println(vitals.toString());
+            this.bpmLabel.setText(String.valueOf(vitals.getHeartBeat()));
+            this.dbpLabel.setText(String.valueOf(vitals.getDbp()));
+            this.sbpLabel.setText(String.valueOf(vitals.getSbp()));
+            this.tempLabel.setText(String.valueOf(vitals.getTemperature()));
+            this.revalidate();
         }
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+    public void actionPerformed(ActionEvent e) {
+        JButton source = (JButton) e.getSource();
+        DiagnosisFrame diagnosisFrame;
+        NewPrescriptionFrame newPrescriptionFrame;
+        NewAdministrationFrame newAdministrationFrame;
+        if (source.equals(diagnosisButton)) {
+            diagnosisFrame = new DiagnosisFrame(this.patient);
+            diagnosisFrame.setDiagnosis(patient.getDiagnosis());
+            diagnosisFrame.setVisible(true);
+        } else if (source.equals(newPrescriptionButton)) {
+            newPrescriptionFrame = new NewPrescriptionFrame(this.patient);
+            newPrescriptionFrame.setVisible(true);
+        } else if (source.equals(newAdministrationButton)) {
+            newAdministrationFrame = new NewAdministrationFrame(this.patient);
+            newAdministrationFrame.setVisible(true);
+        }
     }
 }
