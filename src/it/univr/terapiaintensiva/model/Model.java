@@ -551,7 +551,10 @@ public class Model {
             String pathThisDischarge = pathDischargedPatient.concat(LocalDate.now()+"-"+LocalTime.now()+"/");
             Files.createDirectory(Paths.get(pathThisDischarge));
 
-            Files.move(Paths.get(pathPatient), Paths.get(pathThisDischarge));
+            String[] filesToMove = (new File(pathPatient)).list();
+            for(String fileToMove: filesToMove)
+                Files.move(Paths.get(fileToMove), Paths.get(pathThisDischarge));
+            Files.delete(Paths.get(pathPatient));
 
             // Creating new discharge letter
             String pathDischargeLetter = pathThisDischarge.concat(pathLetterFile.split(".")[0] + LocalDate.now() + pathLetterFile.split(".")[1]);
