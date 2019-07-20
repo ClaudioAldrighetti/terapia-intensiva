@@ -139,6 +139,15 @@ public class MonitorPanel extends JPanel implements ActionListener {
     }
 
     /**
+     * returns the patient associated with the panel
+     *
+     * @return the patient
+     */
+    public Patient getPatient() {
+        return this.patient;
+    }
+
+    /**
      * Removes the association between the panel and the patient stored
      */
     public void removePatient() {
