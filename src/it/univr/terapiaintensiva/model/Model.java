@@ -404,7 +404,7 @@ public class Model {
     }
 
     // UC7, UC8
-    public ArrayList<Vitals> getLastParameters(String cf) {
+    public ArrayList<VitalsLog> getLastParameters(String cf) {
         // Find patient
         int pEntry = findPatient(cf);
 
@@ -428,7 +428,7 @@ public class Model {
 
         try {
             // List of vital parameters returned
-            ArrayList<Vitals> vitalsLogs = new ArrayList<>();
+            ArrayList<VitalsLog> vitalsLogs = new ArrayList<>();
 
             // Search vitals log
             String pathVitals = pathPatients.concat(cf + "/" + pathVitalsFile);
@@ -444,12 +444,11 @@ public class Model {
                     LocalDate logDate = FilesEditor.strToLocalDate(vitalsLog[4]);
                     // Check time
                     if(maxTime.isBefore(logTime) || maxTime.equals(logTime))
-                        vitalsLogs.add(FilesEditor.csvGetVitals(vitalsLog));
+                        vitalsLogs.add(FilesEditor.csvGetVitalsLog(vitalsLog));
 /*                    else if(maxTime.isAfter(logTime) && isTomorrow(today, logDate)){
                         int diffHours = (24 - maxTime.getHour()) - logTime.getHour();
                     }
 */
-                    // Ho aggiunto questo, ora dovrebbe funzionare :)
                     vitalsLog = FilesEditor.csvReadRecord(vitalsFile);
                 }
 

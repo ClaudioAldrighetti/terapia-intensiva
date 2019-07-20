@@ -73,6 +73,13 @@ public final class FilesEditor {
         return new Vitals(heartBeat, temperature, sbp, dbp);
     }
 
+    public static VitalsLog csvGetVitalsLog(String[] vitalsLogData){
+        LocalDate date = strToLocalDate(vitalsLogData[4]);
+        LocalTime time = strToLocalTime(vitalsLogData[5]);
+
+        return new VitalsLog(csvGetVitals(vitalsLogData), date, time);
+    }
+
     public  static Prescription csvGetPrescription(String[] prescriptionData) {
         int duration = Integer.parseInt(prescriptionData[0]);
         String medicine = prescriptionData[1];

@@ -13,6 +13,12 @@ public class VitalsLog extends Vitals {
         this.time = time;
     }
 
+    public VitalsLog(Vitals vitals, LocalDate date, LocalTime time) {
+        super(vitals.getHeartBeat(), vitals.getTemperature(), vitals.getSbp(), vitals.getDbp());
+        this.date = date;
+        this.time = time;
+    }
+
     public LocalDate getDate() {
         return date;
     }
