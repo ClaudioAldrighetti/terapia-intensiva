@@ -2,7 +2,6 @@ package it.univr.terapiaintensiva.view;
 
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
-import it.univr.terapiaintensiva.model.Vitals;
 import it.univr.terapiaintensiva.model.VitalsLog;
 
 import javax.swing.*;
@@ -61,7 +60,7 @@ public class ParametersDialog extends JDialog {
                 columnNames[0] = "Ora";
                 columnNames[1] = "Battito";
                 for (int i = 0; i < vitalsList.size(); i++) {
-                    rowData[i][0] = String.valueOf(0);
+                    rowData[i][0] = String.valueOf(vitalsList.get(i).getTime());
                     rowData[i][1] = String.valueOf(vitalsList.get(i).getHeartBeat());
                 }
                 break;
@@ -74,7 +73,7 @@ public class ParametersDialog extends JDialog {
                 columnNames[1] = "Sistolica";
                 columnNames[2] = "Diastolica";
                 for (int i = 0; i < vitalsList.size(); i++) {
-                    rowData[i][0] = String.valueOf(0);
+                    rowData[i][0] = String.valueOf(vitalsList.get(i).getTime());
                     rowData[i][1] = String.valueOf(vitalsList.get(i).getSbp());
                     rowData[i][2] = String.valueOf(vitalsList.get(i).getDbp());
                 }
@@ -87,7 +86,7 @@ public class ParametersDialog extends JDialog {
                 columnNames[0] = "Ora";
                 columnNames[1] = "Temperatura";
                 for (int i = 0; i < vitalsList.size(); i++) {
-                    rowData[i][1] = String.valueOf(0);
+                    rowData[i][0] = String.valueOf(vitalsList.get(i).getTime());
                     rowData[i][1] = String.valueOf(vitalsList.get(i).getTemperature()).concat(" °C");
                 }
                 break;
