@@ -520,6 +520,56 @@ public class Model {
 
     }
 
+    /**
+     * @param cf codice fiscale of the patient.
+     * @return list of patient's prescriptions. Null in case of error.
+     * @author ClaudioAldrighetti
+     * Returns list of patient's prescriptions if cf is correct and user is authenticated.
+     */
+    public ArrayList<Prescription> getPatientPrescriptions(String cf){
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if (pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return null;
+        }
+
+        // Check valid userType
+        if (type != NURSE && type != DOCTOR && type != CHIEF) {
+            System.out.println("Invalid user type");
+            return null;
+        }
+
+        return patients.get(pEntry).getPrescriptions();
+    }
+
+    /**
+     * @param cf codice fiscale of the patient.
+     * @return list of patient's administrations. Null in case of error.
+     * @author ClaudioAldrighetti
+     * Returns list of patient's administrations if cf is correct and user is authenticated.
+     */
+    public ArrayList<Administration> getPatientAdministrations(String cf){
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if (pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return null;
+        }
+
+        // Check valid userType
+        if (type != GUEST && type != NURSE && type != DOCTOR && type != CHIEF) {
+            System.out.println("Invalid user type");
+            return null;
+        }
+
+        return patients.get(pEntry).getAdministrations();
+    }
+
     // UC11
     /**
      * @param cf codice fiscale of the patient.
