@@ -548,16 +548,16 @@ public class Model {
                 Files.createDirectory(Paths.get(pathDischargedPatient));
 
             // Create directory to archive patient's medical records
-            String pathThisDischarge = pathDischargedPatient.concat(LocalDate.now()+"-"+LocalTime.now()+"/");
+            String pathThisDischarge = pathDischargedPatient.concat(LocalDate.now()+"_"+LocalTime.now()+"/");
             Files.createDirectory(Paths.get(pathThisDischarge));
 
             String[] filesToMove = (new File(pathPatient)).list();
             for(String fileToMove: filesToMove)
-                Files.move(Paths.get(fileToMove), Paths.get(pathThisDischarge));
+                Files.move(Paths.get(pathPatient.concat(fileToMove)), Paths.get(pathThisDischarge.concat(fileToMove)));
             Files.delete(Paths.get(pathPatient));
 
             // Creating new discharge letter
-            String pathDischargeLetter = pathThisDischarge.concat(pathLetterFile.split(".")[0] + LocalDate.now() + pathLetterFile.split(".")[1]);
+            String pathDischargeLetter = pathThisDischarge.concat(pathLetterFile/*.split(".")[0] + LocalDate.now() + pathLetterFile.split(".")[1]*/);
             Files.createFile(Paths.get(pathDischargeLetter));
             FilesEditor.write(pathDischargeLetter, letterText, false);
 
