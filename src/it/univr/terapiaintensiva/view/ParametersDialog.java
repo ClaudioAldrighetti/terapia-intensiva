@@ -17,11 +17,21 @@ public class ParametersDialog extends JDialog {
     private final Patient patient;
     private final int parameterType;
 
-    public ParametersDialog(Patient patient, String title, int parameterType) {
+    /**
+     * Dialog used to show the last vitals of a patient
+     *
+     * @param patient       the patient from which to pick the parameters
+     * @param parameterType one of the three contants
+     *                      <ul>
+     *                      <li><code>ParametersDialog.HEARTBEAT</code> to display the hearbeat log</li>
+     *                      <li><code>ParametersDialog.PRESSURE</code> to display the pressure log</li>
+     *                      <li><code>ParametersDialog.TEMPERATURE</code> to display the temperature log</li>
+     *                      </ul>
+     */
+    public ParametersDialog(Patient patient, int parameterType) {
         super(MonitorFrame.getInstance());
         this.patient = patient;
         this.parameterType = parameterType;
-        this.setTitle(title);
         this.setModal(true);
         this.setResizable(false);
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -32,6 +42,10 @@ public class ParametersDialog extends JDialog {
         this.setLocationRelativeTo(null);
     }
 
+    /**
+     *
+     * @return The correct JTable
+     */
     private JTable getParametersTable() {
         ArrayList<Vitals> vitalsList = Model.getInstance().getLastParameters(patient.getCf());
         String[][] rowData;
@@ -39,6 +53,7 @@ public class ParametersDialog extends JDialog {
 
         switch (parameterType) {
             case HEARTBEAT:
+                this.setTitle("Battito");
                 this.setMinimumSize(new Dimension(150, 300));
                 rowData = new String[vitalsList.size()][2];
                 columnNames = new String[2];
@@ -50,6 +65,7 @@ public class ParametersDialog extends JDialog {
                 }
                 break;
             case PRESSURE:
+                this.setTitle("Pressione");
                 this.setMinimumSize(new Dimension(250, 300));
                 rowData = new String[vitalsList.size()][3];
                 columnNames = new String[3];
@@ -63,6 +79,7 @@ public class ParametersDialog extends JDialog {
                 }
                 break;
             case TEMPERATURE:
+                this.setTitle("Temperatura");
                 this.setMinimumSize(new Dimension(200, 300));
                 rowData = new String[vitalsList.size()][2];
                 columnNames = new String[2];
@@ -74,6 +91,7 @@ public class ParametersDialog extends JDialog {
                 }
                 break;
             default:
+                this.setTitle("---");
                 this.setMinimumSize(new Dimension(250, 300));
                 rowData = new String[vitalsList.size()][3];
                 columnNames = new String[3];
