@@ -177,13 +177,13 @@ public class MonitorPanel extends JPanel implements ActionListener {
             newAdministrationFrame = new NewAdministrationFrame(this.patient);
             newAdministrationFrame.setVisible(true);
         } else if (e.getSource().equals(bpmLabel)) {
-            parametersDialog = new ParametersDialog(this.patient, "Battito", ParametersDialog.HEARTBEAT);
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.HEARTBEAT);
             parametersDialog.setVisible(true);
         } else if (e.getSource().equals(pressButton)) {
-            parametersDialog = new ParametersDialog(this.patient, "Pressione", ParametersDialog.PRESSURE);
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.PRESSURE);
             parametersDialog.setVisible(true);
         } else if (e.getSource().equals(tempButton)) {
-            parametersDialog = new ParametersDialog(this.patient, "Temperatura", ParametersDialog.TEMPERATURE);
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.TEMPERATURE);
             parametersDialog.setVisible(true);
         }
     }
