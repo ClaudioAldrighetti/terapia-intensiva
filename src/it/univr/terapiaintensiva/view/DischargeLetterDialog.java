@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 public class DischargeLetterDialog extends JDialog implements ActionListener {
 
     private JButton okButton = new JButton("Ok");
+    private JTextPane textPane = new JTextPane();
     private Patient patient;
 
     public DischargeLetterDialog(Patient patient) {
@@ -23,7 +24,7 @@ public class DischargeLetterDialog extends JDialog implements ActionListener {
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.getContentPane().setLayout(new BorderLayout());
         this.setTitle("Lettera di dimissioni");
-        JScrollPane scrollPane = new JScrollPane(new JTextPane());
+        JScrollPane scrollPane = new JScrollPane(textPane);
         this.add(scrollPane, BorderLayout.CENTER);
         JButton cancelButton = new JButton("Annulla");
         JPanel panel = new JPanel(new FlowLayout());
@@ -42,7 +43,7 @@ public class DischargeLetterDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton)) {
             MonitorFrame.getInstance().removePatient(patient);
-            Model.getInstance().dischargePatient(patient.getCf());
+            Model.getInstance().dischargePatient(patient.getCf(), textPane.getText());
             this.dispose();
         } else {
             this.dispose();
