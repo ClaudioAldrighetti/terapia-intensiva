@@ -17,12 +17,24 @@ public final class FilesEditor {
 
     // CSV INTERACTIONS
 
+    /**
+     * @param pathCsvFile path of new csv file.
+     * @param csvFormat format of records.
+     * @author ClaudioAldrighetti
+     * Creates csv file and writes in its first line the format that records must have.
+     */
     // Create csv file and write in first line record fields
     public static void csvCreateFile(String pathCsvFile, String csvFormat) throws IOException {
         Files.createFile(Paths.get(pathCsvFile));
         write(pathCsvFile, csvFormat.concat("\n"));
     }
 
+    /**
+     * @param csvFile Reader used to read one record (line) from a csv file.
+     * @return An array of {@link String} that contains the values of read record. Null if there isn't a record to read or in case of error.
+     * @author ClaudioAldrighetti
+     * Returns values of read record.
+     */
     // Return one record from csvFile as String[]
     public static String[] csvReadRecord(BufferedReader csvFile) {
         try {
