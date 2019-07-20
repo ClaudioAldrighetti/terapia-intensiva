@@ -23,6 +23,7 @@ public class Model {
     private final String pathPrescriptionsFile = "prescriptions.csv";
     private final String pathAdministrationsFile = "administrations.csv";
     private final String pathDiagnosisFile = "diagnosis.txt";
+    private final String pathLetterFile = "dischargeLetter.txt";
     private final String pathPatients = "./patients/";
     private final String pathDischarged = "./discharged/";
 
@@ -522,11 +523,12 @@ public class Model {
     // UC11
     /**
      * @param cf codice fiscale of the patient.
+     * @param letterText text of resignation letter.
      * @return success of operation.
      * @author ClaudioAldrighetti
-     * Discharges the hospitalized patient archiving his medical records and removing him from patients list.
+     * Discharges the hospitalized patient archiving his medical records, creating a discharge letter and removing him from patients list.
      */
-    public boolean dischargePatient(String cf) {
+    public boolean dischargePatient(String cf, String letterText) {
         // Find patient
         int pEntry = findPatient(cf);
 
@@ -538,24 +540,23 @@ public class Model {
 
         try {
             // Get discharged patient's medical records
-            String pathSrc = pathPatients.concat(cf + "/");
+            String pathPatient = pathPatients.concat(cf + "/");
 
-            // Check if it doesn't exist in discharged/
-            String pathDest = pathDischarged.concat(cf + "/");
-            if (Files.exists(Paths.get(pathDest)) && Files.isDirectory(Paths.get(pathDest))) {
-                // If it already exist
-                File dirOld = new File(pathDest);
-                // Remove previous files
-                String[] filesList = dirOld.list();
-                for (String pathFile : filesList) {
-                    File file = new File(dirOld.getPath(), pathFile);
-                    file.delete();
-                }
-                // Remove previous directory
-                dirOld.delete();
-            }
+            // Check patient's dir in discharged/
+            String pathDischargedPatient = pathDischarged.concat(cf + "/");
+            if(!Files.exists(Paths.get(pathDischargedPatient)))
+                Files.createDirectory(Paths.get(pathDischargedPatient));
 
-            Files.move(Paths.get(pathSrc), Paths.get(pathDest));
+            // Create directory to archive patient's medical records
+            String pathThisDischarge = pathDischargedPatient.concat(LocalDate.now()+"-"+LocalTime.now()+"/");
+            Files.createDirectory(Paths.get(pathThisDischarge));
+
+            Files.move(Paths.get(pathPatient), Paths.get(pathThisDischarge));
+
+            // Creating new discharge letter
+            String pathDischargeLetter = pathThisDischarge.concat(pathLetterFile.split(".")[0] + LocalDate.now() + pathLetterFile.split(".")[1]);
+            Files.createFile(Paths.get(pathDischargeLetter));
+            FilesEditor.write(pathDischargeLetter, letterText, false);
 
             // Remove patient from patients list
             patients.remove(pEntry);
