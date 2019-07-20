@@ -186,6 +186,11 @@ public class Model {
         }
     }
 
+    /**
+     * @return An instance of Model.
+     * @author ecavicc
+     * Returns an instance of Model, initializing it if it is null. It makes Model a singleton.
+     */
     public static Model getInstance(){
         if (instance == null)
             instance = new Model();
@@ -193,6 +198,13 @@ public class Model {
     }
 
     // UC1
+    /**
+     * @param username username.
+     * @param password password.
+     * @return User type (guest, doctor etc...). In case of exception, it returns char 'e'.
+     * @author ClaudioAldrighetti
+     * Authenticates user checking username and password and returns his user type.
+     */
     public char authenticate(String username, String password) {
         try {
             BufferedReader authenticationFile = new BufferedReader(new FileReader(pathAuthenticationFile));
@@ -230,6 +242,12 @@ public class Model {
     }
 
     // UC2
+    /**
+     * @param patient patient to hospitalize.
+     * @return success of operation.
+     * @author ClaudioAldrighetti
+     * If it is possible, it hospitalizes the patient, adds him to patients list and creates his medical records and logs files.
+     */
     public boolean hospitalizePatient(Patient patient) {
         // Check if there is a free bed
         if(patients.size() >= maxPatients)
@@ -291,6 +309,13 @@ public class Model {
     }
 
     // UC3
+    /**
+     * @param cf codice fiscale of the patient.
+     * @param diagnosis diagnosis to add or change.
+     * @return success of operation.
+     * @author ClaudioAldrighetti
+     * Adds new diagnosis if patient hasn't a diagnosis or changes or modifies last diagnosis with new diagnosis.
+     */
     public boolean setDiagnosis(String cf, String diagnosis) {
         // Find patient
         int pEntry = findPatient(cf);
@@ -324,6 +349,13 @@ public class Model {
     }
 
     // UC4
+    /**
+     * @param cf codice fiscale of the patient.
+     * @param prescription prescription to add.
+     * @return success of operation.
+     * @author ClaudioAldrighetti
+     * Adds new prescription to the patient and writes it on prescriptions.csv file.
+     */
     public boolean addPrescription(String cf, Prescription prescription) {
         // Find patient
         int pEntry = findPatient(cf);
@@ -364,6 +396,13 @@ public class Model {
     }
 
     // UC5
+    /**
+     * @param cf codice fiscale of the patient.
+     * @param administration administration to add.
+     * @return success of operation.
+     * @author ClaudioAldrighetti
+     * Adds new adnministration to the patient and writes it on administrations.csv file.
+     */
     public boolean addAdministration(String cf, Administration administration) {
         // Find patient
         int pEntry = findPatient(cf);
@@ -404,6 +443,12 @@ public class Model {
     }
 
     // UC7, UC8
+    /**
+     * @param cf codice fiscale of the patient.
+     * @return List of {@link VitalsLog} registered within 15 minutes for guests or 2 hours for authenticated users. Null in case of error.
+     * @author ClaudioAldrighetti
+     * Returns list of last vital parameters logs of the patient.
+     */
     public ArrayList<VitalsLog> getLastParameters(String cf) {
         // Find patient
         int pEntry = findPatient(cf);
@@ -421,10 +466,12 @@ public class Model {
         }
 
         LocalTime maxTime = LocalTime.now();
+        int maxSeconds;
         if(type == GUEST)
-            maxTime = maxTime.minusMinutes(15);
+            maxSeconds = 900; // 15 minutes
         else
-            maxTime = maxTime.minusHours(2);
+            maxSeconds = 7200; // 2 hours
+        maxTime = maxTime.minusSeconds(maxSeconds);
 
         try {
             // List of vital parameters returned
@@ -442,13 +489,21 @@ public class Model {
                 while (vitalsLog != null) {
                     LocalTime logTime = FilesEditor.strToLocalTime(vitalsLog[5]);
                     LocalDate logDate = FilesEditor.strToLocalDate(vitalsLog[4]);
+
                     // Check time
                     if(maxTime.isBefore(logTime) || maxTime.equals(logTime))
                         vitalsLogs.add(FilesEditor.csvGetVitalsLog(vitalsLog));
-/*                    else if(maxTime.isAfter(logTime) && isTomorrow(today, logDate)){
-                        int diffHours = (24 - maxTime.getHour()) - logTime.getHour();
+
+                    else if(isTomorrow(today, logDate)){
+                        int diffSeconds =
+                                (60 - maxTime.getSecond() + logTime.getSecond()) +
+                                (60 - maxTime.getMinute() + logTime.getMinute())*60 +
+                                (24 - maxTime.getHour() + logTime.getHour())*3600;
+
+                        if(diffSeconds <= maxSeconds)
+                            vitalsLogs.add(FilesEditor.csvGetVitalsLog(vitalsLog));
                     }
-*/
+
                     vitalsLog = FilesEditor.csvReadRecord(vitalsFile);
                 }
 
@@ -465,6 +520,12 @@ public class Model {
     }
 
     // UC11
+    /**
+     * @param cf codice fiscale of the patient.
+     * @return success of operation.
+     * @author ClaudioAldrighetti
+     * Discharges the hospitalized patient archiving his medical records and removing him from patients list.
+     */
     public boolean dischargePatient(String cf) {
         // Find patient
         int pEntry = findPatient(cf);
@@ -509,6 +570,13 @@ public class Model {
     }
 
     // UC12
+    /**
+     * @param cf codice fiscale of the patient.
+     * @param vitals new vital parameters registered.
+     * @return success of operation.
+     * @author ClaudioAldrighetti
+     * Changes vital parameters of the patient and adds log in vitals.csv file.
+     */
     public boolean changeVitals(String cf, Vitals vitals) {
         // Find patient
         int pEntry = findPatient(cf);
@@ -545,7 +613,7 @@ public class Model {
     }
 
     /**
-     * @param cf odice fiscale of the patient
+     * @param cf codice fiscale of the patient.
      * @return the most recent instance of {@link Vitals}. Null in case of error.
      * @author ecavicc
      * Returns the current parameters of the given patient.

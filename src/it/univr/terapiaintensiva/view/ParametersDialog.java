@@ -3,6 +3,7 @@ package it.univr.terapiaintensiva.view;
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
 import it.univr.terapiaintensiva.model.Vitals;
+import it.univr.terapiaintensiva.model.VitalsLog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +34,7 @@ public class ParametersDialog extends JDialog {
     }
 
     private JTable getParametersTable() {
-        ArrayList<Vitals> vitalsList = Model.getInstance().getLastParameters(patient.getCf());
+        ArrayList<VitalsLog> vitalsList = Model.getInstance().getLastParameters(patient.getCf());
         String[][] rowData;
         String[] columnNames;
 
