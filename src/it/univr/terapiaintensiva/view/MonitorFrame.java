@@ -33,7 +33,9 @@ public class MonitorFrame extends JFrame implements ActionListener {
 
     private MonitorFrame() {
 
+        // Listener
         newPatientMenuItem.addActionListener(this);
+        dischargeMenuItem.addActionListener(this);
 
         contentPane.setLayout(new GridLayout(2, 5));
 
@@ -80,7 +82,7 @@ public class MonitorFrame extends JFrame implements ActionListener {
     }
 
     /**
-     * Adds a new {@link it.univr.terapiaintensiva.view.MonitorPanel}.
+     * Adds a new {@link MonitorPanel}.
      * @param patient the Patient to link to the monitor
      */
     public void addPatient(Patient patient) {
@@ -92,9 +94,24 @@ public class MonitorFrame extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Removes a patient.
+     *
+     * @param patient the patient to remove
+     */
+    public void removePatient(Patient patient) {
+        for (int i = 0; i < 10; i++) {
+            if (monitors.get(i).getPatient().equals(patient)) {
+                monitors.get(i).removePatient();
+                break;
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         NewPatientFrame newPatientFrame;
+        DischargeLetterDialog dischargeLetterDialog;
         if (e.getSource().equals(newPatientMenuItem)) {
             newPatientFrame = new NewPatientFrame();
             newPatientFrame.setVisible(true);
@@ -103,6 +120,38 @@ public class MonitorFrame extends JFrame implements ActionListener {
                 monitor.updateVitals();
                 revalidate();
             }
+            if (model.getType() == Model.CHIEF && monitors.isEmpty())
+                menuBar.setVisible(false);
+            else if (model.getType() == Model.CHIEF && !monitors.isEmpty())
+                menuBar.setVisible(true);
+        } else if (e.getSource().equals(dischargeMenuItem)) {
+            int monitorsize = 0;
+            for (MonitorPanel m : monitors) {
+                if (!m.isEmpty())
+                    monitorsize++;
+            }
+            Object[] names = new Object[monitorsize];
+            for (int i = 0; i < monitorsize; i++) {
+                names[i] = monitors.get(i).getPatient().getName() +
+                        " " + monitors.get(i).getPatient().getSurname() +
+                        " " + monitors.get(i).getPatient().getCf();
+            }
+            String patientString = (String) JOptionPane.showInputDialog(
+                    this,
+                    "Scegliere il paziente da dimettere",
+                    "Dimissioni",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    names,
+                    names[0]);
+            String[] arr = patientString.split(" ", 3);
+            Patient patient = null;
+            for (Patient p : model.getPatients()) {
+                if (p.getCf().equals(arr[2]))
+                    patient = p;
+            }
+            dischargeLetterDialog = new DischargeLetterDialog(patient);
+            dischargeLetterDialog.setVisible(true);
         }
     }
 }

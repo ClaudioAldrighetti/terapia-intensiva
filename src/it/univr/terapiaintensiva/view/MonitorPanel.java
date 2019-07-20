@@ -20,7 +20,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
     private final GridBagConstraints c = new GridBagConstraints();
     private final JLabel nameLabel = new JLabel();
     private final JPanel northPanel = new JPanel(new BorderLayout());
-    private final JLabel bpmLabel = new JLabel("60");
+    private final JButton bpmLabel = new JButton("60");
     private final JLabel tempLabel = new JLabel("36");
     private final JLabel sbpLabel = new JLabel("120");
     private final JLabel dbpLabel = new JLabel("80");
@@ -43,6 +43,9 @@ public class MonitorPanel extends JPanel implements ActionListener {
         diagnosisButton.addActionListener(this);
         newPrescriptionButton.addActionListener(this);
         newAdministrationButton.addActionListener(this);
+        bpmLabel.addActionListener(this);
+        pressButton.addActionListener(this);
+        tempButton.addActionListener(this);
 
         this.setLayout(new BorderLayout());
 
@@ -61,6 +64,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
         bpmLabel.setForeground(Color.green);
         bpmLabel.setFont(new Font("sansserif", Font.PLAIN, 50));
         bpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        bpmLabel.setBorderPainted(false);
         northCenterPanel.add(bpmLabel);
 
         // Northeast
@@ -139,6 +143,15 @@ public class MonitorPanel extends JPanel implements ActionListener {
     }
 
     /**
+     * returns the patient associated with the panel
+     *
+     * @return the patient
+     */
+    public Patient getPatient() {
+        return this.patient;
+    }
+
+    /**
      * Removes the association between the panel and the patient stored
      */
     public void removePatient() {
@@ -177,13 +190,13 @@ public class MonitorPanel extends JPanel implements ActionListener {
             newAdministrationFrame = new NewAdministrationFrame(this.patient);
             newAdministrationFrame.setVisible(true);
         } else if (e.getSource().equals(bpmLabel)) {
-            parametersDialog = new ParametersDialog(this.patient, "Battito", ParametersDialog.HEARTBEAT);
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.HEARTBEAT);
             parametersDialog.setVisible(true);
         } else if (e.getSource().equals(pressButton)) {
-            parametersDialog = new ParametersDialog(this.patient, "Pressione", ParametersDialog.PRESSURE);
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.PRESSURE);
             parametersDialog.setVisible(true);
         } else if (e.getSource().equals(tempButton)) {
-            parametersDialog = new ParametersDialog(this.patient, "Temperatura", ParametersDialog.TEMPERATURE);
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.TEMPERATURE);
             parametersDialog.setVisible(true);
         }
     }
