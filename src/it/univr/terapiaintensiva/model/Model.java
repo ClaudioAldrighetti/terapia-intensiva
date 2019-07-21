@@ -24,7 +24,7 @@ public class Model {
     private final String pathAdministrationsFile = "administrations.csv";
     private final String pathDiagnosisFile = "diagnosis.txt";
     private final String pathLetterFile = "dischargeLetter.txt";
-    // public static final così ci si può accedere, tanto non sono modificabili
+
     public static final String pathPatients = "./patients/";
     public static final String pathDischarged = "./discharged/";
 
@@ -493,7 +493,7 @@ public class Model {
                     LocalDate logDate = FilesEditor.strToLocalDate(vitalsLog[4]);
 
                     // Check time
-                    if(maxTime.isBefore(logTime) || maxTime.equals(logTime))
+                    if( logDate.equals(today) && (maxTime.isBefore(logTime) || maxTime.equals(logTime)))
                         vitalsLogs.add(FilesEditor.csvGetVitalsLog(vitalsLog));
 
                     else if(isTomorrow(today, logDate)){
