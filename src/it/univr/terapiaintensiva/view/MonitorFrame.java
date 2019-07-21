@@ -152,7 +152,8 @@ public class MonitorFrame extends JFrame implements ActionListener {
             for (MonitorPanel monitor : monitors) {
                 monitor.updateVitals();
                 revalidate();
-                monitor.checkAlarms();
+                if(model.getType() == Model.CHIEF || model.getType() == Model.DOCTOR)
+                    monitor.checkAlarms();
             }
 
             if (model.getType() == Model.CHIEF && monitors.isEmpty())
