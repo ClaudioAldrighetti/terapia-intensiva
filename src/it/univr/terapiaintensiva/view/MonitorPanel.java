@@ -29,8 +29,8 @@ public class MonitorPanel extends JPanel implements ActionListener {
     private final JButton diagnosisButton = new JButton("Diagnosi");
     private final JButton newPrescriptionButton = new JButton("Nuova prescrizione");
     private final JButton newAdministrationButton = new JButton("Nuova somministrazione");
-    private final JButton prescriptionLogButton = new JButton("Log prescrizioni");
-    private final JButton administrationLogButton = new JButton("Log somministrazioni");
+    //    private final JButton prescriptionLogButton = new JButton("Log prescrizioni");
+//    private final JButton administrationLogButton = new JButton("Log somministrazioni");
     private final JPanel northCenterPanel = new JPanel(new GridLayout(1, 2));
     private final JPanel northEastCenterPanel = new JPanel(new GridBagLayout());
     private final JPanel southCenterPanel = new JPanel(new FlowLayout());
@@ -92,8 +92,8 @@ public class MonitorPanel extends JPanel implements ActionListener {
         southCenterPanel.add(diagnosisButton);
         southCenterPanel.add(newPrescriptionButton);
         southCenterPanel.add(newAdministrationButton);
-        southCenterPanel.add(prescriptionLogButton);
-        southCenterPanel.add(administrationLogButton);
+//        southCenterPanel.add(prescriptionLogButton);
+//        southCenterPanel.add(administrationLogButton);
 
 
         northCenterPanel.add(northEastCenterPanel);
@@ -106,10 +106,10 @@ public class MonitorPanel extends JPanel implements ActionListener {
         switch (type) {
             case Model.GUEST:
                 diagnosisButton.setVisible(false);
-                prescriptionLogButton.setVisible(false);
+//                prescriptionLogButton.setVisible(false);
                 newPrescriptionButton.setVisible(false);
                 newAdministrationButton.setVisible(false);
-                administrationLogButton.setVisible(false);
+//                administrationLogButton.setVisible(false);
                 break;
             case Model.DOCTOR:
             case Model.CHIEF:

@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -20,9 +21,12 @@ public class MonitorFrame extends JFrame implements ActionListener {
     private static final String title = "Terapia intensiva";
     private static final JMenu chiefMenu = new JMenu("Primario");
     private static final JMenu nurseMenu = new JMenu("Infermiere");
+    private static final JMenu clinicalRecordsMenu = new JMenu("Cartelle cliniche");
     private static final JMenuItem newPatientMenuItem = new JMenuItem("Nuovo paziente");
     private static final JMenuItem dischargeMenuItem = new JMenuItem("Dimetti paziente");
     private static final JMenuItem reportMenuItem = new JMenuItem("Visualizza report");
+    private static final JMenuItem hospitalizedMenuItem = new JMenuItem("Ricoverati");
+    private static final JMenuItem dischargedMenuItem = new JMenuItem("Dimessi");
     private static final JMenuBar menuBar = new JMenuBar();
     private static MonitorFrame instance = null;
     private final ArrayList<MonitorPanel> monitors = new ArrayList<>();
@@ -36,6 +40,8 @@ public class MonitorFrame extends JFrame implements ActionListener {
         // Listener
         newPatientMenuItem.addActionListener(this);
         dischargeMenuItem.addActionListener(this);
+        hospitalizedMenuItem.addActionListener(this);
+        dischargedMenuItem.addActionListener(this);
 
         contentPane.setLayout(new GridLayout(2, 5));
 
@@ -52,12 +58,18 @@ public class MonitorFrame extends JFrame implements ActionListener {
         chiefMenu.add(dischargeMenuItem);
         chiefMenu.add(reportMenuItem);
         nurseMenu.add(newPatientMenuItem);
-        if (type == Model.CHIEF)
-            menuBar.add(chiefMenu);
-        else if (type == Model.NURSE)
-            menuBar.add(nurseMenu);
-        else
-            menuBar.setVisible(false);
+        clinicalRecordsMenu.add(hospitalizedMenuItem);
+        clinicalRecordsMenu.add(dischargedMenuItem);
+        menuBar.setVisible(false);
+        if (type != Model.GUEST) {
+            if (type == Model.CHIEF)
+                menuBar.add(chiefMenu);
+            else if (type == Model.NURSE)
+                menuBar.add(nurseMenu);
+            menuBar.add(clinicalRecordsMenu);
+            menuBar.setVisible(true);
+        }
+
         this.setJMenuBar(menuBar);
 
         this.setTitle(title);
@@ -115,6 +127,26 @@ public class MonitorFrame extends JFrame implements ActionListener {
         if (e.getSource().equals(newPatientMenuItem)) {
             newPatientFrame = new NewPatientFrame();
             newPatientFrame.setVisible(true);
+        } else if (e.getSource().equals(hospitalizedMenuItem)) {
+            JFileChooser fc = new JFileChooser(Model.pathPatients);
+            int returnVal = fc.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                try {
+                    Desktop.getDesktop().open(fc.getSelectedFile());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } else if (e.getSource().equals(dischargedMenuItem)) {
+            JFileChooser fc = new JFileChooser(Model.pathDischarged);
+            int returnVal = fc.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                try {
+                    Desktop.getDesktop().open(fc.getSelectedFile());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
         } else if (e.getSource().equals(timer)) {
             for (MonitorPanel monitor : monitors) {
                 monitor.updateVitals();
