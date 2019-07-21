@@ -53,8 +53,9 @@ public class MonitorPanel extends JPanel implements ActionListener {
 
         // Name in top panel
         nameLabel.setText("-");
-//        nameLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.black));
+        nameLabel.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        nameLabel.setFont(new Font("sansserif", Font.PLAIN, 20));
         northPanel.add(nameLabel, BorderLayout.CENTER);
         northPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.black));
         this.add(northPanel, BorderLayout.NORTH);
