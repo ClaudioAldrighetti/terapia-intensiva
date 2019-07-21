@@ -24,8 +24,9 @@ public class Model {
     private final String pathAdministrationsFile = "administrations.csv";
     private final String pathDiagnosisFile = "diagnosis.txt";
     private final String pathLetterFile = "dischargeLetter.txt";
-    private final String pathPatients = "./patients/";
-    private final String pathDischarged = "./discharged/";
+    // public static final così ci si può accedere, tanto non sono modificabili
+    public static final String pathPatients = "./patients/";
+    public static final String pathDischarged = "./discharged/";
 
     // Macros
     private final int maxPatients;

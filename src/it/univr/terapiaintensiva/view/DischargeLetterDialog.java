@@ -7,11 +7,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
 
 public class DischargeLetterDialog extends JDialog implements ActionListener {
 
     private JButton okButton = new JButton("Ok");
     private JTextPane textPane = new JTextPane();
+    private JButton printButton = new JButton("Stampa");
     private Patient patient;
 
     public DischargeLetterDialog(Patient patient) {
@@ -30,6 +32,7 @@ public class DischargeLetterDialog extends JDialog implements ActionListener {
         JPanel panel = new JPanel(new FlowLayout());
         panel.add(cancelButton);
         panel.add(okButton);
+        panel.add(printButton);
         this.add(panel, BorderLayout.SOUTH);
         this.setMinimumSize(new Dimension(500, 600));
         this.setLocationRelativeTo(MonitorFrame.getInstance());
@@ -37,6 +40,7 @@ public class DischargeLetterDialog extends JDialog implements ActionListener {
         // Listener
         okButton.addActionListener(this);
         cancelButton.addActionListener(this);
+        printButton.addActionListener(this);
     }
 
     @Override
@@ -45,6 +49,12 @@ public class DischargeLetterDialog extends JDialog implements ActionListener {
             MonitorFrame.getInstance().removePatient(patient);
             Model.getInstance().dischargePatient(patient.getCf(), textPane.getText());
             this.dispose();
+        } else if (e.getSource().equals(printButton)) {
+            try {
+                textPane.print(null, null, true, null, null, false);
+            } catch (PrinterException ex) {
+                ex.printStackTrace();
+            }
         } else {
             this.dispose();
         }
