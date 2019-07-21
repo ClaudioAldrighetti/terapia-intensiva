@@ -162,8 +162,8 @@ public final class FilesEditor {
     public static LocalTime strToLocalTime(String timeStr) {
         return LocalTime.of(
             Integer.parseInt(timeStr.split(timeSeparator)[0]),
-            Integer.parseInt(timeStr.split(timeSeparator)[1]),
-            Integer.parseInt((timeStr.split(timeSeparator)[2]).split(".")[0])
+                Integer.parseInt(timeStr.split(timeSeparator)[1])
+//            Integer.parseInt((timeStr.split(timeSeparator)[2]).split(".")[0])
         );
     }
 }

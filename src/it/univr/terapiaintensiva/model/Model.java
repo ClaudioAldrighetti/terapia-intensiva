@@ -22,7 +22,6 @@ public class Model {
     private final String pathVitalsFile = "vitals.csv";
     private final String pathPrescriptionsFile = "prescriptions.csv";
     private final String pathAdministrationsFile = "administrations.csv";
-    private final String pathAlarmsFile = "alarms.csv";
     private final String pathDiagnosisFile = "diagnosis.txt";
     private final String pathLetterFile = "dischargeLetter.txt";
 
@@ -286,10 +285,6 @@ public class Model {
                 // Create administrations csv file
                 String pathAdministrations = pathNewPatient.concat(pathAdministrationsFile);
                 FilesEditor.csvCreateFile(pathAdministrations, Administration.csvFormat());
-
-                // Create alarms csv file
-                String pathAlarms = pathNewPatient.concat(pathAlarmsFile);
-                FilesEditor.csvCreateFile(pathAlarms, Alarm.csvFormat().concat(",notes"));
 
                 // Create diagnosis txt file
                 String pathDiagnosis = pathNewPatient.concat(pathDiagnosisFile);
@@ -707,12 +702,6 @@ public class Model {
         return null;
     }
 
-    /**
-     * @param cf codice fiscale of the patient.
-     * @return List of new {@link Alarm}.
-     * @author ClaudioAldrighetti
-     * Looks for new alarms, returns theirs list.
-     */
     public ArrayList<Alarm> getAlarms(String cf){
         // Find patient
         int pEntry = findPatient(cf);
@@ -729,7 +718,7 @@ public class Model {
             File dirPatient = new File(pathPatient);
 
             for(String filePatient: dirPatient.list()){
-                if(filePatient.contains("newAlarm"));
+                if(filePatient.contains("alarm"));
                     alarms.add(setAlarmAsRead(cf, filePatient));
             }
         }
@@ -761,14 +750,11 @@ public class Model {
             // Get new alarm
             Alarm alarm = FilesEditor.csvGetAlarm(FilesEditor.csvReadRecord(alarmFile));
 
-            // Write it on alarms csv file
-            String pathAlarms = pathPatients.concat(cf + pathAlarmFile);
-            if(!Files.exists(Paths.get(pathAlarms)))
-                Files.createFile(Paths.get(pathAlarms));
-            FilesEditor.csvWriteRecord(pathAlarms, alarm);
-
-            // Remove alarm file
-            Files.delete(Paths.get(pathAlarmFile));
+            // Rename file
+            String newAlarmFileName = pathPatients.concat(cf + "/" + "alrRead" + alarm.getTime() + ".csv");
+            File oldAlarmFile = new File(pathAlarmFile);
+            File newAlarmFile = new File(newAlarmFileName);
+            oldAlarmFile.renameTo(newAlarmFile);
 
             return alarm;
 
@@ -776,47 +762,6 @@ public class Model {
             System.out.println("setAlarmAsRead() catches IOException");
             e.printStackTrace();
             return null;
-        }
-
-    }
-
-    /**
-     * @param cf codice fiscale of the patient.
-     * @param alarm alarm off.
-     * @param notes information related to alarm off.
-     * @return success of operation.
-     * @author ClaudioAldrighetti
-     * Sets alarm off in alarms csv file.
-     */
-    public boolean offAlarm(String cf, Alarm alarm, String notes){
-        // Find patient
-        int pEntry = findPatient(cf);
-
-        // Wrong cf or patient isn't hospitalized
-        if (pEntry == -1) {
-            System.out.println("Patient not found: invalid cf");
-            return false;
-        }
-
-        try {
-            String pathAlarms = pathPatients.concat(cf + "/" + pathAlarmsFile);
-            BufferedReader alarmsFile = new BufferedReader(new FileReader(pathAlarms));
-
-            FilesEditor.csvSkipRecord(alarmsFile);
-
-            String[] alarmRecord = FilesEditor.csvReadRecord(alarmsFile);
-            while (alarmRecord != null){
-                // TODO
-
-                alarmRecord = FilesEditor.csvReadRecord(alarmsFile);
-            }
-
-            return false;
-
-        } catch (IOException e){
-            System.out.println("offAlarm() catches IOException");
-            e.printStackTrace();
-            return false;
         }
 
     }
