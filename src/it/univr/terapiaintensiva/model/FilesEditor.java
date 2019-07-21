@@ -113,6 +113,15 @@ public final class FilesEditor {
         return new Administration(medicine, dose, notes, date, time);
     }
 
+    public static Alarm csvGetAlarm(String[] alarmData){
+        String name = alarmData[0];
+        int level = Integer.parseInt(alarmData[1]);
+        char status = alarmData[2].charAt(0);
+        LocalTime time = strToLocalTime(alarmData[3]);
+
+        return new Alarm(name, level, status, time);
+    }
+
     // Write CsvWritable object on csvFile using path
     public static void csvWriteRecord(String pathCsvFile, CsvWritable csvObject, boolean append) throws IOException {
         FileWriter csvFileWriter = new FileWriter(pathCsvFile, append);
@@ -153,7 +162,8 @@ public final class FilesEditor {
     public static LocalTime strToLocalTime(String timeStr) {
         return LocalTime.of(
             Integer.parseInt(timeStr.split(timeSeparator)[0]),
-            Integer.parseInt(timeStr.split(timeSeparator)[1])
+            Integer.parseInt(timeStr.split(timeSeparator)[1]),
+            Integer.parseInt((timeStr.split(timeSeparator)[2]).split(".")[0])
         );
     }
 }

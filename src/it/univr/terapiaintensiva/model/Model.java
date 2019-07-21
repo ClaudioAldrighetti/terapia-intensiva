@@ -546,6 +546,7 @@ public class Model {
         return patients.get(pEntry).getPrescriptions();
     }
 
+    // UC9
     /**
      * @param cf codice fiscale of the patient.
      * @return list of patient's administrations. Null in case of error.
@@ -701,7 +702,36 @@ public class Model {
         return null;
     }
 
-    // PUBLIC METHODS
+    /**
+     * @param cf codice fiscale of the patient.
+     * @param pathAlarmFile path of new alarm file.
+     * @return {@link Alarm} extracted.
+     * @author ClaudioAldrighetti
+     * Returns new alarm and set alarm file as read.
+     */
+    public Alarm setAlarmAsRead(String cf, String pathAlarmFile) {
+        try {
+            BufferedReader alarmFile = new BufferedReader(new FileReader(pathAlarmFile));
+            FilesEditor.csvSkipRecord(alarmFile);
+
+            // Get new alarm
+            Alarm alarm = FilesEditor.csvGetAlarm(FilesEditor.csvReadRecord(alarmFile));
+
+            // Rename file
+            String newAlarmFileName = pathPatients.concat(cf + "/" + "alrRead" + alarm.getTime() + ".csv");
+            File oldAlarmFile = new File(pathAlarmFile);
+            File newAlarmFile = new File(newAlarmFileName);
+            oldAlarmFile.renameTo(newAlarmFile);
+
+            return alarm;
+
+        } catch (IOException e) {
+            System.out.println("getAlarm() catches IOException");
+            e.printStackTrace();
+            return null;
+        }
+
+    }
 
     // Return patients ArrayList
     public ArrayList<Patient> getPatients(){
