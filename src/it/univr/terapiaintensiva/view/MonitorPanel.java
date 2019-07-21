@@ -1,5 +1,6 @@
 package it.univr.terapiaintensiva.view;
 
+import it.univr.terapiaintensiva.model.Alarm;
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
 import it.univr.terapiaintensiva.model.Vitals;
@@ -8,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * A {@link JPanel} representing a patient.
@@ -198,6 +200,15 @@ public class MonitorPanel extends JPanel implements ActionListener {
         } else if (e.getSource().equals(tempButton)) {
             parametersDialog = new ParametersDialog(this.patient, ParametersDialog.TEMPERATURE);
             parametersDialog.setVisible(true);
+        }
+    }
+
+    public void checkAlarms() {
+        if (this.patient != null) {
+            ArrayList<Alarm> alarms = model.getAlarms(patient.getCf());
+            for (Alarm alarm : alarms) {
+                JOptionPane.showMessageDialog(MonitorFrame.getInstance(), alarm.toString());
+            }
         }
     }
 }

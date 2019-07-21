@@ -148,14 +148,19 @@ public class MonitorFrame extends JFrame implements ActionListener {
                 }
             }
         } else if (e.getSource().equals(timer)) {
+
             for (MonitorPanel monitor : monitors) {
                 monitor.updateVitals();
                 revalidate();
+                monitor.checkAlarms();
             }
+
             if (model.getType() == Model.CHIEF && monitors.isEmpty())
-                menuBar.setVisible(false);
+                chiefMenu.setVisible(false);
             else if (model.getType() == Model.CHIEF && !monitors.isEmpty())
-                menuBar.setVisible(true);
+                chiefMenu.setVisible(true);
+
+
         } else if (e.getSource().equals(dischargeMenuItem)) {
             int monitorsize = 0;
             for (MonitorPanel m : monitors) {
