@@ -718,8 +718,9 @@ public class Model {
             File dirPatient = new File(pathPatient);
 
             for(String filePatient: dirPatient.list()){
-                if(filePatient.contains("alarm"));
-                    alarms.add(setAlarmAsRead(cf, filePatient));
+                boolean condition = filePatient.contains("newAlarm");
+                if (condition)
+                    alarms.add(setAlarmAsRead(cf, pathPatient.concat("/".concat(filePatient))));
             }
         }
 
