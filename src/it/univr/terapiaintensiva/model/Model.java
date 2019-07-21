@@ -702,6 +702,30 @@ public class Model {
         return null;
     }
 
+    public ArrayList<Alarm> getAlarms(String cf){
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if (pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return null;
+        }
+
+        ArrayList<Alarm> alarms = new ArrayList<>();
+        String pathPatient = pathPatients.concat(cf + "/");
+        if(Files.exists(Paths.get(pathPatient)) && Files.isDirectory(Paths.get(pathPatient))){
+            File dirPatient = new File(pathPatient);
+
+            for(String filePatient: dirPatient.list()){
+                if(filePatient.contains("alarm"));
+                    alarms.add(setAlarmAsRead(cf, filePatient));
+            }
+        }
+
+        return alarms;
+    }
+
     /**
      * @param cf codice fiscale of the patient.
      * @param pathAlarmFile path of new alarm file.
@@ -710,6 +734,15 @@ public class Model {
      * Returns new alarm and set alarm file as read.
      */
     public Alarm setAlarmAsRead(String cf, String pathAlarmFile) {
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if (pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return null;
+        }
+
         try {
             BufferedReader alarmFile = new BufferedReader(new FileReader(pathAlarmFile));
             FilesEditor.csvSkipRecord(alarmFile);
@@ -726,7 +759,7 @@ public class Model {
             return alarm;
 
         } catch (IOException e) {
-            System.out.println("getAlarm() catches IOException");
+            System.out.println("setAlarmAsRead() catches IOException");
             e.printStackTrace();
             return null;
         }
