@@ -12,6 +12,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A form in which to put all the informations about a new patient
@@ -35,6 +37,7 @@ public class NewPatientFrame extends JFrame implements ActionListener {
     private final JPanel centerPanel = new JPanel(new GridBagLayout());
     private final JPanel southPanel = new JPanel(new FlowLayout());
     private final GridBagConstraints c = new GridBagConstraints();
+    private final Pattern pattern = Pattern.compile("^(?:[A-Z][AEIOU][AEIOUX]|[B-DF-HJ-NP-TV-Z]{2}[A-Z]){2}(?:[\\dLMNP-V]{2}(?:[A-EHLMPR-T](?:[04LQ][1-9MNP-V]|[15MR][\\dLMNP-V]|[26NS][0-8LMNP-U])|[DHPS][37PT][0L]|[ACELMRT][37PT][01LM]|[AC-EHLMPR-T][26NS][9V])|(?:[02468LNQSU][048LQU]|[13579MPRTV][26NS])B[26NS][9V])(?:[A-MZ][1-9MNP-V][\\dLMNP-V]{2}|[A-M][0L](?:[1-9MNP-V][\\dLMNP-V]|[0L][1-9MNP-V]))[A-Z]$");
 
     public NewPatientFrame() {
 
@@ -109,16 +112,26 @@ public class NewPatientFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton)) {
-            if (Model.getInstance().hospitalizePatient(getPatient()))
-                MonitorFrame.getInstance().addPatient(getPatient());
-            else
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Il paziente con il codice fiscale inserito è già presente\n" +
-                                "oppure è stato raggiunto il numero massimo di posti",
-                        "Errore", JOptionPane.ERROR_MESSAGE
+            Matcher matcher = pattern.matcher(cfTextField.getText().toUpperCase().trim());
+            if (matcher.matches()) {
+                if (Model.getInstance().hospitalizePatient(getPatient())) {
+                    MonitorFrame.getInstance().addPatient(getPatient());
+                } else {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Il paziente con il codice fiscale inserito è già presente\n" +
+                                    "oppure è stato raggiunto il numero massimo di posti",
+                            "Errore", JOptionPane.ERROR_MESSAGE
+                    );
+                }
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Il codice fiscale non è valido",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE
                 );
+            }
         }
-        this.dispose();
     }
 }
