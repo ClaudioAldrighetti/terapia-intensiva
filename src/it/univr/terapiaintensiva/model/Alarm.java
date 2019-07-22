@@ -1,5 +1,6 @@
 package it.univr.terapiaintensiva.model;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
@@ -18,12 +19,14 @@ public class Alarm implements CsvWritable {
     private String name;
     private int level;
     private char status;
+    private LocalDate date;
     private LocalTime time;
 
-    public Alarm(String name, int level, char status, LocalTime time){
+    public Alarm(String name, int level, char status, LocalDate date, LocalTime time){
         this.name = name;
         this.level = level;
         this.status = status;
+        this.date = date;
         this.time = time;
     }
 
@@ -31,13 +34,15 @@ public class Alarm implements CsvWritable {
         this.name = name;
         this.level = level;
         this.status = status;
+        this.date = LocalDate.now();
         this.time = LocalTime.now();
     }
 
-    public Alarm(String name, int level, LocalTime time){
+    public Alarm(String name, int level, LocalDate date, LocalTime time){
         this.name = name;
         this.level = level;
         this.status = ALARM_ON;
+        this.date = date;
         this.time = time;
     }
 
@@ -45,6 +50,7 @@ public class Alarm implements CsvWritable {
         this.name = name;
         this.level = level;
         this.status = ALARM_ON;
+        this.date = LocalDate.now();
         this.time = LocalTime.now();
     }
 
@@ -72,6 +78,14 @@ public class Alarm implements CsvWritable {
         this.status = status;
     }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     public LocalTime getTime() {
         return time;
     }
@@ -87,15 +101,16 @@ public class Alarm implements CsvWritable {
                  "Name: " + name +
                  "\nLevel: " + level +
                  "\nStatus: " + strStatus +
+                 "\nDate: " + date +
                  "\nTime: " + time
                 );
     }
 
     public String toCsv() {
-        return name + "," + level + "," + status + "," + time;
+        return name + "," + level + "," + status + "," + date + "," + time;
     }
 
     public static String csvFormat() {
-        return "name,level,status,time";
+        return "name,level,status,date,time";
     }
 }

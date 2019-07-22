@@ -169,9 +169,10 @@ public final class FilesEditor {
         String name = alarmData[0];
         int level = Integer.parseInt(alarmData[1]);
         char status = alarmData[2].charAt(0);
-        LocalTime time = strToLocalTime(alarmData[3]);
+        LocalDate date = strToLocalDate(alarmData[3]);
+        LocalTime time = strToLocalTime(alarmData[4]);
 
-        return new Alarm(name, level, status, time);
+        return new Alarm(name, level, status, date, time);
     }
 
     /**
