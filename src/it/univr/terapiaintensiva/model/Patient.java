@@ -107,7 +107,7 @@ public class Patient extends Person {
     public String toString(){
         return
                 (
-                 "Name: " + super.getName() +
+                 "\nName: " + super.getName() +
                  "\nSurname: " + super.getSurname() +
                  "\nCf: " + cf +
                  "\nPlace of birth: " + pob +

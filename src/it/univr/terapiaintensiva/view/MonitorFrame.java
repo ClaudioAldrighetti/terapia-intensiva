@@ -49,8 +49,8 @@ class MonitorFrame extends JFrame implements ActionListener {
             contentPane.add(monitors.get(i));
             monitors.get(i).setVisible(false);
         }
-        for (int i = 0; i < model.getPatients().size(); i++) {
-            monitors.get(i).setPatient(model.getPatients().get(i));
+        for (int i = 0; i < model.getHospitalizedPatients().size(); i++) {
+            monitors.get(i).setPatient(model.getHospitalizedPatients().get(i));
         }
 
         // Menu
@@ -180,7 +180,7 @@ class MonitorFrame extends JFrame implements ActionListener {
                     names[0]);
             String[] arr = patientString.split(" ", 3);
             Patient patient = null;
-            for (Patient p : model.getPatients()) {
+            for (Patient p : model.getHospitalizedPatients()) {
                 if (p.getCf().equals(arr[2]))
                     patient = p;
             }

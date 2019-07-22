@@ -176,6 +176,24 @@ public final class FilesEditor {
     }
 
     /**
+     * @param alarmData values read from alarms csv file.
+     * @return {@link AlarmOff} got from data.
+     * @author mizukami
+     * Returns {@link AlarmOff} from values in alarmData.
+     */
+    public static AlarmOff csvGetAlarmOff(String[] alarmData){
+        String name = alarmData[0];
+        int level = Integer.parseInt(alarmData[1]);
+        char status = alarmData[2].charAt(0);
+        LocalDate date = strToLocalDate(alarmData[3]);
+        LocalTime time = strToLocalTime(alarmData[4]);
+        String notes = alarmData[5];
+
+        return new AlarmOff(name, level, status, date, time, notes);
+
+    }
+
+    /**
      * @param pathCsvFile file on wich write operation is performed.
      * @param csvObject {@link CsvWritable} object that has to be written on csv file.
      * @param append if true, new record is written at the end of file, else at the start.

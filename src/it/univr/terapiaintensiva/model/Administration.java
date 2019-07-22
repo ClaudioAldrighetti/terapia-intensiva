@@ -31,12 +31,32 @@ public class Administration implements CsvWritable {
         this.time = time;
     }
 
+    public String getMedicine() {
+        return medicine;
+    }
+
+    public double getDose() {
+        return dose;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
     public String toString() {
         String timeStr = time.getHour() + ":" + time.getMinute();
         String noteStr = ( notes.equals("") ? "" : "\n" + notes + "\n");
         return
                 (
-                 "Medicine: " + medicine +
+                 "\nMedicine: " + medicine +
                  "\nDose: " + dose +
                  "\nNotes: " + noteStr +
                  "\nDate of administration: " + date +

@@ -25,16 +25,40 @@ public class Prescription implements CsvWritable {
         this.time = time;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public String getMedicine() {
+        return medicine;
+    }
+
+    public int getnDoses() {
+        return nDoses;
+    }
+
+    public double getDose() {
+        return dose;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
     public String toString() {
         return
-               (
-                "Duration of prescription: " + duration + " days" +
-                "\nMedicine: " + medicine +
-                "\nDaily doses: " + nDoses +
-                "\nQuantity: " + dose +
-                "\nDate of prescription: " + date +
-                "\nTime of prescription: " + time
-               );
+                (
+                        "\nDuration of prescription: " + duration + " days" +
+                                "\nMedicine: " + medicine +
+                                "\nDaily doses: " + nDoses +
+                                "\nQuantity: " + dose +
+                                "\nDate of prescription: " + date +
+                                "\nTime of prescription: " + time
+                );
     }
 
     public String toCsv() {
