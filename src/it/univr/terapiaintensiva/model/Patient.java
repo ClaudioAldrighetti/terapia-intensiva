@@ -30,6 +30,10 @@ public class Patient extends Person {
         this.administrations = new ArrayList<>();
     }
 
+    /**
+     * @author mizukami
+     * Sets all registry fields null, used during the loading of a medical records, when registry csv file is not found.
+     */
     public Patient(){
         new Patient(null, null, null, null, null);
     }

@@ -41,6 +41,10 @@ public class Model {
 
     private char type;
 
+    /**
+     * @author mizukami
+     * Loads medical records and patients list, searching informations about all hospitalized patients stored in files inside each medical records.
+     */
     // Constructor
     private Model() {
         maxPatients = 10;
@@ -189,7 +193,7 @@ public class Model {
             }
 
         } catch (IOException e){
-            System.out.println("Model() catch IOException!");
+            System.out.println("Model() catches IOException!");
             e.printStackTrace();
         }
     }
@@ -244,6 +248,10 @@ public class Model {
         }
     }
 
+    /**
+     * @return type of logged user.
+     * @author ecavicc
+     */
     public char getType() {
         return type;
     }
