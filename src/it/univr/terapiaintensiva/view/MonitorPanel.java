@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
- * A {@link JPanel} representing a patient.
+ * A panel representing a patient.
  */
 public class MonitorPanel extends JPanel implements ActionListener {
 
@@ -31,8 +31,6 @@ public class MonitorPanel extends JPanel implements ActionListener {
     private final JButton diagnosisButton = new JButton("Diagnosi");
     private final JButton newPrescriptionButton = new JButton("Nuova prescrizione");
     private final JButton newAdministrationButton = new JButton("Nuova somministrazione");
-    //    private final JButton prescriptionLogButton = new JButton("Log prescrizioni");
-//    private final JButton administrationLogButton = new JButton("Log somministrazioni");
     private final JPanel northCenterPanel = new JPanel(new GridLayout(1, 2));
     private final JPanel northEastCenterPanel = new JPanel(new GridBagLayout());
     private final JPanel southCenterPanel = new JPanel(new FlowLayout());
@@ -95,9 +93,6 @@ public class MonitorPanel extends JPanel implements ActionListener {
         southCenterPanel.add(diagnosisButton);
         southCenterPanel.add(newPrescriptionButton);
         southCenterPanel.add(newAdministrationButton);
-//        southCenterPanel.add(prescriptionLogButton);
-//        southCenterPanel.add(administrationLogButton);
-
 
         northCenterPanel.add(northEastCenterPanel);
         centerPanel.add(northCenterPanel);
@@ -106,13 +101,12 @@ public class MonitorPanel extends JPanel implements ActionListener {
 
         this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 
+        // Change menu depending on user type
         switch (type) {
             case Model.GUEST:
                 diagnosisButton.setVisible(false);
-//                prescriptionLogButton.setVisible(false);
                 newPrescriptionButton.setVisible(false);
                 newAdministrationButton.setVisible(false);
-//                administrationLogButton.setVisible(false);
                 break;
             case Model.DOCTOR:
             case Model.CHIEF:
@@ -136,7 +130,6 @@ public class MonitorPanel extends JPanel implements ActionListener {
 
     /**
      * Associates the panel with a patient.
-     *
      * @param patient the patient to associate
      */
     public void setPatient(Patient patient) {
@@ -147,7 +140,6 @@ public class MonitorPanel extends JPanel implements ActionListener {
 
     /**
      * returns the patient associated with the panel
-     *
      * @return the patient
      */
     public Patient getPatient() {
@@ -176,34 +168,9 @@ public class MonitorPanel extends JPanel implements ActionListener {
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        DiagnosisFrame diagnosisFrame;
-        NewPrescriptionFrame newPrescriptionFrame;
-        NewAdministrationFrame newAdministrationFrame;
-        ParametersDialog parametersDialog;
-        if (e.getSource().equals(diagnosisButton)) {
-            diagnosisFrame = new DiagnosisFrame(this.patient);
-            diagnosisFrame.setDiagnosis(patient.getDiagnosis());
-            diagnosisFrame.setVisible(true);
-        } else if (e.getSource().equals(newPrescriptionButton)) {
-            newPrescriptionFrame = new NewPrescriptionFrame(this.patient);
-            newPrescriptionFrame.setVisible(true);
-        } else if (e.getSource().equals(newAdministrationButton)) {
-            newAdministrationFrame = new NewAdministrationFrame(this.patient);
-            newAdministrationFrame.setVisible(true);
-        } else if (e.getSource().equals(bpmLabel)) {
-            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.HEARTBEAT);
-            parametersDialog.setVisible(true);
-        } else if (e.getSource().equals(pressButton)) {
-            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.PRESSURE);
-            parametersDialog.setVisible(true);
-        } else if (e.getSource().equals(tempButton)) {
-            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.TEMPERATURE);
-            parametersDialog.setVisible(true);
-        }
-    }
-
+    /**
+     * Dhecks if there are any new alarms associated with the patient and displays them using a {@link AlarmDialog}.
+     */
     public void checkAlarms() {
         AlarmDialog alarmDialog;
         if (this.patient != null) {
@@ -212,6 +179,35 @@ public class MonitorPanel extends JPanel implements ActionListener {
                 alarmDialog = new AlarmDialog(patient, alarm);
                 alarmDialog.setVisible(true);
             }
+        }
+    }
+
+    // Listener
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        DiagnosisFrame diagnosisFrame;
+        NewPrescriptionFrame newPrescriptionFrame;
+        NewAdministrationFrame newAdministrationFrame;
+        ParametersDialog parametersDialog;
+        if (e.getSource().equals(diagnosisButton)) {                // Diagnosis
+            diagnosisFrame = new DiagnosisFrame(this.patient);
+            diagnosisFrame.setDiagnosis(patient.getDiagnosis());
+            diagnosisFrame.setVisible(true);
+        } else if (e.getSource().equals(newPrescriptionButton)) {   // Prescription
+            newPrescriptionFrame = new NewPrescriptionFrame(this.patient);
+            newPrescriptionFrame.setVisible(true);
+        } else if (e.getSource().equals(newAdministrationButton)) { // Administration
+            newAdministrationFrame = new NewAdministrationFrame(this.patient);
+            newAdministrationFrame.setVisible(true);
+        } else if (e.getSource().equals(bpmLabel)) {                // Hearbeat log
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.HEARTBEAT);
+            parametersDialog.setVisible(true);
+        } else if (e.getSource().equals(pressButton)) {             // Pressure log
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.PRESSURE);
+            parametersDialog.setVisible(true);
+        } else if (e.getSource().equals(tempButton)) {              // Temperatire log
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.TEMPERATURE);
+            parametersDialog.setVisible(true);
         }
     }
 }

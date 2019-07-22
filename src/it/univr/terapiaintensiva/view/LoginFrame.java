@@ -67,9 +67,10 @@ public class LoginFrame extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
+    // Listener
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(loginButton)) {
+        if (e.getSource().equals(loginButton)) {    // Login
             String user = unameTField.getText();
             String psw = passField.getText();
             if (model.authenticate(user.trim(), psw.trim()) != Model.GUEST) {
@@ -78,7 +79,7 @@ public class LoginFrame extends JFrame implements ActionListener {
             } else {
                 JOptionPane.showMessageDialog(this, "Credenziali errate", "Errore", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
+        } else {                                    // Login as guest
             model.authenticate("guestUser", "guestPassword");
             MonitorFrame.getInstance().setVisible(true);
             this.dispose();

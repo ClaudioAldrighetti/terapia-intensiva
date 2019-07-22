@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * The main frame of the application, made using the Singleton pattern. It displays several
  * {@link it.univr.terapiaintensiva.view.MonitorPanel} to perform several operations on patients and to display
  * their status.
- * Its design varies depending on the type of user logged in.
+ * Its design varies depending on the type of user logged in (see {@link Model#getType()}).
  */
 public class MonitorFrame extends JFrame implements ActionListener {
 
@@ -84,7 +84,6 @@ public class MonitorFrame extends JFrame implements ActionListener {
 
     /**
      * Used to make this object a Singleton.
-     *
      * @return a new instance of this class if there is not one present, or the only instance already present
      */
     public static MonitorFrame getInstance() {
@@ -120,14 +119,15 @@ public class MonitorFrame extends JFrame implements ActionListener {
         }
     }
 
+    // Listener
     @Override
     public void actionPerformed(ActionEvent e) {
         NewPatientFrame newPatientFrame;
         DischargeLetterDialog dischargeLetterDialog;
-        if (e.getSource().equals(newPatientMenuItem)) {
+        if (e.getSource().equals(newPatientMenuItem)) {             // New patient
             newPatientFrame = new NewPatientFrame();
             newPatientFrame.setVisible(true);
-        } else if (e.getSource().equals(hospitalizedMenuItem)) {
+        } else if (e.getSource().equals(hospitalizedMenuItem)) {    // Hospitalized clinical records
             JFileChooser fc = new JFileChooser(Model.pathPatients);
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -137,7 +137,7 @@ public class MonitorFrame extends JFrame implements ActionListener {
                     ex.printStackTrace();
                 }
             }
-        } else if (e.getSource().equals(dischargedMenuItem)) {
+        } else if (e.getSource().equals(dischargedMenuItem)) {      // Discharged clinical records
             JFileChooser fc = new JFileChooser(Model.pathDischarged);
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -147,22 +147,18 @@ public class MonitorFrame extends JFrame implements ActionListener {
                     ex.printStackTrace();
                 }
             }
-        } else if (e.getSource().equals(timer)) {
-
+        } else if (e.getSource().equals(timer)) {                   // Refresh timer
             for (MonitorPanel monitor : monitors) {
                 monitor.updateVitals();
                 revalidate();
                 if(model.getType() == Model.CHIEF || model.getType() == Model.DOCTOR)
                     monitor.checkAlarms();
             }
-
             if (model.getType() == Model.CHIEF && monitors.isEmpty())
                 chiefMenu.setVisible(false);
             else if (model.getType() == Model.CHIEF && !monitors.isEmpty())
                 chiefMenu.setVisible(true);
-
-
-        } else if (e.getSource().equals(dischargeMenuItem)) {
+        } else if (e.getSource().equals(dischargeMenuItem)) {       // Discharge a patient
             int monitorsize = 0;
             for (MonitorPanel m : monitors) {
                 if (!m.isEmpty())

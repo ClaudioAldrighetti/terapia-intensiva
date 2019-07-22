@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A form in which to put all the informations about a new patient
+ * A form in which to put all the informations about a new patient.
  */
 public class NewPatientFrame extends JFrame implements ActionListener {
 
@@ -93,8 +93,7 @@ public class NewPatientFrame extends JFrame implements ActionListener {
     }
 
     /**
-     * Read all the {@link JTextField} and {@link JSpinner} of the form
-     *
+     * Reads all the the data in the form
      * @return a new patient
      */
     private Patient getPatient() {
@@ -109,9 +108,11 @@ public class NewPatientFrame extends JFrame implements ActionListener {
                 localdate);
     }
 
+    // Listener
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(okButton)) {
+        if (e.getSource().equals(okButton)) {       // Ok
+            // Check if codice fiscale checks out
             Matcher matcher = pattern.matcher(cfTextField.getText().toUpperCase().trim());
             if (matcher.matches()) {
                 if (Model.getInstance().hospitalizePatient(getPatient())) {
@@ -132,6 +133,8 @@ public class NewPatientFrame extends JFrame implements ActionListener {
                         JOptionPane.ERROR_MESSAGE
                 );
             }
+        } else {                                    // Cancel
+            this.dispose();
         }
     }
 }

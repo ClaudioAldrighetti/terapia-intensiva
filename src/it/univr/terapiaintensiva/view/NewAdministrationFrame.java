@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.time.*;
 
 /**
- * A form use to add a new {@link Administration} to the file of the patient.
+ * A form used to add a new {@link Administration} to the record of the patient.
  */
 public class NewAdministrationFrame extends JFrame implements ActionListener {
 
@@ -35,6 +35,9 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
     private final GridBagConstraints c = new GridBagConstraints();
     private final Patient patient;
 
+    /**
+     * @param patient the patient to whom to add the administration
+     */
     public NewAdministrationFrame(Patient patient) {
 
         this.patient = patient;
@@ -45,7 +48,6 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
 
         doseSpinner.setPreferredSize(new Dimension(60, 27));
         doseSpinner.setMinimumSize(new Dimension(60, 27));
-        //scrollPane.setMinimumSize(new Dimension(60, 27));
 
         c.insets.set(5, 5, 5, 5);
         c.anchor = GridBagConstraints.EAST;
@@ -92,8 +94,7 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
     }
 
     /**
-     * Read all the {@link JTextField}, {@link JSpinner} and {@link JTextPane}
-     *
+     * Reads all the data about the administration
      * @return a new administration
      */
     private Administration getAdministration() {
@@ -110,6 +111,7 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
         );
     }
 
+    // Listener
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton))

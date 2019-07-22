@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.time.*;
 
 /**
- * A form used to acquire all the data about a new {@link Prescription}
+ * A form used to acquire all the data about a new {@link Prescription}.
  */
 public class NewPrescriptionFrame extends JFrame implements ActionListener {
 
@@ -38,6 +38,9 @@ public class NewPrescriptionFrame extends JFrame implements ActionListener {
     private final JPanel southPanel = new JPanel(new FlowLayout());
     private final GridBagConstraints c = new GridBagConstraints();
 
+    /**
+     * @param patient the patient to whom to add the new prescription
+     */
     public NewPrescriptionFrame(Patient patient) {
 
         this.patient = patient;
@@ -101,8 +104,7 @@ public class NewPrescriptionFrame extends JFrame implements ActionListener {
     }
 
     /**
-     * Read all the {@link JTextField} and {@link JSpinner}
-     *
+     * Reads all the {@link JTextField} and {@link JSpinner}
      * @return a new Prescription
      */
     private Prescription getPrescription() {
@@ -120,6 +122,7 @@ public class NewPrescriptionFrame extends JFrame implements ActionListener {
         );
     }
 
+    // Listener
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton))

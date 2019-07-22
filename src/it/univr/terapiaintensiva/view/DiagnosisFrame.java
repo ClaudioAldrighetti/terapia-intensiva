@@ -23,6 +23,9 @@ public class DiagnosisFrame extends JFrame implements ActionListener {
     private final JPanel centerPanel = new JPanel(new BorderLayout());
     private final JPanel southPanel = new JPanel(new FlowLayout());
 
+    /**
+     * @param patient the patient to whom to add the prescription
+     */
     public DiagnosisFrame(Patient patient) {
 
         // Listener
@@ -49,13 +52,13 @@ public class DiagnosisFrame extends JFrame implements ActionListener {
 
     /**
      * Writes a String to the JTextPane.
-     *
      * @param s the string to write
      */
     public void setDiagnosis(String s) {
         diagnosisPane.setText(s.trim());
     }
 
+    // Listener
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton)) {

@@ -9,6 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 
+/**
+ * A dialog used to write and/or print the discharge letter for the patient.
+ */
 public class DischargeLetterDialog extends JDialog implements ActionListener {
 
     private JButton okButton = new JButton("Ok");
@@ -16,6 +19,9 @@ public class DischargeLetterDialog extends JDialog implements ActionListener {
     private JButton printButton = new JButton("Stampa");
     private Patient patient;
 
+    /**
+     * @param patient the patient to whom to add the discharge letter
+     */
     public DischargeLetterDialog(Patient patient) {
 
         super(MonitorFrame.getInstance());
@@ -43,13 +49,14 @@ public class DischargeLetterDialog extends JDialog implements ActionListener {
         printButton.addActionListener(this);
     }
 
+    // Listener
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(okButton)) {
+        if (e.getSource().equals(okButton)) {           // Sets the letter and discharges the patient
             MonitorFrame.getInstance().removePatient(patient);
             Model.getInstance().dischargePatient(patient.getCf(), textPane.getText());
             this.dispose();
-        } else if (e.getSource().equals(printButton)) {
+        } else if (e.getSource().equals(printButton)) { // Opens a print dialog
             try {
                 textPane.print(null, null, true, null, null, false);
             } catch (PrinterException ex) {

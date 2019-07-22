@@ -8,6 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * Dialog used to show the last vitals of a patient
+ */
 public class ParametersDialog extends JDialog {
 
     public static final int HEARTBEAT = 0;
@@ -18,8 +21,6 @@ public class ParametersDialog extends JDialog {
     private final int parameterType;
 
     /**
-     * Dialog used to show the last vitals of a patient
-     *
      * @param patient       the patient from which to pick the parameters
      * @param parameterType one of the three contants
      *                      <ul>
