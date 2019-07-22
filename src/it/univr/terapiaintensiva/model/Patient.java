@@ -3,6 +3,11 @@ package it.univr.terapiaintensiva.model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * @author mizukami
+ * Patient hospitalized or that has been hospitalized.
+ * Class CsvWritable.
+ */
 public class Patient extends Person {
 
     private String cf;
@@ -81,6 +86,11 @@ public class Patient extends Person {
         this.administrations = administrations;
     }
 
+    /**
+     * @author mizukami
+     * @return true if all patient's registry field are null.
+     * Used to check if {@link Patient} is initialized with null values.
+     */
     public boolean noRegistry(){
         return
                 (super.getName() == null) &&

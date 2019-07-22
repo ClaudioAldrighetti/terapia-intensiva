@@ -7,6 +7,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
+/**
+ * @author mizukami
+ * Model component of MVC pattern, this class is a singleton that manages memory of software (medical records, log files, registries, patients list etc..).
+ * It meets Controller requests, archiving datas coming from View and extracting informations stored.
+ */
 public class Model {
 
     private static Model instance = null;
@@ -204,7 +209,7 @@ public class Model {
      * @param username username.
      * @param password password.
      * @return User type (guest, doctor etc...). In case of exception, it returns 'e'.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Authenticates user checking username and password and returns his user type.
      */
     public char authenticate(String username, String password) {
@@ -246,7 +251,7 @@ public class Model {
     /**
      * @param patient {@link Patient} to hospitalize.
      * @return success of operation.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * If it is possible, it hospitalizes patient, adds him to patients list and creates his medical records and logs files.
      */
     public boolean hospitalizePatient(Patient patient) {
@@ -317,7 +322,7 @@ public class Model {
      * @param cf codice fiscale of {@link Patient}.
      * @param diagnosis {@link String} diagnosis to add or change.
      * @return success of operation.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Adds new diagnosis if patient hasn't a diagnosis or changes or modifies last diagnosis with new diagnosis.
      */
     public boolean setDiagnosis(String cf, String diagnosis) {
@@ -356,7 +361,7 @@ public class Model {
      * @param cf codice fiscale of {@link Patient}.
      * @param prescription {@link Prescription} to add.
      * @return success of operation.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Adds prescription to the patient and writes it on prescriptions csv file.
      */
     public boolean addPrescription(String cf, Prescription prescription) {
@@ -402,7 +407,7 @@ public class Model {
      * @param cf codice fiscale of {@link Patient}.
      * @param administration {@link Administration} to add.
      * @return success of operation.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Adds adnministration to the patient and writes it on administrations csv file.
      */
     public boolean addAdministration(String cf, Administration administration) {
@@ -447,7 +452,7 @@ public class Model {
     /**
      * @param cf codice fiscale of {@link Patient}.
      * @return List of {@link VitalsLog} registered within 15 minutes for guests or 2 hours for authenticated users. Null in case of error.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Returns list of last vital parameters logs of the patient.
      */
     public ArrayList<VitalsLog> getLastParameters(String cf) {
@@ -523,7 +528,7 @@ public class Model {
     /**
      * @param cf codice fiscale of {@link Patient}.
      * @return list of patient's prescriptions. Null in case of error.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Returns list of patient's prescriptions if user is authenticated.
      */
     public ArrayList<Prescription> getPatientPrescriptions(String cf){
@@ -548,7 +553,7 @@ public class Model {
     /**
      * @param cf codice fiscale of {@link Patient}.
      * @return list of patient's administrations. Null in case of error.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Returns list of patient's administrations if user is authenticated.
      */
     public ArrayList<Administration> getPatientAdministrations(String cf){
@@ -574,7 +579,7 @@ public class Model {
      * @param cf codice fiscale of {@link Patient}.
      * @param letterText text of resignation letter.
      * @return success of operation.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Discharges the hospitalized patient archiving his medical records, creating a discharge letter and removing him from patients list.
      */
     public boolean dischargePatient(String cf, String letterText) {
@@ -626,7 +631,7 @@ public class Model {
      * @param cf codice fiscale of {@link Patient}.
      * @param vitals new {@link Vitals} registered.
      * @return success of operation.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Changes vital parameters of the patient and adds log in vitals csv file.
      */
     public boolean changeVitals(String cf, Vitals vitals) {
@@ -701,7 +706,7 @@ public class Model {
     /**
      * @param cf codice fiscale of {@link Patient}.
      * @return list of new {@link Alarm}s.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Looks for new {@link Alarm}s of patient and returns their list.
      */
     public ArrayList<Alarm> checkNewAlarms(String cf){
@@ -732,7 +737,7 @@ public class Model {
      * @param cf codice fiscale of {@link Patient}.
      * @param pathAlarmFile path of new alarm file.
      * @return {@link Alarm} extracted.
-     * @author ClaudioAldrighetti
+     * @author mizukami
      * Returns new {@link Alarm} and deletes its file.
      */
     public Alarm readAlarm(String cf, String pathAlarmFile) {
@@ -752,12 +757,6 @@ public class Model {
             // Get new alarm
             Alarm alarm = FilesEditor.csvGetAlarm(FilesEditor.csvReadRecord(alarmFile));
 
-            // Write it on alarms csv file
-/*            String pathAlarms = pathPatients.concat(cf + "/" + pathAlarmsFile);
-            if( !Files.exists(Paths.get(pathAlarms)) )
-                FilesEditor.csvCreateFile(pathAlarms, Alarm.csvFormat().concat(",notes"));
-            FilesEditor.csvWriteRecord(pathAlarms, alarm);
-*/
             // Delete new alarm file
             Files.delete(Paths.get(pathAlarmFile));
 
@@ -776,6 +775,7 @@ public class Model {
      * @param alarm resolved {@link Alarm}.
      * @param notes information about how alarm was offed.
      * @return success of operation.
+     * @author mizukami
      * Writes alarm on alarms csv file to archive it as resolved.
      */
     public boolean offAlarm(String cf, Alarm alarm, String notes) {

@@ -1,5 +1,10 @@
 package it.univr.terapiaintensiva.model;
 
+/**
+ * @author mizukami
+ * A person with name and surname.
+ * Class CsvWritable.
+ */
 public class Person implements CsvWritable {
     private String name;
     private String surname;

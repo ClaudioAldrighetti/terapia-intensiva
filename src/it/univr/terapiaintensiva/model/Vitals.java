@@ -1,5 +1,10 @@
 package it.univr.terapiaintensiva.model;
 
+/**
+ * @author mizukami
+ * Contains patient's vital parameters: heart beat, body temperature, sistolic and diastolic pressure.
+ * Class CsvWritable.
+ */
 public class Vitals implements CsvWritable {
     public static final int nullVital = -1;
 
