@@ -22,6 +22,7 @@ public class Model {
     private final String pathVitalsFile = "vitals.csv";
     private final String pathPrescriptionsFile = "prescriptions.csv";
     private final String pathAdministrationsFile = "administrations.csv";
+    private final String pathAlarmsFile = "alarms.csv";
     private final String pathDiagnosisFile = "diagnosis.txt";
     private final String pathLetterFile = "dischargeLetter.txt";
 
@@ -285,6 +286,10 @@ public class Model {
                 // Create administrations csv file
                 String pathAdministrations = pathNewPatient.concat(pathAdministrationsFile);
                 FilesEditor.csvCreateFile(pathAdministrations, Administration.csvFormat());
+
+                // Create alarms csv file
+                String pathAlarms = pathNewPatient.concat(pathAlarmsFile);
+                FilesEditor.csvCreateFile(pathAdministrations, Alarm.csvFormat().concat(",notes"));
 
                 // Create diagnosis txt file
                 String pathDiagnosis = pathNewPatient.concat(pathDiagnosisFile);
@@ -702,7 +707,13 @@ public class Model {
         return null;
     }
 
-    public ArrayList<Alarm> getAlarms(String cf){
+    /**
+     * @param cf codice fiscale of the patient.
+     * @return list of new {@link Alarm}s.
+     * @author ClaudioAldrighetti
+     * Looks for new {@link Alarm}s of patient.
+     */
+    public ArrayList<Alarm> checkNewAlarms(String cf){
         // Find patient
         int pEntry = findPatient(cf);
 
@@ -718,9 +729,8 @@ public class Model {
             File dirPatient = new File(pathPatient);
 
             for(String filePatient: dirPatient.list()){
-                boolean condition = filePatient.contains("newAlarm");
-                if (condition)
-                    alarms.add(setAlarmAsRead(cf, pathPatient.concat("/".concat(filePatient))));
+                if (filePatient.contains("newAlr"))
+                    alarms.add(readAlarm(cf, pathPatient.concat(filePatient)));
             }
         }
 
@@ -732,9 +742,9 @@ public class Model {
      * @param pathAlarmFile path of new alarm file.
      * @return {@link Alarm} extracted.
      * @author ClaudioAldrighetti
-     * Returns new alarm and set alarm file as read.
+     * Returns new alarm and set alarm file as read (deletes new alarm file).
      */
-    public Alarm setAlarmAsRead(String cf, String pathAlarmFile) {
+    public Alarm readAlarm(String cf, String pathAlarmFile) {
         // Find patient
         int pEntry = findPatient(cf);
 
@@ -751,18 +761,58 @@ public class Model {
             // Get new alarm
             Alarm alarm = FilesEditor.csvGetAlarm(FilesEditor.csvReadRecord(alarmFile));
 
-            // Rename file
-            String newAlarmFileName = pathPatients.concat(cf + "/" + "alrRead" + alarm.getTime() + ".csv");
-            File oldAlarmFile = new File(pathAlarmFile);
-            File newAlarmFile = new File(newAlarmFileName);
-            oldAlarmFile.renameTo(newAlarmFile);
+            // Write it on alarms csv file
+/*            String pathAlarms = pathPatients.concat(cf + "/" + pathAlarmsFile);
+            if( !Files.exists(Paths.get(pathAlarms)) )
+                FilesEditor.csvCreateFile(pathAlarms, Alarm.csvFormat().concat(",notes"));
+            FilesEditor.csvWriteRecord(pathAlarms, alarm);
+*/
+            // Delete new alarm file
+            Files.delete(Paths.get(pathAlarmFile));
 
             return alarm;
 
         } catch (IOException e) {
-            System.out.println("setAlarmAsRead() catches IOException");
+            System.out.println("readAlarm() catches IOException");
             e.printStackTrace();
             return null;
+        }
+
+    }
+
+    /**
+     * @param cf codice fiscale of the patient.
+     * @param alarm resolved {@link Alarm}.
+     * @param notes information about how alarm was offed.
+     * @return success of operation.
+     * Writes alarm on alarms csv file to archive it as resolved.
+     */
+    public boolean offAlarm(String cf, Alarm alarm, String notes) {
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if (pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return false;
+        }
+
+        try {
+            // Check alarms csv file
+            String pathAlarms = pathPatients.concat(cf + "/" + pathAlarmsFile);
+            if (!Files.exists(Paths.get(pathAlarms)))
+                FilesEditor.csvCreateFile(pathAlarms, Alarm.csvFormat().concat(",notes"));
+
+            // Write resolved alarm on alarms csv file
+            // N.B: To concat notes, we have to use write() and not csvWriteRecord()
+            FilesEditor.write(pathAlarms, alarm.toCsv().concat("," + notes + "\n"));
+
+            return true;
+
+        } catch(IOException e) {
+            System.out.println("offAlarm() catches IOException");
+            e.printStackTrace();
+            return false;
         }
 
     }

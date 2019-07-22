@@ -207,7 +207,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
     public void checkAlarms() {
         AlarmDialog alarmDialog;
         if (this.patient != null) {
-            ArrayList<Alarm> alarms = model.getAlarms(patient.getCf());
+            ArrayList<Alarm> alarms = model.checkNewAlarms(patient.getCf());
             for (Alarm alarm : alarms) {
                 alarmDialog = new AlarmDialog(patient, alarm);
                 alarmDialog.setVisible(true);
