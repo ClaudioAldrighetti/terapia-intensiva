@@ -43,7 +43,7 @@ public class VitalsLog extends Vitals {
     public String toString() {
         return
                 (
-                        "Heartbeat: " + getHeartBeat() +
+                        "\nHeartbeat: " + getHeartBeat() +
                         "\nTemperature: " + getTemperature() +
                         "\nSbp: " + getSbp() +
                         "\nDbp: " + getDbp() +

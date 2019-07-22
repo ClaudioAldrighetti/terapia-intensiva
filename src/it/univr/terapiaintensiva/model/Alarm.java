@@ -98,7 +98,7 @@ public class Alarm implements CsvWritable {
         String strStatus = (status == ALARM_ON)? "On" : ( (status == ALARM_OFF_INT)? "Off in time" : "Off out of time" );
         return
                 (
-                 "Name: " + name +
+                 "\nName: " + name +
                  "\nLevel: " + level +
                  "\nStatus: " + strStatus +
                  "\nDate: " + date +

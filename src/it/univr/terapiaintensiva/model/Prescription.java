@@ -28,7 +28,7 @@ public class Prescription implements CsvWritable {
     public String toString() {
         return
                (
-                "Duration of prescription: " + duration + " days" +
+                "\nDuration of prescription: " + duration + " days" +
                 "\nMedicine: " + medicine +
                 "\nDaily doses: " + nDoses +
                 "\nQuantity: " + dose +

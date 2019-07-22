@@ -36,7 +36,7 @@ public class Administration implements CsvWritable {
         String noteStr = ( notes.equals("") ? "" : "\n" + notes + "\n");
         return
                 (
-                 "Medicine: " + medicine +
+                 "\nMedicine: " + medicine +
                  "\nDose: " + dose +
                  "\nNotes: " + noteStr +
                  "\nDate of administration: " + date +

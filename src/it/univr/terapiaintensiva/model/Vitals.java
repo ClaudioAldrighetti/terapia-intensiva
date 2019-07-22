@@ -58,7 +58,7 @@ public class Vitals implements CsvWritable {
     public String toString() {
         return
                 (
-                 "Heartbeat: " + heartBeat +
+                 "\nHeartbeat: " + heartBeat +
                  "\nTemperature: " + temperature +
                  "\nSbp: " + sbp +
                  "\nDbp: " + dbp
