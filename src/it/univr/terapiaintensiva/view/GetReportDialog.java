@@ -55,6 +55,7 @@ class GetReportDialog extends JDialog implements ActionListener {
     @Override
 
     public void actionPerformed(ActionEvent e) {
+        ReportDialog reportDialog;
         if (e.getSource().equals(okButton)) {
             Instant instant = Instant.ofEpochMilli(startModel.getDate().getTime());
             LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
@@ -63,8 +64,10 @@ class GetReportDialog extends JDialog implements ActionListener {
             ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
             LocalDate endDate = ldt.toLocalDate();
             String report = Model.getInstance().getReport(startDate, endDate);
-            if (report.length() > 0)
-                JOptionPane.showMessageDialog(this, report);
+            if (report.length() > 0) {
+                reportDialog = new ReportDialog(report);
+                reportDialog.setVisible(true);
+            }
         }
         this.dispose();
     }
