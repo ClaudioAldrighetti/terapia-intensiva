@@ -54,7 +54,10 @@ public class AlarmDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(deactivateButton)) {
             timer.stop();
-            boolean inTime = remainingTime > 0;
+            if (remainingTime > 0)
+                alarm.setStatus(Alarm.ALARM_OFF_INT);
+            else
+                alarm.setStatus(Alarm.ALARM_OFF_OUTT);
             String actions = JOptionPane.showInputDialog(
                     this,
                     "Quali azioni sono state eseguite\n" +
@@ -62,7 +65,7 @@ public class AlarmDialog extends JDialog implements ActionListener {
                     "Azioni",
                     JOptionPane.QUESTION_MESSAGE
                     );
-            //TODO
+            Model.getInstance().offAlarm(patient.getCf(), this.alarm, actions);
             this.dispose();
         } else {
             if (remainingTime > 0) {
