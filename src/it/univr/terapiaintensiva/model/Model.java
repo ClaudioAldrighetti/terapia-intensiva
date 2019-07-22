@@ -190,9 +190,9 @@ public class Model {
     }
 
     /**
-     * @return An instance of Model.
+     * @return An instance of {@link Model}.
      * @author ecavicc
-     * Returns an instance of Model, initializing it if it is null. It makes Model a singleton.
+     * Returns an instance of {@link Model}, initializing it if it is null. It makes {@link Model} a singleton.
      */
     public static Model getInstance(){
         if (instance == null)
@@ -200,11 +200,10 @@ public class Model {
         return instance;
     }
 
-    // UC1
     /**
      * @param username username.
      * @param password password.
-     * @return User type (guest, doctor etc...). In case of exception, it returns char 'e'.
+     * @return User type (guest, doctor etc...). In case of exception, it returns 'e'.
      * @author ClaudioAldrighetti
      * Authenticates user checking username and password and returns his user type.
      */
@@ -244,12 +243,11 @@ public class Model {
         return type;
     }
 
-    // UC2
     /**
-     * @param patient patient to hospitalize.
+     * @param patient {@link Patient} to hospitalize.
      * @return success of operation.
      * @author ClaudioAldrighetti
-     * If it is possible, it hospitalizes the patient, adds him to patients list and creates his medical records and logs files.
+     * If it is possible, it hospitalizes patient, adds him to patients list and creates his medical records and logs files.
      */
     public boolean hospitalizePatient(Patient patient) {
         // Check if there is a free bed
@@ -308,17 +306,16 @@ public class Model {
                 return true;
 
             } catch (IOException e){
-                System.out.println("hospitalizePatient() catch IOException!");
+                System.out.println("hospitalizePatient() catches IOException!");
                 e.printStackTrace();
                 return false;
             }
         }
     }
 
-    // UC3
     /**
-     * @param cf codice fiscale of the patient.
-     * @param diagnosis diagnosis to add or change.
+     * @param cf codice fiscale of {@link Patient}.
+     * @param diagnosis {@link String} diagnosis to add or change.
      * @return success of operation.
      * @author ClaudioAldrighetti
      * Adds new diagnosis if patient hasn't a diagnosis or changes or modifies last diagnosis with new diagnosis.
@@ -349,19 +346,18 @@ public class Model {
             return true;
 
         } catch (IOException e){
-            System.out.println("setDiagnosis() catch IOException!");
+            System.out.println("setDiagnosis() catches IOException!");
             e.printStackTrace();
             return false;
         }
     }
 
-    // UC4
     /**
-     * @param cf codice fiscale of the patient.
-     * @param prescription prescription to add.
+     * @param cf codice fiscale of {@link Patient}.
+     * @param prescription {@link Prescription} to add.
      * @return success of operation.
      * @author ClaudioAldrighetti
-     * Adds new prescription to the patient and writes it on prescriptions.csv file.
+     * Adds prescription to the patient and writes it on prescriptions csv file.
      */
     public boolean addPrescription(String cf, Prescription prescription) {
         // Find patient
@@ -396,19 +392,18 @@ public class Model {
             return true;
 
         } catch (IOException e) {
-            System.out.println("addPrescription() catch IOException!");
+            System.out.println("addPrescription() catches IOException!");
             e.printStackTrace();
             return false;
         }
     }
 
-    // UC5
     /**
-     * @param cf codice fiscale of the patient.
-     * @param administration administration to add.
+     * @param cf codice fiscale of {@link Patient}.
+     * @param administration {@link Administration} to add.
      * @return success of operation.
      * @author ClaudioAldrighetti
-     * Adds new adnministration to the patient and writes it on administrations.csv file.
+     * Adds adnministration to the patient and writes it on administrations csv file.
      */
     public boolean addAdministration(String cf, Administration administration) {
         // Find patient
@@ -443,15 +438,14 @@ public class Model {
             return true;
 
         } catch (IOException e) {
-            System.out.println("addAdministration() catch IOException!");
+            System.out.println("addAdministration() catches IOException!");
             e.printStackTrace();
             return false;
         }
     }
 
-    // UC7, UC8
     /**
-     * @param cf codice fiscale of the patient.
+     * @param cf codice fiscale of {@link Patient}.
      * @return List of {@link VitalsLog} registered within 15 minutes for guests or 2 hours for authenticated users. Null in case of error.
      * @author ClaudioAldrighetti
      * Returns list of last vital parameters logs of the patient.
@@ -527,10 +521,10 @@ public class Model {
     }
 
     /**
-     * @param cf codice fiscale of the patient.
+     * @param cf codice fiscale of {@link Patient}.
      * @return list of patient's prescriptions. Null in case of error.
      * @author ClaudioAldrighetti
-     * Returns list of patient's prescriptions if cf is correct and user is authenticated.
+     * Returns list of patient's prescriptions if user is authenticated.
      */
     public ArrayList<Prescription> getPatientPrescriptions(String cf){
         // Find patient
@@ -551,12 +545,11 @@ public class Model {
         return patients.get(pEntry).getPrescriptions();
     }
 
-    // UC9
     /**
-     * @param cf codice fiscale of the patient.
+     * @param cf codice fiscale of {@link Patient}.
      * @return list of patient's administrations. Null in case of error.
      * @author ClaudioAldrighetti
-     * Returns list of patient's administrations if cf is correct and user is authenticated.
+     * Returns list of patient's administrations if user is authenticated.
      */
     public ArrayList<Administration> getPatientAdministrations(String cf){
         // Find patient
@@ -577,9 +570,8 @@ public class Model {
         return patients.get(pEntry).getAdministrations();
     }
 
-    // UC11
     /**
-     * @param cf codice fiscale of the patient.
+     * @param cf codice fiscale of {@link Patient}.
      * @param letterText text of resignation letter.
      * @return success of operation.
      * @author ClaudioAldrighetti
@@ -614,7 +606,7 @@ public class Model {
             Files.delete(Paths.get(pathPatient));
 
             // Creating new discharge letter
-            String pathDischargeLetter = pathThisDischarge.concat(pathLetterFile/*.split(".")[0] + LocalDate.now() + pathLetterFile.split(".")[1]*/);
+            String pathDischargeLetter = pathThisDischarge.concat(pathLetterFile);
             Files.createFile(Paths.get(pathDischargeLetter));
             FilesEditor.write(pathDischargeLetter, letterText, false);
 
@@ -624,19 +616,18 @@ public class Model {
             return true;
 
         } catch (IOException e){
-            System.out.println("dischargePatient() catch IOException!");
+            System.out.println("dischargePatient() catches IOException!");
             e.printStackTrace();
             return false;
         }
     }
 
-    // UC12
     /**
-     * @param cf codice fiscale of the patient.
-     * @param vitals new vital parameters registered.
+     * @param cf codice fiscale of {@link Patient}.
+     * @param vitals new {@link Vitals} registered.
      * @return success of operation.
      * @author ClaudioAldrighetti
-     * Changes vital parameters of the patient and adds log in vitals.csv file.
+     * Changes vital parameters of the patient and adds log in vitals csv file.
      */
     public boolean changeVitals(String cf, Vitals vitals) {
         // Find patient
@@ -674,7 +665,7 @@ public class Model {
     }
 
     /**
-     * @param cf codice fiscale of the patient.
+     * @param cf codice fiscale of {@link Patient}.
      * @return the most recent instance of {@link Vitals}. Null in case of error.
      * @author ecavicc
      * Returns the current parameters of the given patient.
@@ -708,10 +699,10 @@ public class Model {
     }
 
     /**
-     * @param cf codice fiscale of the patient.
+     * @param cf codice fiscale of {@link Patient}.
      * @return list of new {@link Alarm}s.
      * @author ClaudioAldrighetti
-     * Looks for new {@link Alarm}s of patient.
+     * Looks for new {@link Alarm}s of patient and returns their list.
      */
     public ArrayList<Alarm> checkNewAlarms(String cf){
         // Find patient
@@ -738,11 +729,11 @@ public class Model {
     }
 
     /**
-     * @param cf codice fiscale of the patient.
+     * @param cf codice fiscale of {@link Patient}.
      * @param pathAlarmFile path of new alarm file.
      * @return {@link Alarm} extracted.
      * @author ClaudioAldrighetti
-     * Returns new alarm and set alarm file as read (deletes new alarm file).
+     * Returns new {@link Alarm} and deletes its file.
      */
     public Alarm readAlarm(String cf, String pathAlarmFile) {
         // Find patient
@@ -781,7 +772,7 @@ public class Model {
     }
 
     /**
-     * @param cf codice fiscale of the patient.
+     * @param cf codice fiscale of {@link Patient}.
      * @param alarm resolved {@link Alarm}.
      * @param notes information about how alarm was offed.
      * @return success of operation.

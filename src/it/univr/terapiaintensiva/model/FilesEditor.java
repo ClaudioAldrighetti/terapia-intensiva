@@ -30,8 +30,8 @@ public final class FilesEditor {
     }
 
     /**
-     * @param csvFile Reader used to read one record (line) from a csv file.
-     * @return An array of {@link String} that contains the values of read record. Null if there isn't a record to read or in case of error.
+     * @param csvFile {@link BufferedReader} used to read one record (line) from a csv file.
+     * @return an array of {@link String} that contains the values of read record. Null if there isn't a record to read or in case of error.
      * @author ClaudioAldrighetti
      * Returns values of read record.
      */
@@ -48,6 +48,12 @@ public final class FilesEditor {
         }
     }
 
+    /**
+     * @param csvFile {@link BufferedReader} used to read last record (line) from a csv file.
+     * @return an array of {@link String} that contains the values of read record. Null in case of error or empty file.
+     * @author ClaudioAldrighetti
+     * Returns values of last record.
+     */
     // Return last record of csvFile
     public static String[] csvReadLastRecord(BufferedReader csvFile) {
         String[] lastRecord= null;
@@ -61,11 +67,23 @@ public final class FilesEditor {
         return lastRecord;
     }
 
+    /**
+     * @param csvFile {@link BufferedReader} of csv file.
+     * @throws IOException
+     * @author ClaudioAldrighetti
+     * Skip current record of csv file (usually is used to skip format line).
+     */
     // Skip next record of csvFile
     public static void csvSkipRecord(BufferedReader csvFile) throws IOException {
         csvFile.readLine();
     }
 
+    /**
+     * @param registryData values read from registry csv file.
+     * @return {@link Patient} got from data.
+     * @author ClaudioAldrighetti
+     * Returns {@link Patient} from values in registryData.
+     */
     public static Patient csvGetPatient(String[] registryData){
         String name = registryData[0];
         String surname = registryData[1];
@@ -76,6 +94,12 @@ public final class FilesEditor {
         return new Patient(name, surname, cf, pob, dob);
     }
 
+    /**
+     * @param vitalsData values read from vitals csv file.
+     * @return {@link Vitals} got from data.
+     * @author ClaudioAldrighetti
+     * Returns {@link Vitals} from values in vitalsData.
+     */
     public static Vitals csvGetVitals(String[] vitalsData){
         int heartBeat = Integer.parseInt(vitalsData[0]);
         double temperature = Double.parseDouble(vitalsData[1]);
@@ -85,6 +109,12 @@ public final class FilesEditor {
         return new Vitals(heartBeat, temperature, sbp, dbp);
     }
 
+    /**
+     * @param vitalsLogData values read from vitals csv file.
+     * @return {@link VitalsLog} got from data.
+     * @author ClaudioAldrighetti
+     * Returns {@link VitalsLog} from values in vitalsLogData.
+     */
     public static VitalsLog csvGetVitalsLog(String[] vitalsLogData){
         LocalDate date = strToLocalDate(vitalsLogData[4]);
         LocalTime time = strToLocalTime(vitalsLogData[5]);
@@ -92,6 +122,12 @@ public final class FilesEditor {
         return new VitalsLog(csvGetVitals(vitalsLogData), date, time);
     }
 
+    /**
+     * @param prescriptionData values read from prescriptions csv file.
+     * @return {@link Prescription} got from data.
+     * @author ClaudioAldrighetti
+     * Returns {@link Prescription} from values in prescriptionData.
+     */
     public  static Prescription csvGetPrescription(String[] prescriptionData) {
         int duration = Integer.parseInt(prescriptionData[0]);
         String medicine = prescriptionData[1];
@@ -103,6 +139,12 @@ public final class FilesEditor {
         return new Prescription(duration, medicine, nDoses, dose, date, time);
     }
 
+    /**
+     * @param administrationData values read from administrations csv file.
+     * @return {@link Administration} got from data.
+     * @author ClaudioAldrighetti
+     * Returns {@link Administration} from values in administrationData.
+     */
     public static Administration csvGetAdministration(String[] administrationData) {
         String medicine = administrationData[0];
         double dose = Double.parseDouble(administrationData[1]);
@@ -113,6 +155,12 @@ public final class FilesEditor {
         return new Administration(medicine, dose, notes, date, time);
     }
 
+    /**
+     * @param alarmData values read from alarms csv file.
+     * @return {@link Alarm} got from data.
+     * @author ClaudioAldrighetti
+     * Returns {@link Alarm} from values in alarmData.
+     */
     public static Alarm csvGetAlarm(String[] alarmData){
         String name = alarmData[0];
         int level = Integer.parseInt(alarmData[1]);
@@ -122,6 +170,14 @@ public final class FilesEditor {
         return new Alarm(name, level, status, time);
     }
 
+    /**
+     * @param pathCsvFile file on wich write operation is performed.
+     * @param csvObject {@link CsvWritable} object that has to be written on csv file.
+     * @param append if true, new record is written at the end of file, else at the start.
+     * @throws IOException
+     * @author ClaudioAldrighetti
+     * Writes csvObject on csv file as a new record.
+     */
     // Write CsvWritable object on csvFile using path
     public static void csvWriteRecord(String pathCsvFile, CsvWritable csvObject, boolean append) throws IOException {
         FileWriter csvFileWriter = new FileWriter(pathCsvFile, append);
@@ -132,12 +188,28 @@ public final class FilesEditor {
         csvFileWriter.flush();
         csvFileWriter.close();
     }
+
+    /**
+     * @param pathCsvFile file on wich write operation is performed.
+     * @param csvObject {@link CsvWritable} object that has to be written on csv file.
+     * @throws IOException
+     * @author ClaudioAldrighetti
+     * Writes csvObject on csv file as a new record, always at the end of the file.
+     */
     public static void csvWriteRecord(String pathCsvFile, CsvWritable csvObject) throws IOException {
         csvWriteRecord(pathCsvFile, csvObject, true);
     }
 
     // GENERIC TEXT FILE INTERACTIONS
 
+    /**
+     * @param pathFile file on wich write operation is performed.
+     * @param str {@link String} that has to be written on file.
+     * @param append if true, str is written at the end of file, else at the start.
+     * @throws IOException
+     * @author ClaudioAldrighetti
+     * Write {@link String} str on file.
+     */
     // Write string on file using path
     public static void write(String pathFile, String str, boolean append) throws IOException {
         FileWriter fileWriter = new FileWriter(pathFile, append);
@@ -145,12 +217,25 @@ public final class FilesEditor {
         fileWriter.flush();
         fileWriter.close();
     }
+
+    /**
+     * @param pathFile file on wich write operation is performed.
+     * @param str {@link String} that has to be written on file.
+     * @throws IOException
+     * @author ClaudioAldrighetti
+     * Write {@link String} str on file, always at the end of it.
+     */
     public static void write(String pathFile, String str) throws IOException {
         write(pathFile, str, true);
     }
 
     // AUXILIARY METHODS
 
+    /**
+     * @param dateStr {@link String} that has to be convertet in LocalDate.
+     * @return {@link LocalDate} got from dateStr.
+     * @author ClaudioAldrighetti
+     */
     public static LocalDate strToLocalDate(String dateStr) {
         return LocalDate.of(
             Integer.parseInt(dateStr.split(dateSeparator)[0]),
@@ -159,6 +244,11 @@ public final class FilesEditor {
         );
     }
 
+    /**
+     * @param timeStr {@link String} that has to be convertet in LocalTime.
+     * @return {@link LocalTime} got from timeStr in hours, minutes and seconds.
+     * @author ClaudioAldrighetti
+     */
     public static LocalTime strToLocalTime(String timeStr) {
         return LocalTime.of(
             Integer.parseInt(timeStr.split(timeSeparator)[0]),
