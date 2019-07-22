@@ -59,7 +59,7 @@ public class DiagnosisFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton)) {
-            int i = Model.getInstance().getPatients().indexOf(patient);
+            int i = Model.getInstance().getHospitalizedPatients().indexOf(patient);
             String txt = diagnosisPane.getText();
             Model.getInstance().setDiagnosis(patient.getCf(), txt);
         }

@@ -816,11 +816,191 @@ public class Model {
 
     }
 
-    // Return patients ArrayList
-    public ArrayList<Patient> getPatients(){
+    /**
+     * @param cf codice fiscale of {@link Patient}.
+     * @param pathPatientsDir directory that contains patient's medical records.
+     * @return list of {@link AlarmOff}s correlated to the {@link Patient}.
+     * @author mizukami
+     */
+    public ArrayList<AlarmOff> getPatientAlarmsOff(String cf, String pathPatientsDir){
+        // Find patient
+        int pEntry = findPatient(cf);
+
+        // Wrong cf or patient isn't hospitalized
+        if (pEntry == -1) {
+            System.out.println("Patient not found: invalid cf");
+            return null;
+        }
+
+        try {
+            // Alarms list
+            ArrayList<AlarmOff> alarms = new ArrayList<>();
+
+            // Alarms csv file
+            String pathAlarms = pathPatientsDir.concat(cf + "/" + pathAlarmsFile);
+            BufferedReader alarmsFile = new BufferedReader(new FileReader(pathAlarms));
+            FilesEditor.csvSkipRecord(alarmsFile);
+
+            String[] alarmRecord = FilesEditor.csvReadRecord(alarmsFile);
+            while (alarmRecord != null) {
+                alarms.add(FilesEditor.csvGetAlarmOff(alarmRecord));
+                alarmRecord = FilesEditor.csvReadRecord(alarmsFile);
+            }
+
+            return alarms;
+
+        } catch(IOException e) {
+            System.out.println("getPatientAlarmsOff() catches IOException");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * @param cf codice fiscale of {@link Patient}.
+     * @return list of {@link Alarm}s correlated to the {@link Patient}.
+     * @author mizukami
+     * Selects default directory that contains patients medical records as pathPatientsDir.
+     */
+    public ArrayList<AlarmOff> getPatientAlarmsOff(String cf){
+        return getPatientAlarmsOff(cf, pathPatients);
+    }
+
+    /**
+     * @param firstDate the less recent date of report.
+     * @param lastDate the latest date of report.
+     * @param patient {@link Patient} to report.
+     * @param pathPatientsDir path of directory that contains patient's medical records.
+     * @return patient's report.
+     * @author mizukami
+     */
+    public String getPatientReport(LocalDate firstDate, LocalDate lastDate, Patient patient, String pathPatientsDir) {
+        // Patient string
+        String patientStr = "";
+
+        // Check prescriptions list
+        String prescriptionsStr = "";
+        if(!patient.getPrescriptions().isEmpty()) {
+            for (Prescription prescription : patient.getPrescriptions())
+                if(
+                        (prescription.getDate().isAfter(firstDate) || prescription.getDate().isEqual(firstDate)) &&
+                                (prescription.getDate().isBefore(lastDate) || prescription.getDate().isEqual(firstDate))
+                )
+                    prescriptionsStr.concat(prescription.toString());
+        }
+        if(prescriptionsStr != "") {
+            prescriptionsStr = "\nPresciptions:" + prescriptionsStr;
+            patientStr = patientStr.concat(prescriptionsStr);
+        }
+
+
+        // Check administrations list
+        String administrationsStr = "";
+        if(!patient.getAdministrations().isEmpty()) {
+            for (Administration administration : patient.getAdministrations())
+                if(
+                        (administration.getDate().isAfter(firstDate) || administration.getDate().isEqual(firstDate)) &&
+                                (administration.getDate().isBefore(lastDate) || administration.getDate().isEqual(firstDate))
+                )
+                    administrationsStr.concat(administration.toString());
+        }
+        if(administrationsStr != "") {
+            administrationsStr = "\nAdministrations:" + administrationsStr;
+            patientStr = patientStr.concat(administrationsStr);
+        }
+
+        // Search for alarms
+        String alarmsStr = "";
+        ArrayList<AlarmOff> alarms = getPatientAlarmsOff(patient.getCf(), pathPatientsDir);
+        if(!alarms.isEmpty()) {
+            for (AlarmOff alarm : alarms)
+                if(
+                    (alarm.getDate().isAfter(firstDate) || alarm.getDate().isEqual(firstDate)) &&
+                    (alarm.getDate().isBefore(lastDate) || alarm.getDate().isEqual(firstDate))
+                )
+                    alarmsStr.concat(alarm.toString());
+        }
+        if(alarmsStr != "") {
+            alarmsStr = "\nAlarms:" + alarmsStr;
+            patientStr = patientStr.concat(alarmsStr);
+        }
+
+        // If some events were found
+        if(patientStr != "") {
+            patientStr =
+                    patient.toString() +
+                    "\nDiagnosis: " + patient.getDiagnosis() +
+                    patientStr + "\n";
+        }
+
+        return patientStr;
+    }
+
+    /**
+     * @param firstDate the less recent date of report.
+     * @param lastDate the latest date of report.
+     * @return report of selected time lapse.
+     * @author mizukami
+     * Generates a report of happened events between firstDate and lastDate.
+     */
+    public String getReport(LocalDate firstDate, LocalDate lastDate){
+        // Check user
+        if(type != CHIEF)
+            return null;
+
+        // Check and switch invalid time lapse
+        if(firstDate.isAfter(lastDate))
+            return getReport(lastDate, firstDate);
+
+        // Report string
+        String reportStr = new String();
+
+        // Search in hospitalized patients list
+        for(Patient hospitalizedPatient: patients){
+            reportStr.concat(getPatientReport(firstDate, lastDate, hospitalizedPatient, pathPatients));
+        }
+
+        // Search in discharged patients list
+        // TODO
+/*        for(Patient dischargedPatient: getDischargedPatients()){
+            String dischargedPatientStr = "";
+        }
+*/
+        return reportStr;
+    }
+
+    // Return hospitalized patients list
+    public ArrayList<Patient> getHospitalizedPatients(){
         return patients;
     }
 
+/*    public ArrayList<Patient> getDischargedPatients(){
+        ArrayList<Patient> dischargedPatients = new ArrayList<>();
+
+        // Search in discharged patients directory
+        if(Files.exists(Paths.get(pathDischarged)) && Files.isDirectory(Paths.get(pathDischarged))) {
+            File dirPatientsDischarged = new File(pathDischarged);
+
+            // Search discharged patients
+            for(String pathPatientDischarged: dirPatientsDischarged.list()){
+                if(Files.isDirectory(Paths.get(pathPatientDischarged))){
+
+                    // Here it's in: ./discharged/cf/
+                    File dirPatientDischarged = new File(pathPatientDischarged);
+                    if(dirPatientDischarged.listFiles().length != 0) {
+
+                        // Take last archived medical records
+
+                        for(String lastMRFile: dirPatientDischarged.list()[0])
+                    }
+                }
+            }
+
+        }
+
+        return dischargedPatients;
+    }
+*/
     // AUXILIARY PRIVATE METHODS
 
     // Return index position of patient in patients, or -1 if patient doesn't exist
