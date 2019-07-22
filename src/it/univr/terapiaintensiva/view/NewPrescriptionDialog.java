@@ -1,9 +1,8 @@
 package it.univr.terapiaintensiva.view;
 
-import it.univr.terapiaintensiva.model.Administration;
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
-import org.apache.commons.lang3.StringEscapeUtils;
+import it.univr.terapiaintensiva.model.Prescription;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,33 +11,40 @@ import java.awt.event.ActionListener;
 import java.time.*;
 
 /**
- * A form used to add a new {@link Administration} to the record of the patient.
+ * A form used to acquire all the data about a new {@link Prescription}.
  */
-public class NewAdministrationFrame extends JFrame implements ActionListener {
+public class NewPrescriptionDialog extends JDialog implements ActionListener {
 
-    private static final String title = "Nuova somministrazione";
+    private final Patient patient;
+
+    private static final String title = "Nuova prescrizione";
     private static final JLabel medicineLabel = new JLabel("Farmaco");
+    private static final JLabel durationLabel = new JLabel("Durata");
     private static final JLabel doseLabel = new JLabel("Dose");
-    private static final JLabel dateLabel = new JLabel("Data e ora");
-    private static final JLabel notesLabel = new JLabel("Note");
+    private static final JLabel nDosesLabel = new JLabel("Numero di dosi");
+    private static final JLabel dateLabel = new JLabel("Data");
     private final JTextField medicineTextField = new JTextField();
+    private final SpinnerNumberModel durationModel = new SpinnerNumberModel();
+    private final JSpinner durationSpinner = new JSpinner(durationModel);
     private final SpinnerNumberModel doseModel = new SpinnerNumberModel(0.0, 0.0, null, 0.1);
     private final JSpinner doseSpinner = new JSpinner(doseModel);
+    private final SpinnerNumberModel nDosesModel = new SpinnerNumberModel();
+    private final JSpinner nDosesSpinner = new JSpinner(nDosesModel);
     private final SpinnerDateModel dateModel = new SpinnerDateModel();
     private final JSpinner dateSpinner = new JSpinner(dateModel);
     private final JButton okButton = new JButton("Ok");
     private final JButton cancelButton = new JButton("Annulla");
-    private final JTextPane notesPane = new JTextPane();
-    private final JScrollPane scrollPane = new JScrollPane(notesPane);
     private final JPanel centerPanel = new JPanel(new GridBagLayout());
     private final JPanel southPanel = new JPanel(new FlowLayout());
     private final GridBagConstraints c = new GridBagConstraints();
-    private final Patient patient;
 
     /**
-     * @param patient the patient to whom to add the administration
+     * @param patient the patient to whom to add the new prescription
      */
-    public NewAdministrationFrame(Patient patient) {
+    public NewPrescriptionDialog(Patient patient) {
+
+        super(MonitorFrame.getInstance());
+        this.setModal(true);
 
         this.patient = patient;
 
@@ -46,8 +52,13 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
         okButton.addActionListener(this);
         cancelButton.addActionListener(this);
 
+        durationSpinner.setPreferredSize(new Dimension(60, 27));
         doseSpinner.setPreferredSize(new Dimension(60, 27));
+        nDosesSpinner.setPreferredSize(new Dimension(60, 27));
+
+        durationSpinner.setMinimumSize(new Dimension(60, 27));
         doseSpinner.setMinimumSize(new Dimension(60, 27));
+        nDosesSpinner.setMinimumSize(new Dimension(60, 27));
 
         c.insets.set(5, 5, 5, 5);
         c.anchor = GridBagConstraints.EAST;
@@ -56,27 +67,29 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
         c.weighty = 0.0;
         centerPanel.add(medicineLabel, c);
         c.gridy++;
+        centerPanel.add(durationLabel, c);
+        c.gridy++;
         centerPanel.add(doseLabel, c);
         c.gridy++;
-        centerPanel.add(dateLabel, c);
+        centerPanel.add(nDosesLabel, c);
         c.gridy++;
-        centerPanel.add(notesLabel, c);
+        centerPanel.add(dateLabel, c);
         c.weightx = 1.0;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = 0;
-        c.gridx = 1;
+        c.gridx++;
         centerPanel.add(medicineTextField, c);
+        c.gridy++;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
+        centerPanel.add(durationSpinner, c);
         c.gridy++;
         centerPanel.add(doseSpinner, c);
         c.gridy++;
-        dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, "dd/MM/yyyy HH:mm"));
-        centerPanel.add(dateSpinner, c);
+        centerPanel.add(nDosesSpinner, c);
         c.gridy++;
-        c.fill = GridBagConstraints.BOTH;
-        c.weighty = 3;
-        centerPanel.add(scrollPane, c);
+        dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, "dd/MM/yyyy"));
+        centerPanel.add(dateSpinner, c);
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         southPanel.add(cancelButton);
@@ -86,7 +99,7 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
         contentPane.add(centerPanel, BorderLayout.CENTER);
         contentPane.add(southPanel, BorderLayout.SOUTH);
 
-        this.setSize(500, 350);
+        this.setSize(580, 270);
         this.setResizable(false);
         this.setTitle(title);
         this.setLocationRelativeTo(null);
@@ -94,18 +107,19 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
     }
 
     /**
-     * Reads all the data about the administration
-     * @return a new administration
+     * Reads all the {@link JTextField} and {@link JSpinner}
+     * @return a new Prescription
      */
-    private Administration getAdministration() {
+    private Prescription getPrescription() {
         Instant instant = Instant.ofEpochMilli(dateModel.getDate().getTime());
         LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         LocalDate localDate = ldt.toLocalDate();
-        LocalTime localTime = ldt.toLocalTime();
-        return new Administration(
+        LocalTime localTime = LocalTime.now();
+        return new Prescription(
+                durationModel.getNumber().intValue(),
                 medicineTextField.getText().trim(),
+                nDosesModel.getNumber().intValue(),
                 doseModel.getNumber().doubleValue(),
-                StringEscapeUtils.escapeCsv(notesPane.getText().trim()),
                 localDate,
                 localTime
         );
@@ -115,7 +129,7 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton))
-            Model.getInstance().addAdministration(patient.getCf(), getAdministration());
+            Model.getInstance().addPrescription(patient.getCf(), getPrescription());
         this.dispose();
     }
 }

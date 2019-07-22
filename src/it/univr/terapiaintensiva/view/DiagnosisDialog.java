@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 /**
  * A form in which to write and modify the diagnosis of a patient.
  */
-public class DiagnosisFrame extends JFrame implements ActionListener {
+public class DiagnosisDialog extends JDialog implements ActionListener {
 
     private final Patient patient;
 
@@ -26,7 +26,10 @@ public class DiagnosisFrame extends JFrame implements ActionListener {
     /**
      * @param patient the patient to whom to add the prescription
      */
-    public DiagnosisFrame(Patient patient) {
+    public DiagnosisDialog(Patient patient) {
+
+        super(MonitorFrame.getInstance());
+        this.setModal(true);
 
         // Listener
         okButton.addActionListener(this);
@@ -52,6 +55,7 @@ public class DiagnosisFrame extends JFrame implements ActionListener {
 
     /**
      * Writes a String to the JTextPane.
+     *
      * @param s the string to write
      */
     public void setDiagnosis(String s) {

@@ -185,20 +185,20 @@ public class MonitorPanel extends JPanel implements ActionListener {
     // Listener
     @Override
     public void actionPerformed(ActionEvent e) {
-        DiagnosisFrame diagnosisFrame;
-        NewPrescriptionFrame newPrescriptionFrame;
-        NewAdministrationFrame newAdministrationFrame;
+        DiagnosisDialog diagnosisDialog;
+        NewPrescriptionDialog newPrescriptionDialog;
+        NewAdministrationDialog newAdministrationDialog;
         ParametersDialog parametersDialog;
         if (e.getSource().equals(diagnosisButton)) {                // Diagnosis
-            diagnosisFrame = new DiagnosisFrame(this.patient);
-            diagnosisFrame.setDiagnosis(patient.getDiagnosis());
-            diagnosisFrame.setVisible(true);
+            diagnosisDialog = new DiagnosisDialog(this.patient);
+            diagnosisDialog.setDiagnosis(patient.getDiagnosis());
+            diagnosisDialog.setVisible(true);
         } else if (e.getSource().equals(newPrescriptionButton)) {   // Prescription
-            newPrescriptionFrame = new NewPrescriptionFrame(this.patient);
-            newPrescriptionFrame.setVisible(true);
+            newPrescriptionDialog = new NewPrescriptionDialog(this.patient);
+            newPrescriptionDialog.setVisible(true);
         } else if (e.getSource().equals(newAdministrationButton)) { // Administration
-            newAdministrationFrame = new NewAdministrationFrame(this.patient);
-            newAdministrationFrame.setVisible(true);
+            newAdministrationDialog = new NewAdministrationDialog(this.patient);
+            newAdministrationDialog.setVisible(true);
         } else if (e.getSource().equals(bpmLabel)) {                // Hearbeat log
             parametersDialog = new ParametersDialog(this.patient, ParametersDialog.HEARTBEAT);
             parametersDialog.setVisible(true);

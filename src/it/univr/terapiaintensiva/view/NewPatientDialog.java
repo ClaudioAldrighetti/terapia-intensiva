@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 /**
  * A form in which to put all the informations about a new patient.
  */
-public class NewPatientFrame extends JFrame implements ActionListener {
+public class NewPatientDialog extends JDialog implements ActionListener {
 
     private static final String title = "Nuovo paziente";
     private static final JLabel nameLabel = new JLabel("Nome");
@@ -39,7 +39,10 @@ public class NewPatientFrame extends JFrame implements ActionListener {
     private final GridBagConstraints c = new GridBagConstraints();
     private final Pattern pattern = Pattern.compile("^(?:[A-Z][AEIOU][AEIOUX]|[B-DF-HJ-NP-TV-Z]{2}[A-Z]){2}(?:[\\dLMNP-V]{2}(?:[A-EHLMPR-T](?:[04LQ][1-9MNP-V]|[15MR][\\dLMNP-V]|[26NS][0-8LMNP-U])|[DHPS][37PT][0L]|[ACELMRT][37PT][01LM]|[AC-EHLMPR-T][26NS][9V])|(?:[02468LNQSU][048LQU]|[13579MPRTV][26NS])B[26NS][9V])(?:[A-MZ][1-9MNP-V][\\dLMNP-V]{2}|[A-M][0L](?:[1-9MNP-V][\\dLMNP-V]|[0L][1-9MNP-V]))[A-Z]$");
 
-    public NewPatientFrame() {
+    public NewPatientDialog() {
+
+        super(MonitorFrame.getInstance());
+        this.setModal(true);
 
         // Listener
         okButton.addActionListener(this);

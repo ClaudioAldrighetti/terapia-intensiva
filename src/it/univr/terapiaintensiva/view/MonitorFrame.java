@@ -122,11 +122,11 @@ public class MonitorFrame extends JFrame implements ActionListener {
     // Listener
     @Override
     public void actionPerformed(ActionEvent e) {
-        NewPatientFrame newPatientFrame;
+        NewPatientDialog newPatientDialog;
         DischargeLetterDialog dischargeLetterDialog;
         if (e.getSource().equals(newPatientMenuItem)) {             // New patient
-            newPatientFrame = new NewPatientFrame();
-            newPatientFrame.setVisible(true);
+            newPatientDialog = new NewPatientDialog();
+            newPatientDialog.setVisible(true);
         } else if (e.getSource().equals(hospitalizedMenuItem)) {    // Hospitalized clinical records
             JFileChooser fc = new JFileChooser(Model.pathPatients);
             int returnVal = fc.showOpenDialog(this);
