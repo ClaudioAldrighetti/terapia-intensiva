@@ -15,9 +15,9 @@ import java.awt.event.ActionListener;
  * When the countDown is stopped, the user is required to enter the actions performed to bring the conditions of
  * the patient back to a normal state.
  */
-public class AlarmDialog extends JDialog implements ActionListener {
 
-    private final JLabel nameLabel;
+class AlarmDialog extends JDialog implements ActionListener {
+
     private final JLabel timerLabel;
     private final JButton deactivateButton = new JButton("Spegni");
     private final Patient patient;
@@ -29,11 +29,11 @@ public class AlarmDialog extends JDialog implements ActionListener {
      * @param patient the patient that generated the alarm
      * @param alarm   the alarm
      */
-    public AlarmDialog(Patient patient, Alarm alarm) {
+    AlarmDialog(Patient patient, Alarm alarm) {
         super(MonitorFrame.getInstance());
         this.patient = patient;
         this.alarm = alarm;
-        nameLabel = new JLabel(patient.getName() + " " + patient.getSurname() + ": " + alarm.getName().toLowerCase());
+        JLabel nameLabel = new JLabel(patient.getName() + " " + patient.getSurname() + ": " + alarm.getName().toLowerCase());
         nameLabel.setFont(new Font("sansserif", Font.PLAIN, 30));
         remainingTime = (4 - alarm.getLevel()) * 60;
         timerLabel = new JLabel(String.valueOf(remainingTime));

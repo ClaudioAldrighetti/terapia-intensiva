@@ -13,7 +13,7 @@ import java.time.*;
 /**
  * A form used to acquire all the data about a new {@link Prescription}.
  */
-public class NewPrescriptionDialog extends JDialog implements ActionListener {
+class NewPrescriptionDialog extends JDialog implements ActionListener {
 
     private final Patient patient;
 
@@ -25,23 +25,15 @@ public class NewPrescriptionDialog extends JDialog implements ActionListener {
     private static final JLabel dateLabel = new JLabel("Data");
     private final JTextField medicineTextField = new JTextField();
     private final SpinnerNumberModel durationModel = new SpinnerNumberModel();
-    private final JSpinner durationSpinner = new JSpinner(durationModel);
     private final SpinnerNumberModel doseModel = new SpinnerNumberModel(0.0, 0.0, null, 0.1);
-    private final JSpinner doseSpinner = new JSpinner(doseModel);
     private final SpinnerNumberModel nDosesModel = new SpinnerNumberModel();
-    private final JSpinner nDosesSpinner = new JSpinner(nDosesModel);
     private final SpinnerDateModel dateModel = new SpinnerDateModel();
-    private final JSpinner dateSpinner = new JSpinner(dateModel);
     private final JButton okButton = new JButton("Ok");
-    private final JButton cancelButton = new JButton("Annulla");
-    private final JPanel centerPanel = new JPanel(new GridBagLayout());
-    private final JPanel southPanel = new JPanel(new FlowLayout());
-    private final GridBagConstraints c = new GridBagConstraints();
 
     /**
      * @param patient the patient to whom to add the new prescription
      */
-    public NewPrescriptionDialog(Patient patient) {
+    NewPrescriptionDialog(Patient patient) {
 
         super(MonitorFrame.getInstance());
         this.setModal(true);
@@ -50,21 +42,27 @@ public class NewPrescriptionDialog extends JDialog implements ActionListener {
 
         // Listener
         okButton.addActionListener(this);
+        JButton cancelButton = new JButton("Annulla");
         cancelButton.addActionListener(this);
 
+        JSpinner durationSpinner = new JSpinner(durationModel);
         durationSpinner.setPreferredSize(new Dimension(60, 27));
+        JSpinner doseSpinner = new JSpinner(doseModel);
         doseSpinner.setPreferredSize(new Dimension(60, 27));
+        JSpinner nDosesSpinner = new JSpinner(nDosesModel);
         nDosesSpinner.setPreferredSize(new Dimension(60, 27));
 
         durationSpinner.setMinimumSize(new Dimension(60, 27));
         doseSpinner.setMinimumSize(new Dimension(60, 27));
         nDosesSpinner.setMinimumSize(new Dimension(60, 27));
 
+        GridBagConstraints c = new GridBagConstraints();
         c.insets.set(5, 5, 5, 5);
         c.anchor = GridBagConstraints.EAST;
         c.gridx = c.gridy = 0;
         c.weightx = 0.15;
         c.weighty = 0.0;
+        JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.add(medicineLabel, c);
         c.gridy++;
         centerPanel.add(durationLabel, c);
@@ -88,10 +86,12 @@ public class NewPrescriptionDialog extends JDialog implements ActionListener {
         c.gridy++;
         centerPanel.add(nDosesSpinner, c);
         c.gridy++;
+        JSpinner dateSpinner = new JSpinner(dateModel);
         dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, "dd/MM/yyyy"));
         centerPanel.add(dateSpinner, c);
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        JPanel southPanel = new JPanel(new FlowLayout());
         southPanel.add(cancelButton);
         southPanel.add(okButton);
 

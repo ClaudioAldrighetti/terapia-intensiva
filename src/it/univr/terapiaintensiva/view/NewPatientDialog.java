@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 /**
  * A form in which to put all the informations about a new patient.
  */
-public class NewPatientDialog extends JDialog implements ActionListener {
+class NewPatientDialog extends JDialog implements ActionListener {
 
     private static final String title = "Nuovo paziente";
     private static final JLabel nameLabel = new JLabel("Nome");
@@ -29,30 +29,28 @@ public class NewPatientDialog extends JDialog implements ActionListener {
     private final JTextField nameTextField = new JTextField();
     private final JTextField surnameTextField = new JTextField();
     private final SpinnerDateModel dateModel = new SpinnerDateModel();
-    private final JSpinner dateSpinner = new JSpinner(dateModel);
     private final JTextField pobTextField = new JTextField();
     private final JTextField cfTextField = new JTextField();
     private final JButton okButton = new JButton("Ok");
-    private final JButton cancelButton = new JButton("Annulla");
-    private final JPanel centerPanel = new JPanel(new GridBagLayout());
-    private final JPanel southPanel = new JPanel(new FlowLayout());
-    private final GridBagConstraints c = new GridBagConstraints();
     private final Pattern pattern = Pattern.compile("^(?:[A-Z][AEIOU][AEIOUX]|[B-DF-HJ-NP-TV-Z]{2}[A-Z]){2}(?:[\\dLMNP-V]{2}(?:[A-EHLMPR-T](?:[04LQ][1-9MNP-V]|[15MR][\\dLMNP-V]|[26NS][0-8LMNP-U])|[DHPS][37PT][0L]|[ACELMRT][37PT][01LM]|[AC-EHLMPR-T][26NS][9V])|(?:[02468LNQSU][048LQU]|[13579MPRTV][26NS])B[26NS][9V])(?:[A-MZ][1-9MNP-V][\\dLMNP-V]{2}|[A-M][0L](?:[1-9MNP-V][\\dLMNP-V]|[0L][1-9MNP-V]))[A-Z]$");
 
-    public NewPatientDialog() {
+    NewPatientDialog() {
 
         super(MonitorFrame.getInstance());
         this.setModal(true);
 
         // Listener
         okButton.addActionListener(this);
+        JButton cancelButton = new JButton("Annulla");
         cancelButton.addActionListener(this);
 
+        GridBagConstraints c = new GridBagConstraints();
         c.insets.set(5, 5, 5, 5);
         c.anchor = GridBagConstraints.EAST;
         c.gridx = c.gridy = 0;
         c.weightx = 0.15;
         c.weighty = 0.0;
+        JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.add(nameLabel, c);
         c.gridy++;
         centerPanel.add(surnameLabel, c);
@@ -72,6 +70,7 @@ public class NewPatientDialog extends JDialog implements ActionListener {
         c.gridy++;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
+        JSpinner dateSpinner = new JSpinner(dateModel);
         dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, "dd/MM/yyyy"));
         centerPanel.add(dateSpinner, c);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -81,6 +80,7 @@ public class NewPatientDialog extends JDialog implements ActionListener {
         centerPanel.add(cfTextField, c);
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        JPanel southPanel = new JPanel(new FlowLayout());
         southPanel.add(cancelButton);
         southPanel.add(okButton);
 

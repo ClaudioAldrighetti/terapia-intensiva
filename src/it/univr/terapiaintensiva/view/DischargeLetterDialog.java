@@ -12,7 +12,7 @@ import java.awt.print.PrinterException;
 /**
  * A dialog used to write and/or print the discharge letter for the patient.
  */
-public class DischargeLetterDialog extends JDialog implements ActionListener {
+class DischargeLetterDialog extends JDialog implements ActionListener {
 
     private JButton okButton = new JButton("Ok");
     private JTextPane textPane = new JTextPane();
@@ -22,7 +22,7 @@ public class DischargeLetterDialog extends JDialog implements ActionListener {
     /**
      * @param patient the patient to whom to add the discharge letter
      */
-    public DischargeLetterDialog(Patient patient) {
+    DischargeLetterDialog(Patient patient) {
 
         super(MonitorFrame.getInstance());
         this.patient = patient;

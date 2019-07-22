@@ -11,34 +11,34 @@ import java.awt.event.ActionListener;
 /**
  * A form in which to write and modify the diagnosis of a patient.
  */
-public class DiagnosisDialog extends JDialog implements ActionListener {
+class DiagnosisDialog extends JDialog implements ActionListener {
 
     private final Patient patient;
 
     private static final String title = "Inserisci diagnosi";
     private final JTextPane diagnosisPane = new JTextPane();
     private final JButton okButton = new JButton("Ok");
-    private final JButton cancelButton = new JButton("Annulla");
-    private final JScrollPane diagnosisScroll = new JScrollPane(diagnosisPane);
-    private final JPanel centerPanel = new JPanel(new BorderLayout());
-    private final JPanel southPanel = new JPanel(new FlowLayout());
 
     /**
      * @param patient the patient to whom to add the prescription
      */
-    public DiagnosisDialog(Patient patient) {
+    DiagnosisDialog(Patient patient) {
 
         super(MonitorFrame.getInstance());
         this.setModal(true);
 
         // Listener
         okButton.addActionListener(this);
+        JButton cancelButton = new JButton("Annulla");
         cancelButton.addActionListener(this);
 
         this.patient = patient;
 
+        JScrollPane diagnosisScroll = new JScrollPane(diagnosisPane);
+        JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(diagnosisScroll, BorderLayout.CENTER);
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel southPanel = new JPanel(new FlowLayout());
         southPanel.add(cancelButton);
         southPanel.add(okButton);
 
@@ -58,7 +58,7 @@ public class DiagnosisDialog extends JDialog implements ActionListener {
      *
      * @param s the string to write
      */
-    public void setDiagnosis(String s) {
+    void setDiagnosis(String s) {
         diagnosisPane.setText(s.trim());
     }
 
@@ -66,7 +66,6 @@ public class DiagnosisDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(okButton)) {
-            int i = Model.getInstance().getPatients().indexOf(patient);
             String txt = diagnosisPane.getText();
             Model.getInstance().setDiagnosis(patient.getCf(), txt);
         }

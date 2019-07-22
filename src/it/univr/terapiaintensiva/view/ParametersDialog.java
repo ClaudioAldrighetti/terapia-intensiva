@@ -11,11 +11,11 @@ import java.util.ArrayList;
 /**
  * Dialog used to show the last vitals of a patient
  */
-public class ParametersDialog extends JDialog {
+class ParametersDialog extends JDialog {
 
-    public static final int HEARTBEAT = 0;
-    public static final int PRESSURE = 1;
-    public static final int TEMPERATURE = 2;
+    static final int HEARTBEAT = 0;
+    static final int PRESSURE = 1;
+    static final int TEMPERATURE = 2;
 
     private final Patient patient;
     private final int parameterType;
@@ -29,7 +29,7 @@ public class ParametersDialog extends JDialog {
      *                      <li><code>ParametersDialog.TEMPERATURE</code> to display the temperature log</li>
      *                      </ul>
      */
-    public ParametersDialog(Patient patient, int parameterType) {
+    ParametersDialog(Patient patient, int parameterType) {
         super(MonitorFrame.getInstance());
         this.patient = patient;
         this.parameterType = parameterType;

@@ -14,14 +14,11 @@ import java.util.ArrayList;
 /**
  * A panel representing a patient.
  */
-public class MonitorPanel extends JPanel implements ActionListener {
+class MonitorPanel extends JPanel implements ActionListener {
 
     private static final JLabel dash = new JLabel("-");
     private final Model model = Model.getInstance();
-    private final char type = model.getType();
-    private final GridBagConstraints c = new GridBagConstraints();
     private final JLabel nameLabel = new JLabel();
-    private final JPanel northPanel = new JPanel(new BorderLayout());
     private final JButton bpmLabel = new JButton("60");
     private final JLabel tempLabel = new JLabel("36");
     private final JLabel sbpLabel = new JLabel("120");
@@ -31,13 +28,9 @@ public class MonitorPanel extends JPanel implements ActionListener {
     private final JButton diagnosisButton = new JButton("Diagnosi");
     private final JButton newPrescriptionButton = new JButton("Nuova prescrizione");
     private final JButton newAdministrationButton = new JButton("Nuova somministrazione");
-    private final JPanel northCenterPanel = new JPanel(new GridLayout(1, 2));
-    private final JPanel northEastCenterPanel = new JPanel(new GridBagLayout());
-    private final JPanel southCenterPanel = new JPanel(new FlowLayout());
-    private final JPanel centerPanel = new JPanel(new GridLayout(2, 1));
     private Patient patient = null;
 
-    public MonitorPanel() {
+    MonitorPanel() {
 
         // Listener
         diagnosisButton.addActionListener(this);
@@ -54,6 +47,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
         nameLabel.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         nameLabel.setFont(new Font("sansserif", Font.PLAIN, 20));
+        JPanel northPanel = new JPanel(new BorderLayout());
         northPanel.add(nameLabel, BorderLayout.CENTER);
         northPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.black));
         this.add(northPanel, BorderLayout.NORTH);
@@ -66,14 +60,17 @@ public class MonitorPanel extends JPanel implements ActionListener {
         bpmLabel.setFont(new Font("sansserif", Font.PLAIN, 50));
         bpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
         bpmLabel.setBorderPainted(false);
+        JPanel northCenterPanel = new JPanel(new GridLayout(1, 2));
         northCenterPanel.add(bpmLabel);
 
         // Northeast
         sbpLabel.setFont(new Font("sansserif", Font.PLAIN, 17));
         dbpLabel.setFont(new Font("sansserif", Font.PLAIN, 17));
         tempLabel.setFont(new Font("sansserif", Font.PLAIN, 30));
+        GridBagConstraints c = new GridBagConstraints();
         c.weightx = c.weighty = 1.0;
         c.gridx = c.gridy = 0;
+        JPanel northEastCenterPanel = new JPanel(new GridBagLayout());
         northEastCenterPanel.add(tempButton, c);
         c.gridy++;
         northEastCenterPanel.add(pressButton, c);
@@ -90,11 +87,13 @@ public class MonitorPanel extends JPanel implements ActionListener {
         northEastCenterPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.black));
 
         // South
+        JPanel southCenterPanel = new JPanel(new FlowLayout());
         southCenterPanel.add(diagnosisButton);
         southCenterPanel.add(newPrescriptionButton);
         southCenterPanel.add(newAdministrationButton);
 
         northCenterPanel.add(northEastCenterPanel);
+        JPanel centerPanel = new JPanel(new GridLayout(2, 1));
         centerPanel.add(northCenterPanel);
         centerPanel.add(southCenterPanel);
         this.add(centerPanel, BorderLayout.CENTER);
@@ -102,6 +101,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
         this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 
         // Change menu depending on user type
+        char type = model.getType();
         switch (type) {
             case Model.GUEST:
                 diagnosisButton.setVisible(false);
@@ -124,7 +124,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
      *
      * @return true if the panel is not associated with any patient, false if it is
      */
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return (this.patient == null);
     }
 
@@ -149,7 +149,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
     /**
      * Removes the association between the panel and the patient stored
      */
-    public void removePatient() {
+    void removePatient() {
         this.patient = null;
         this.setVisible(false);
     }
@@ -157,7 +157,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
     /**
      * Updates the vitals labels
      */
-    public void updateVitals() {
+    void updateVitals() {
         if (patient != null) {
             Vitals vitals = model.getCurrentVitals(patient.getCf());
             this.bpmLabel.setText(String.valueOf(vitals.getHeartBeat()));
@@ -171,7 +171,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
     /**
      * Dhecks if there are any new alarms associated with the patient and displays them using a {@link AlarmDialog}.
      */
-    public void checkAlarms() {
+    void checkAlarms() {
         AlarmDialog alarmDialog;
         if (this.patient != null) {
             ArrayList<Alarm> alarms = model.checkNewAlarms(patient.getCf());

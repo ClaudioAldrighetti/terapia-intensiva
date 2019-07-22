@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * their status.
  * Its design varies depending on the type of user logged in (see {@link Model#getType()}).
  */
-public class MonitorFrame extends JFrame implements ActionListener {
+class MonitorFrame extends JFrame implements ActionListener {
 
     private static final String title = "Terapia intensiva";
     private static final JMenu chiefMenu = new JMenu("Primario");
@@ -30,9 +30,7 @@ public class MonitorFrame extends JFrame implements ActionListener {
     private static final JMenuBar menuBar = new JMenuBar();
     private static MonitorFrame instance = null;
     private final ArrayList<MonitorPanel> monitors = new ArrayList<>();
-    private final Container contentPane = this.getContentPane();
     private final Model model = Model.getInstance();
-    private final char type = model.getType();
     private Timer timer = new Timer(100, this);
 
     private MonitorFrame() {
@@ -43,6 +41,7 @@ public class MonitorFrame extends JFrame implements ActionListener {
         hospitalizedMenuItem.addActionListener(this);
         dischargedMenuItem.addActionListener(this);
 
+        Container contentPane = this.getContentPane();
         contentPane.setLayout(new GridLayout(2, 5));
 
         for (int i = 0; i < 10; i++) {
@@ -61,6 +60,7 @@ public class MonitorFrame extends JFrame implements ActionListener {
         clinicalRecordsMenu.add(hospitalizedMenuItem);
         clinicalRecordsMenu.add(dischargedMenuItem);
         menuBar.setVisible(false);
+        char type = model.getType();
         if (type != Model.GUEST) {
             if (type == Model.CHIEF)
                 menuBar.add(chiefMenu);
@@ -86,7 +86,7 @@ public class MonitorFrame extends JFrame implements ActionListener {
      * Used to make this object a Singleton.
      * @return a new instance of this class if there is not one present, or the only instance already present
      */
-    public static MonitorFrame getInstance() {
+    static MonitorFrame getInstance() {
         if (instance == null)
             instance = new MonitorFrame();
         return instance;
@@ -96,7 +96,7 @@ public class MonitorFrame extends JFrame implements ActionListener {
      * Adds a new {@link MonitorPanel}.
      * @param patient the Patient to link to the monitor
      */
-    public void addPatient(Patient patient) {
+    void addPatient(Patient patient) {
         for (int i = 0; i < 10; i++) {
             if (monitors.get(i).isEmpty()) {
                 monitors.get(i).setPatient(patient);
@@ -110,7 +110,7 @@ public class MonitorFrame extends JFrame implements ActionListener {
      *
      * @param patient the patient to remove
      */
-    public void removePatient(Patient patient) {
+    void removePatient(Patient patient) {
         for (int i = 0; i < 10; i++) {
             if (monitors.get(i).getPatient().equals(patient)) {
                 monitors.get(i).removePatient();
