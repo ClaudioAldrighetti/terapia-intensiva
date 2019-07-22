@@ -3,6 +3,11 @@ package it.univr.terapiaintensiva.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * @author mizukami
+ * Administration given to a patient.
+ * Class CsvWritable.
+ */
 public class Administration implements CsvWritable {
     private final String medicine;
     private final double dose;
