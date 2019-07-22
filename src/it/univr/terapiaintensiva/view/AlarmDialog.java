@@ -66,7 +66,7 @@ public class AlarmDialog extends JDialog implements ActionListener {
                     "Azioni",
                     JOptionPane.QUESTION_MESSAGE
                     );
-            StringEscapeUtils.escapeHtml4(actions.trim());
+            StringEscapeUtils.escapeCsv(actions.trim());
             Model.getInstance().offAlarm(patient.getCf(), this.alarm, actions);
             this.dispose();
         } else {

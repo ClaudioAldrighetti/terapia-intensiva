@@ -104,7 +104,7 @@ public class NewAdministrationFrame extends JFrame implements ActionListener {
         return new Administration(
                 medicineTextField.getText().trim(),
                 doseModel.getNumber().doubleValue(),
-                StringEscapeUtils.escapeHtml4(notesPane.getText().trim()),
+                StringEscapeUtils.escapeCsv(notesPane.getText().trim()),
                 localDate,
                 localTime
         );
