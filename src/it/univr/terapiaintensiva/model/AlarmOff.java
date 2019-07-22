@@ -24,15 +24,15 @@ public class AlarmOff extends Alarm {
     }
 
     public String toString() {
-        String strStatus = (getStatus() == ALARM_ON)? "On" : ( (getStatus() == ALARM_OFF_INT)? "Off in time" : "Off out of time" );
+        String strStatus = (getStatus() == ALARM_ON)? "Acceso" : ( (getStatus() == ALARM_OFF_INT)? "Spento in tempo" : "Spento fuori tempo" );
         return
                 (
-                        "\nName: " + getName() +
-                        "\nLevel: " + getLevel() +
-                        "\nStatus: " + strStatus +
-                        "\nDate: " + getDate() +
-                        "\nTime: " + getTime() +
-                        "\nNotes: " + notes
+                        "\n\tNome allarme: " + getName() +
+                        "\n\tLivello allarme: " + getLevel() +
+                        "\n\tStatus allarme: " + strStatus +
+                        "\n\tData dell'allarme: " + getDate() +
+                        "\n\tOra dell'allarme: " + getTime() +
+                        "\n\nOperazioni effettuate: " + notes
                 );
     }
 }

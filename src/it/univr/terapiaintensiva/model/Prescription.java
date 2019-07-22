@@ -52,12 +52,12 @@ public class Prescription implements CsvWritable {
     public String toString() {
         return
                 (
-                        "\nDuration of prescription: " + duration + " days" +
-                                "\nMedicine: " + medicine +
-                                "\nDaily doses: " + nDoses +
-                                "\nQuantity: " + dose +
-                                "\nDate of prescription: " + date +
-                                "\nTime of prescription: " + time
+                 "\n\tDurata della prescrizione: " + duration + " giorni" +
+                 "\n\tFarmaco prescritto: " + medicine +
+                 "\n\tDosi giornaliere: " + nDoses +
+                 "\n\tQuantità per dose: " + dose + " cl" +
+                 "\n\tData della prescrizione: " + date +
+                 "\n\tOra della prescrizione: " + time
                 );
     }
 

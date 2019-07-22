@@ -300,7 +300,7 @@ public class Model {
 
                 // Create alarms csv file
                 String pathAlarms = pathNewPatient.concat(pathAlarmsFile);
-                FilesEditor.csvCreateFile(pathAdministrations, Alarm.csvFormat().concat(",notes"));
+                FilesEditor.csvCreateFile(pathAlarms, Alarm.csvFormat().concat(",notes"));
 
                 // Create diagnosis txt file
                 String pathDiagnosis = pathNewPatient.concat(pathDiagnosisFile);
@@ -818,18 +818,21 @@ public class Model {
 
     /**
      * @param cf codice fiscale of {@link Patient}.
-     * @param pathPatientsDir directory that contains patient's medical records.
+     * @param pathEsternDir directory that contains hospitalized patient's medical records or that is discharged patient's archived medical records.
+     * @param isHospitalized true if patient is hospitalized.
      * @return list of {@link AlarmOff}s correlated to the {@link Patient}.
      * @author mizukami
      */
-    public ArrayList<AlarmOff> getPatientAlarmsOff(String cf, String pathPatientsDir){
-        // Find patient
-        int pEntry = findPatient(cf);
+    public ArrayList<AlarmOff> getPatientAlarmsOff(String cf, String pathEsternDir, boolean isHospitalized){
+        if(isHospitalized) {
+            // Find patient
+            int pEntry = findPatient(cf);
 
-        // Wrong cf or patient isn't hospitalized
-        if (pEntry == -1) {
-            System.out.println("Patient not found: invalid cf");
-            return null;
+            // Wrong cf or patient isn't hospitalized
+            if (pEntry == -1) {
+                System.out.println("Patient not found: invalid cf");
+                return null;
+            }
         }
 
         try {
@@ -837,7 +840,12 @@ public class Model {
             ArrayList<AlarmOff> alarms = new ArrayList<>();
 
             // Alarms csv file
-            String pathAlarms = pathPatientsDir.concat(cf + "/" + pathAlarmsFile);
+            String pathAlarms;
+            if(isHospitalized)
+                pathAlarms = pathEsternDir.concat(cf + "/" + pathAlarmsFile);
+            else
+                pathAlarms = pathEsternDir.concat((pathEsternDir.endsWith("/")? "" : "/") + pathAlarmsFile);
+
             BufferedReader alarmsFile = new BufferedReader(new FileReader(pathAlarms));
             FilesEditor.csvSkipRecord(alarmsFile);
 
@@ -863,30 +871,239 @@ public class Model {
      * Selects default directory that contains patients medical records as pathPatientsDir.
      */
     public ArrayList<AlarmOff> getPatientAlarmsOff(String cf){
-        return getPatientAlarmsOff(cf, pathPatients);
+        return getPatientAlarmsOff(cf, pathPatients, true);
+    }
+
+    /**
+     * @return list of hospitalized {@link Patient}s.
+     * @author mizukami
+     */
+    // Return hospitalized patients list
+    public ArrayList<Patient> getHospitalizedPatients(){
+        return patients;
+    }
+
+    /**
+     * @return list of discharged {@link Patient}s.
+     * @author mizukami
+     * Returns discharged patients found searching their registry file in their archived medical records.
+     */
+    public ArrayList<Patient> getDischargedPatients(){
+        ArrayList<Patient> dischargedPatients = new ArrayList<>();
+
+        // Search in discharged patients directory
+        if(Files.exists(Paths.get(pathDischarged)) && Files.isDirectory(Paths.get(pathDischarged))) {
+            File dirPatientsDischarged = new File(pathDischarged);
+
+            // Search discharged patients
+            for(String pathPatientDischarged: dirPatientsDischarged.list()){
+                if(Files.isDirectory(Paths.get(pathPatientDischarged))){
+
+                    // Here it's in: ./discharged/cf/
+                    File dirPatientDischarged = new File(pathPatientDischarged);
+                    if(dirPatientDischarged.listFiles().length != 0) {
+
+                        // Take last archived medical records
+                        File lastMR = dirPatientDischarged.listFiles()[dirPatientDischarged.listFiles().length -1];
+
+                        // Search registry file in medical records
+                        for(String lastMRFile: lastMR.list()){
+                            if(lastMRFile.contains(pathRegistryFile)){
+                                try {
+                                    // Get discharged patient from registry file
+                                    BufferedReader registryFile = new BufferedReader(new FileReader(lastMRFile));
+                                    FilesEditor.csvSkipRecord(registryFile);
+
+                                    String[] registryData = FilesEditor.csvReadRecord(registryFile);
+                                    if(registryData != null)
+                                        dischargedPatients.add(FilesEditor.csvGetPatient(registryData));
+
+                                } catch (IOException e){
+                                    System.out.println("getDischargedPatients() catches IOException");
+                                    e.printStackTrace();
+                                }
+
+                                break;
+                            }
+                        }
+
+                    }
+
+                }
+            }
+
+        }
+
+        return dischargedPatients;
     }
 
     /**
      * @param firstDate the less recent date of report.
      * @param lastDate the latest date of report.
      * @param patient {@link Patient} to report.
-     * @param pathPatientsDir path of directory that contains patient's medical records.
      * @return patient's report.
      * @author mizukami
      */
-    public String getPatientReport(LocalDate firstDate, LocalDate lastDate, Patient patient, String pathPatientsDir) {
+    public String getHospitalizedPatientReport(LocalDate firstDate, LocalDate lastDate, Patient patient) {
         // Patient string
         String patientStr = "";
 
         // Check prescriptions list
         String prescriptionsStr = "";
         if(!patient.getPrescriptions().isEmpty()) {
+            int n = 1;
             for (Prescription prescription : patient.getPrescriptions())
-                if(
-                        (prescription.getDate().isAfter(firstDate) || prescription.getDate().isEqual(firstDate)) &&
-                                (prescription.getDate().isBefore(lastDate) || prescription.getDate().isEqual(firstDate))
-                )
-                    prescriptionsStr.concat(prescription.toString());
+                if(isBetween(prescription.getDate(), firstDate, lastDate))
+                    prescriptionsStr = prescriptionsStr.concat("\n" + (n++) + ")" + prescription.toString());
+        }
+        if(prescriptionsStr != "") {
+            prescriptionsStr = "\n\nPrescrizioni:" + prescriptionsStr;
+            patientStr = patientStr.concat(prescriptionsStr);
+        }
+
+        // Check administrations list
+        String administrationsStr = "";
+        if(!patient.getAdministrations().isEmpty()) {
+            int n = 1;
+            for (Administration administration : patient.getAdministrations())
+                if(isBetween(administration.getDate(), firstDate, lastDate))
+                    administrationsStr = administrationsStr.concat("\n" + (n++) + ")" + administration.toString());
+        }
+        if(administrationsStr != "") {
+            administrationsStr = "\n\nSomministrazioni:" + administrationsStr;
+            patientStr = patientStr.concat(administrationsStr);
+        }
+
+        // Search for alarms
+        String alarmsStr = "";
+        ArrayList<AlarmOff> alarms = getPatientAlarmsOff(patient.getCf());
+        if(!alarms.isEmpty()) {
+            int n = 1;
+            for (AlarmOff alarm : alarms)
+                if(isBetween(alarm.getDate(), firstDate, lastDate))
+                    alarmsStr = alarmsStr.concat("\n" + (n++) + ")" + alarm.toString());
+        }
+        if(alarmsStr != "") {
+            alarmsStr = "\n\nAllarmi:" + alarmsStr;
+            patientStr = patientStr.concat(alarmsStr);
+        }
+
+        // If some events were found
+        if(patientStr != "") {
+            patientStr =
+                    patient.toString() +
+                    "\nDiagnosi: " + ((patient.getDiagnosis()=="")? "nessuna" : patient.getDiagnosis()) +
+                    patientStr + "\n";
+        }
+
+
+        return patientStr;
+    }
+
+    /**
+     * @param firstDate the less recent date of report.
+     * @param lastDate the latest date of report.
+     * @param patient {@link Patient} to report.
+     * @return patient's report.
+     * @author mizukami
+     */
+/*    public String getDischargedPatientReport(LocalDate firstDate, LocalDate lastDate, Patient patient) {
+        // Patient string
+        String patientStr = "";
+
+        // Other strings
+        String prescriptionsStr = "";
+        String administrationsStr = "";
+        String alarmsStr = "";
+
+        String pathPatient = pathDischarged.concat(patient.getCf() + "/");
+        if(Files.exists(Paths.get(pathPatient))){
+            File dirPatient = new File(pathPatient);
+            if(dirPatient.isDirectory()){
+
+                // Here it's in: ./discharged/cf/
+                for(File medicalRecords: dirPatient.listFiles()){
+
+                    if(medicalRecords.isDirectory()){
+                        // Search, for each medical records, list of prescriptions, administrations and alarms
+                        for(String pathPatientFile: medicalRecords.list()){
+                            switch (pathPatientFile){
+
+                                // Prescriptions list
+                                case (pathPrescriptionsFile):
+                                    try {
+                                        ArrayList<Prescription> prescriptions = new ArrayList<>();
+                                        BufferedReader prescriptionsFile = new BufferedReader(new FileReader(pathPatientFile));
+                                        FilesEditor.csvSkipRecord(prescriptionsFile);
+
+                                        // Extract prescriptions list from prescriptions csv file
+                                        String[] prescriptionRecord = FilesEditor.csvReadRecord(prescriptionsFile);
+                                        while (prescriptionRecord != null){
+                                            prescriptions.add(FilesEditor.csvGetPrescription(prescriptionRecord));
+                                            prescriptionRecord = FilesEditor.csvReadRecord(prescriptionsFile);
+                                        }
+
+                                        // Check each prescription
+                                        for (Prescription prescription : prescriptions)
+                                            if(
+                                                (prescription.getDate().isAfter(firstDate) || prescription.getDate().isEqual(firstDate)) &&
+                                                (prescription.getDate().isBefore(lastDate) || prescription.getDate().isEqual(firstDate))
+                                            )
+                                                prescriptionsStr.concat(prescription.toString());
+
+                                    } catch (IOException e) {
+                                        System.out.println("getDischargedPatientReport() catches IOException");
+                                        e.printStackTrace();
+                                    }
+                                    break;
+
+                                // Administration list
+                                case (pathAdministrationsFile):
+                                    try {
+                                        ArrayList<Administration> administrations = new ArrayList<>();
+                                        BufferedReader administrationsFile = new BufferedReader(new FileReader(pathPatientFile));
+                                        FilesEditor.csvSkipRecord(administrationsFile);
+
+                                        // Extract administrations list from administrations csv file
+                                        String[] administrationRecord = FilesEditor.csvReadRecord(administrationsFile);
+                                        while (administrationRecord != null){
+                                            administrations.add(FilesEditor.csvGetAdministration(administrationRecord));
+                                            administrationRecord = FilesEditor.csvReadRecord(administrationsFile);
+                                        }
+
+                                        for (Administration administration : administrations)
+                                            if(
+                                                (administration.getDate().isAfter(firstDate) || administration.getDate().isEqual(firstDate)) &&
+                                                (administration.getDate().isBefore(lastDate) || administration.getDate().isEqual(firstDate))
+                                            )
+                                                administrationsStr.concat(administration.toString());
+
+                                    } catch (IOException e) {
+                                        System.out.println("getDischargedPatientReport() catches IOException");
+                                        e.printStackTrace();
+                                    }
+                                    break;
+
+                                // Alarms list
+                                case (pathAlarmsFile):
+//                                    ArrayList<AlarmOff> alarms = getPatientAlarmsOff(patient.getCf(), medicalRecords.getPath(), false);
+
+                                    break;
+
+                                default:
+                                    // Just nothing...
+                                    break;
+                            }
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+        // Check prescriptions in all prescriptions lists
+        if(!patient.getPrescriptions().isEmpty()) {
         }
         if(prescriptionsStr != "") {
             prescriptionsStr = "\nPresciptions:" + prescriptionsStr;
@@ -895,14 +1112,7 @@ public class Model {
 
 
         // Check administrations list
-        String administrationsStr = "";
         if(!patient.getAdministrations().isEmpty()) {
-            for (Administration administration : patient.getAdministrations())
-                if(
-                        (administration.getDate().isAfter(firstDate) || administration.getDate().isEqual(firstDate)) &&
-                                (administration.getDate().isBefore(lastDate) || administration.getDate().isEqual(firstDate))
-                )
-                    administrationsStr.concat(administration.toString());
         }
         if(administrationsStr != "") {
             administrationsStr = "\nAdministrations:" + administrationsStr;
@@ -910,13 +1120,12 @@ public class Model {
         }
 
         // Search for alarms
-        String alarmsStr = "";
-        ArrayList<AlarmOff> alarms = getPatientAlarmsOff(patient.getCf(), pathPatientsDir);
+        ArrayList<AlarmOff> alarms = getPatientAlarmsOff(patient.getCf());
         if(!alarms.isEmpty()) {
             for (AlarmOff alarm : alarms)
                 if(
-                    (alarm.getDate().isAfter(firstDate) || alarm.getDate().isEqual(firstDate)) &&
-                    (alarm.getDate().isBefore(lastDate) || alarm.getDate().isEqual(firstDate))
+                        (alarm.getDate().isAfter(firstDate) || alarm.getDate().isEqual(firstDate)) &&
+                                (alarm.getDate().isBefore(lastDate) || alarm.getDate().isEqual(firstDate))
                 )
                     alarmsStr.concat(alarm.toString());
         }
@@ -929,13 +1138,14 @@ public class Model {
         if(patientStr != "") {
             patientStr =
                     patient.toString() +
-                    "\nDiagnosis: " + patient.getDiagnosis() +
-                    patientStr + "\n";
+                            "\nDiagnosis: " + patient.getDiagnosis() +
+                            patientStr + "\n";
         }
+
 
         return patientStr;
     }
-
+*/
     /**
      * @param firstDate the less recent date of report.
      * @param lastDate the latest date of report.
@@ -957,50 +1167,18 @@ public class Model {
 
         // Search in hospitalized patients list
         for(Patient hospitalizedPatient: patients){
-            reportStr.concat(getPatientReport(firstDate, lastDate, hospitalizedPatient, pathPatients));
+            reportStr = reportStr.concat(getHospitalizedPatientReport(firstDate, lastDate, hospitalizedPatient));
         }
 
         // Search in discharged patients list
         // TODO
 /*        for(Patient dischargedPatient: getDischargedPatients()){
-            String dischargedPatientStr = "";
+            reportStr = reportStr.concat(getDischargedPatientReport(firstDate, lastDate, dischargedPatient));
         }
 */
         return reportStr;
     }
 
-    // Return hospitalized patients list
-    public ArrayList<Patient> getHospitalizedPatients(){
-        return patients;
-    }
-
-/*    public ArrayList<Patient> getDischargedPatients(){
-        ArrayList<Patient> dischargedPatients = new ArrayList<>();
-
-        // Search in discharged patients directory
-        if(Files.exists(Paths.get(pathDischarged)) && Files.isDirectory(Paths.get(pathDischarged))) {
-            File dirPatientsDischarged = new File(pathDischarged);
-
-            // Search discharged patients
-            for(String pathPatientDischarged: dirPatientsDischarged.list()){
-                if(Files.isDirectory(Paths.get(pathPatientDischarged))){
-
-                    // Here it's in: ./discharged/cf/
-                    File dirPatientDischarged = new File(pathPatientDischarged);
-                    if(dirPatientDischarged.listFiles().length != 0) {
-
-                        // Take last archived medical records
-
-                        for(String lastMRFile: dirPatientDischarged.list()[0])
-                    }
-                }
-            }
-
-        }
-
-        return dischargedPatients;
-    }
-*/
     // AUXILIARY PRIVATE METHODS
 
     // Return index position of patient in patients, or -1 if patient doesn't exist
@@ -1066,5 +1244,13 @@ public class Model {
             default:
                 return (date.getDayOfMonth() == 31);
         }
+    }
+
+    private boolean isBetween(LocalDate thisDate, LocalDate firstDate, LocalDate lastDate){
+        return (
+            (thisDate.isAfter(firstDate) || thisDate.isEqual(firstDate)) &&
+            (thisDate.isBefore(lastDate) || thisDate.isEqual(lastDate))
+        );
+
     }
 }

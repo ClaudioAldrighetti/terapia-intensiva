@@ -95,14 +95,14 @@ public class Alarm implements CsvWritable {
     }
 
     public String toString() {
-        String strStatus = (status == ALARM_ON)? "On" : ( (status == ALARM_OFF_INT)? "Off in time" : "Off out of time" );
+        String strStatus = (status == ALARM_ON)? "Acceso" : ( (status == ALARM_OFF_INT)? "Spento in tempo" : "Spento fuori tempo" );
         return
                 (
-                 "\nName: " + name +
-                 "\nLevel: " + level +
-                 "\nStatus: " + strStatus +
-                 "\nDate: " + date +
-                 "\nTime: " + time
+                 "\n\tNome allarme: " + name +
+                 "\n\tLivello allarme: " + level +
+                 "\n\tStatus allarme: " + strStatus +
+                 "\n\tData dell'allarme: " + date +
+                 "\n\tOra dell'allarme: " + time
                 );
     }
 
