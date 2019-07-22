@@ -10,9 +10,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AlarmDialog extends JDialog implements ActionListener {
+/**
+ * A dialog that displays ana alarm, the patient name and a stoppable countdown.
+ * When the countDown is stopped, the user is required to enter the actions performed to bring the conditions of
+ * the patient back to a normal state.
+ */
 
-    private final JLabel nameLabel;
+class AlarmDialog extends JDialog implements ActionListener {
+
     private final JLabel timerLabel;
     private final JButton deactivateButton = new JButton("Spegni");
     private final Patient patient;
@@ -20,11 +25,15 @@ public class AlarmDialog extends JDialog implements ActionListener {
     private final Timer timer;
     private int remainingTime;
 
-    public AlarmDialog(Patient patient, Alarm alarm) {
+    /**
+     * @param patient the patient that generated the alarm
+     * @param alarm   the alarm
+     */
+    AlarmDialog(Patient patient, Alarm alarm) {
         super(MonitorFrame.getInstance());
         this.patient = patient;
         this.alarm = alarm;
-        nameLabel = new JLabel(patient.getName() + " " + patient.getSurname() + ": " + alarm.getName().toLowerCase());
+        JLabel nameLabel = new JLabel(patient.getName() + " " + patient.getSurname() + ": " + alarm.getName().toLowerCase());
         nameLabel.setFont(new Font("sansserif", Font.PLAIN, 30));
         remainingTime = (4 - alarm.getLevel()) * 60;
         timerLabel = new JLabel(String.valueOf(remainingTime));
@@ -51,9 +60,10 @@ public class AlarmDialog extends JDialog implements ActionListener {
         timer.start();
     }
 
+    // Listener
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(deactivateButton)) {
+        if (e.getSource().equals(deactivateButton)) {   // Stop the countdown
             timer.stop();
             if (remainingTime > 0)
                 alarm.setStatus(Alarm.ALARM_OFF_INT);
@@ -62,14 +72,14 @@ public class AlarmDialog extends JDialog implements ActionListener {
             String actions = JOptionPane.showInputDialog(
                     this,
                     "Quali azioni sono state eseguite\n" +
-                        "per riportare il paziente ad uno stato normale?",
+                            "per riportare il paziente ad uno stato normale?",
                     "Azioni",
                     JOptionPane.QUESTION_MESSAGE
-                    );
+            );
             StringEscapeUtils.escapeCsv(actions.trim());
             Model.getInstance().offAlarm(patient.getCf(), this.alarm, actions);
             this.dispose();
-        } else {
+        } else {                                        // Countdown
             if (remainingTime > 0) {
                 remainingTime--;
                 timerLabel.setText(String.valueOf(remainingTime));

@@ -12,16 +12,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
- * A {@link JPanel} representing a patient.
+ * A panel representing a patient.
  */
-public class MonitorPanel extends JPanel implements ActionListener {
+class MonitorPanel extends JPanel implements ActionListener {
 
     private static final JLabel dash = new JLabel("-");
     private final Model model = Model.getInstance();
-    private final char type = model.getType();
-    private final GridBagConstraints c = new GridBagConstraints();
     private final JLabel nameLabel = new JLabel();
-    private final JPanel northPanel = new JPanel(new BorderLayout());
     private final JButton bpmLabel = new JButton("60");
     private final JLabel tempLabel = new JLabel("36");
     private final JLabel sbpLabel = new JLabel("120");
@@ -31,15 +28,9 @@ public class MonitorPanel extends JPanel implements ActionListener {
     private final JButton diagnosisButton = new JButton("Diagnosi");
     private final JButton newPrescriptionButton = new JButton("Nuova prescrizione");
     private final JButton newAdministrationButton = new JButton("Nuova somministrazione");
-    //    private final JButton prescriptionLogButton = new JButton("Log prescrizioni");
-//    private final JButton administrationLogButton = new JButton("Log somministrazioni");
-    private final JPanel northCenterPanel = new JPanel(new GridLayout(1, 2));
-    private final JPanel northEastCenterPanel = new JPanel(new GridBagLayout());
-    private final JPanel southCenterPanel = new JPanel(new FlowLayout());
-    private final JPanel centerPanel = new JPanel(new GridLayout(2, 1));
     private Patient patient = null;
 
-    public MonitorPanel() {
+    MonitorPanel() {
 
         // Listener
         diagnosisButton.addActionListener(this);
@@ -56,6 +47,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
         nameLabel.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         nameLabel.setFont(new Font("sansserif", Font.PLAIN, 20));
+        JPanel northPanel = new JPanel(new BorderLayout());
         northPanel.add(nameLabel, BorderLayout.CENTER);
         northPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.black));
         this.add(northPanel, BorderLayout.NORTH);
@@ -68,14 +60,17 @@ public class MonitorPanel extends JPanel implements ActionListener {
         bpmLabel.setFont(new Font("sansserif", Font.PLAIN, 50));
         bpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
         bpmLabel.setBorderPainted(false);
+        JPanel northCenterPanel = new JPanel(new GridLayout(1, 2));
         northCenterPanel.add(bpmLabel);
 
         // Northeast
         sbpLabel.setFont(new Font("sansserif", Font.PLAIN, 17));
         dbpLabel.setFont(new Font("sansserif", Font.PLAIN, 17));
         tempLabel.setFont(new Font("sansserif", Font.PLAIN, 30));
+        GridBagConstraints c = new GridBagConstraints();
         c.weightx = c.weighty = 1.0;
         c.gridx = c.gridy = 0;
+        JPanel northEastCenterPanel = new JPanel(new GridBagLayout());
         northEastCenterPanel.add(tempButton, c);
         c.gridy++;
         northEastCenterPanel.add(pressButton, c);
@@ -92,27 +87,26 @@ public class MonitorPanel extends JPanel implements ActionListener {
         northEastCenterPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.black));
 
         // South
+        JPanel southCenterPanel = new JPanel(new FlowLayout());
         southCenterPanel.add(diagnosisButton);
         southCenterPanel.add(newPrescriptionButton);
         southCenterPanel.add(newAdministrationButton);
-//        southCenterPanel.add(prescriptionLogButton);
-//        southCenterPanel.add(administrationLogButton);
-
 
         northCenterPanel.add(northEastCenterPanel);
+        JPanel centerPanel = new JPanel(new GridLayout(2, 1));
         centerPanel.add(northCenterPanel);
         centerPanel.add(southCenterPanel);
         this.add(centerPanel, BorderLayout.CENTER);
 
         this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 
+        // Change menu depending on user type
+        char type = model.getType();
         switch (type) {
             case Model.GUEST:
                 diagnosisButton.setVisible(false);
-//                prescriptionLogButton.setVisible(false);
                 newPrescriptionButton.setVisible(false);
                 newAdministrationButton.setVisible(false);
-//                administrationLogButton.setVisible(false);
                 break;
             case Model.DOCTOR:
             case Model.CHIEF:
@@ -130,13 +124,12 @@ public class MonitorPanel extends JPanel implements ActionListener {
      *
      * @return true if the panel is not associated with any patient, false if it is
      */
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return (this.patient == null);
     }
 
     /**
      * Associates the panel with a patient.
-     *
      * @param patient the patient to associate
      */
     public void setPatient(Patient patient) {
@@ -147,7 +140,6 @@ public class MonitorPanel extends JPanel implements ActionListener {
 
     /**
      * returns the patient associated with the panel
-     *
      * @return the patient
      */
     public Patient getPatient() {
@@ -157,7 +149,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
     /**
      * Removes the association between the panel and the patient stored
      */
-    public void removePatient() {
+    void removePatient() {
         this.patient = null;
         this.setVisible(false);
     }
@@ -165,7 +157,7 @@ public class MonitorPanel extends JPanel implements ActionListener {
     /**
      * Updates the vitals labels
      */
-    public void updateVitals() {
+    void updateVitals() {
         if (patient != null) {
             Vitals vitals = model.getCurrentVitals(patient.getCf());
             this.bpmLabel.setText(String.valueOf(vitals.getHeartBeat()));
@@ -176,35 +168,10 @@ public class MonitorPanel extends JPanel implements ActionListener {
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        DiagnosisFrame diagnosisFrame;
-        NewPrescriptionFrame newPrescriptionFrame;
-        NewAdministrationFrame newAdministrationFrame;
-        ParametersDialog parametersDialog;
-        if (e.getSource().equals(diagnosisButton)) {
-            diagnosisFrame = new DiagnosisFrame(this.patient);
-            diagnosisFrame.setDiagnosis(patient.getDiagnosis());
-            diagnosisFrame.setVisible(true);
-        } else if (e.getSource().equals(newPrescriptionButton)) {
-            newPrescriptionFrame = new NewPrescriptionFrame(this.patient);
-            newPrescriptionFrame.setVisible(true);
-        } else if (e.getSource().equals(newAdministrationButton)) {
-            newAdministrationFrame = new NewAdministrationFrame(this.patient);
-            newAdministrationFrame.setVisible(true);
-        } else if (e.getSource().equals(bpmLabel)) {
-            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.HEARTBEAT);
-            parametersDialog.setVisible(true);
-        } else if (e.getSource().equals(pressButton)) {
-            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.PRESSURE);
-            parametersDialog.setVisible(true);
-        } else if (e.getSource().equals(tempButton)) {
-            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.TEMPERATURE);
-            parametersDialog.setVisible(true);
-        }
-    }
-
-    public void checkAlarms() {
+    /**
+     * Dhecks if there are any new alarms associated with the patient and displays them using a {@link AlarmDialog}.
+     */
+    void checkAlarms() {
         AlarmDialog alarmDialog;
         if (this.patient != null) {
             ArrayList<Alarm> alarms = model.checkNewAlarms(patient.getCf());
@@ -212,6 +179,35 @@ public class MonitorPanel extends JPanel implements ActionListener {
                 alarmDialog = new AlarmDialog(patient, alarm);
                 alarmDialog.setVisible(true);
             }
+        }
+    }
+
+    // Listener
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        DiagnosisDialog diagnosisDialog;
+        NewPrescriptionDialog newPrescriptionDialog;
+        NewAdministrationDialog newAdministrationDialog;
+        ParametersDialog parametersDialog;
+        if (e.getSource().equals(diagnosisButton)) {                // Diagnosis
+            diagnosisDialog = new DiagnosisDialog(this.patient);
+            diagnosisDialog.setDiagnosis(patient.getDiagnosis());
+            diagnosisDialog.setVisible(true);
+        } else if (e.getSource().equals(newPrescriptionButton)) {   // Prescription
+            newPrescriptionDialog = new NewPrescriptionDialog(this.patient);
+            newPrescriptionDialog.setVisible(true);
+        } else if (e.getSource().equals(newAdministrationButton)) { // Administration
+            newAdministrationDialog = new NewAdministrationDialog(this.patient);
+            newAdministrationDialog.setVisible(true);
+        } else if (e.getSource().equals(bpmLabel)) {                // Hearbeat log
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.HEARTBEAT);
+            parametersDialog.setVisible(true);
+        } else if (e.getSource().equals(pressButton)) {             // Pressure log
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.PRESSURE);
+            parametersDialog.setVisible(true);
+        } else if (e.getSource().equals(tempButton)) {              // Temperatire log
+            parametersDialog = new ParametersDialog(this.patient, ParametersDialog.TEMPERATURE);
+            parametersDialog.setVisible(true);
         }
     }
 }

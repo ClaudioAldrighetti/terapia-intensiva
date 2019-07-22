@@ -8,18 +8,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class ParametersDialog extends JDialog {
+/**
+ * Dialog used to show the last vitals of a patient
+ */
+class ParametersDialog extends JDialog {
 
-    public static final int HEARTBEAT = 0;
-    public static final int PRESSURE = 1;
-    public static final int TEMPERATURE = 2;
+    static final int HEARTBEAT = 0;
+    static final int PRESSURE = 1;
+    static final int TEMPERATURE = 2;
 
     private final Patient patient;
     private final int parameterType;
 
     /**
-     * Dialog used to show the last vitals of a patient
-     *
      * @param patient       the patient from which to pick the parameters
      * @param parameterType one of the three contants
      *                      <ul>
@@ -28,7 +29,7 @@ public class ParametersDialog extends JDialog {
      *                      <li><code>ParametersDialog.TEMPERATURE</code> to display the temperature log</li>
      *                      </ul>
      */
-    public ParametersDialog(Patient patient, int parameterType) {
+    ParametersDialog(Patient patient, int parameterType) {
         super(MonitorFrame.getInstance());
         this.patient = patient;
         this.parameterType = parameterType;
