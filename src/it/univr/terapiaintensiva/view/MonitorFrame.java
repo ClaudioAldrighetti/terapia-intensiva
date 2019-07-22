@@ -40,6 +40,7 @@ class MonitorFrame extends JFrame implements ActionListener {
         dischargeMenuItem.addActionListener(this);
         hospitalizedMenuItem.addActionListener(this);
         dischargedMenuItem.addActionListener(this);
+        reportMenuItem.addActionListener(this);
 
         Container contentPane = this.getContentPane();
         contentPane.setLayout(new GridLayout(2, 5));
@@ -124,6 +125,7 @@ class MonitorFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         NewPatientDialog newPatientDialog;
         DischargeLetterDialog dischargeLetterDialog;
+        GetReportDialog getReportDialog;
         if (e.getSource().equals(newPatientMenuItem)) {             // New patient
             newPatientDialog = new NewPatientDialog();
             newPatientDialog.setVisible(true);
@@ -186,6 +188,9 @@ class MonitorFrame extends JFrame implements ActionListener {
             }
             dischargeLetterDialog = new DischargeLetterDialog(patient);
             dischargeLetterDialog.setVisible(true);
+        } else if (e.getSource().equals(reportMenuItem)) {          // Get report
+            getReportDialog = new GetReportDialog();
+            getReportDialog.setVisible(true);
         }
     }
 }
