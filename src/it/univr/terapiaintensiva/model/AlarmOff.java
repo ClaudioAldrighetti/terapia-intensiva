@@ -32,7 +32,7 @@ public class AlarmOff extends Alarm {
                         "\n\tStatus allarme: " + strStatus +
                         "\n\tData dell'allarme: " + getDate() +
                         "\n\tOra dell'allarme: " + getTime() +
-                        "\n\nOperazioni effettuate: " + notes
+                        "\n\tOperazioni effettuate: " + notes
                 );
     }
 }
