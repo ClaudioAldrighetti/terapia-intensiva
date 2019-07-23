@@ -909,49 +909,43 @@ public class Model {
                         String diagnosis = "";
 
                         // Search registry file in medical records
-                        for(String lastMRFile: lastMR.list()){
+                        for(File lastMRFile: lastMR.listFiles()){
 
-                            switch (lastMRFile) {
-                                case (pathRegistryFile):
-                                    try {
-                                        // Get discharged patient from registry file
-                                        BufferedReader registryFile = new BufferedReader(new FileReader(lastMRFile));
-                                        FilesEditor.csvSkipRecord(registryFile);
+                            // Registry file
+                            if(lastMRFile.getName().contains(pathRegistryFile)) {
+                                try {
+                                    // Get discharged patient from registry file
+                                    BufferedReader registryFile = new BufferedReader(new FileReader(lastMRFile));
+                                    FilesEditor.csvSkipRecord(registryFile);
 
-                                        String[] registryData = FilesEditor.csvReadRecord(registryFile);
-                                        if(registryData != null) {
-                                            foundPatient = FilesEditor.csvGetPatient(registryData);
-                                            dischargedPatients.add(foundPatient);
-                                        }
-
-                                    } catch (IOException e){
-                                        System.out.println("getDischargedPatients() catches IOException");
-                                        e.printStackTrace();
+                                    String[] registryData = FilesEditor.csvReadRecord(registryFile);
+                                    if (registryData != null) {
+                                        foundPatient = FilesEditor.csvGetPatient(registryData);
+                                        dischargedPatients.add(foundPatient);
                                     }
 
-                                    break;
+                                } catch (IOException e) {
+                                    System.out.println("getDischargedPatients() catches IOException");
+                                    e.printStackTrace();
+                                }
+                            }
 
-                                case (pathDiagnosisFile):
-                                    try {
-                                        // Get diagnosis from diagnosis file
-                                        BufferedReader diagnosisFile = new BufferedReader(new FileReader(lastMRFile));
+                            // Diagnosis file
+                            else if(lastMRFile.getName().contains(pathDiagnosisFile)) {
+                                try {
+                                    // Get diagnosis from diagnosis file
+                                    BufferedReader diagnosisFile = new BufferedReader(new FileReader(lastMRFile));
 
-                                        String line = diagnosisFile.readLine();
-                                        while (line != null){
-                                            diagnosis = diagnosis.concat(line);
-                                            line = diagnosisFile.readLine();
-                                        }
-
-                                    } catch (IOException e) {
-                                        System.out.println("getDischargedPatients() catches IOException");
-                                        e.printStackTrace();
+                                    String line = diagnosisFile.readLine();
+                                    while (line != null) {
+                                        diagnosis = diagnosis.concat(line);
+                                        line = diagnosisFile.readLine();
                                     }
 
-                                    break;
-
-                                default:
-                                    // Just nothing...
-                                    break;
+                                } catch (IOException e) {
+                                    System.out.println("getDischargedPatients() catches IOException");
+                                    e.printStackTrace();
+                                }
                             }
                         }
 
@@ -1057,8 +1051,11 @@ public class Model {
 
                     if(medicalRecords.isDirectory()){
                         // Search, for each medical records, list of prescriptions, administrations and alarms
-                        for(String pathPatientFile: medicalRecords.list()){
-                            switch (pathPatientFile){
+                        String pathMedicalRecords = medicalRecords.getPath();
+
+                        for(String patientFile: medicalRecords.list()){
+                            String pathPatientFile = pathMedicalRecords.concat("/" + patientFile);
+                            switch (patientFile){
 
                                 // Prescriptions list
                                 case (pathPrescriptionsFile):
@@ -1075,9 +1072,10 @@ public class Model {
                                         }
 
                                         // Check each prescription
+                                        int n = 1;
                                         for (Prescription prescription : prescriptions)
-                                            if(isBetween(prescription.getDate(), firstDate, lastDate))
-                                                prescriptionsStr.concat(prescription.toString());
+                                            if (isBetween(prescription.getDate(), firstDate, lastDate))
+                                                prescriptionsStr = prescriptionsStr.concat("\n" + (n++) + ")" + prescription.toString());
 
                                     } catch (IOException e) {
                                         System.out.println("getDischargedPatientReport() catches IOException");
@@ -1099,9 +1097,10 @@ public class Model {
                                             administrationRecord = FilesEditor.csvReadRecord(administrationsFile);
                                         }
 
+                                        int n = 1;
                                         for (Administration administration : administrations)
-                                            if(isBetween(administration.getDate(), firstDate, lastDate))
-                                                administrationsStr.concat(administration.toString());
+                                            if (isBetween(administration.getDate(), firstDate, lastDate))
+                                                administrationsStr = administrationsStr.concat("\n" + (n++) + ")" + administration.toString());
 
                                     } catch (IOException e) {
                                         System.out.println("getDischargedPatientReport() catches IOException");
@@ -1111,26 +1110,13 @@ public class Model {
 
                                 // Alarms list
                                 case (pathAlarmsFile):
-                                    try{
-                                        ArrayList<AlarmOff> alarms = new ArrayList<>();
-                                        BufferedReader alarmsFile = new BufferedReader(new FileReader(pathPatientFile));
-                                        FilesEditor.csvSkipRecord(alarmsFile);
+                                    ArrayList<AlarmOff> alarms = getPatientAlarmsOff(patient.getCf(), pathMedicalRecords, false);
 
-                                        // Extract administrations list from administrations csv file
-                                        String[] alarmRecord = FilesEditor.csvReadRecord(alarmsFile);
-                                        while (alarmRecord != null){
-                                            alarms.add(FilesEditor.csvGetAlarmOff(alarmRecord));
-                                            alarmRecord = FilesEditor.csvReadRecord(alarmsFile);
-                                        }
+                                    int n = 1;
+                                    for (AlarmOff alarm : alarms)
+                                        if (isBetween(alarm.getDate(), firstDate, lastDate))
+                                            alarmsStr = alarmsStr.concat("\n" + (n++) + ")" + alarm.toString());
 
-                                        for (AlarmOff alarm : alarms)
-                                            if(isBetween(alarm.getDate(), firstDate, lastDate))
-                                                alarmsStr.concat(alarm.toString());
-
-                                    } catch (IOException e) {
-                                        System.out.println("getDischargedPatientReport() catches IOException");
-                                        e.printStackTrace();
-                                    }
                                     break;
 
                                 default:
@@ -1147,19 +1133,19 @@ public class Model {
 
         // Check prescriptions
         if(prescriptionsStr != "") {
-            prescriptionsStr = "\nPrescrizioni:" + prescriptionsStr;
+            prescriptionsStr = "\n\nPrescrizioni:" + prescriptionsStr;
             patientStr = patientStr.concat(prescriptionsStr);
         }
 
         // Check administrations
         if(administrationsStr != "") {
-            administrationsStr = "\nSomministrazioni:" + administrationsStr;
+            administrationsStr = "\n\nSomministrazioni:" + administrationsStr;
             patientStr = patientStr.concat(administrationsStr);
         }
 
         // Search for alarms
         if(alarmsStr != "") {
-            alarmsStr = "\nAlarms:" + alarmsStr;
+            alarmsStr = "\n\nAlarms:" + alarmsStr;
             patientStr = patientStr.concat(alarmsStr);
         }
 
@@ -1195,15 +1181,18 @@ public class Model {
 
         // Search in hospitalized patients list
         for(Patient hospitalizedPatient: patients){
-            reportStr = reportStr.concat(getHospitalizedPatientReport(firstDate, lastDate, hospitalizedPatient) + reportSeparatorStr);
+            String patientReportStr = getHospitalizedPatientReport(firstDate, lastDate, hospitalizedPatient);
+            if(patientReportStr != "")
+                reportStr = reportStr.concat(patientReportStr + reportSeparatorStr);
         }
 
         // Search in discharged patients list
-        // TODO
-/*        for(Patient dischargedPatient: getDischargedPatients()){
-            reportStr = reportStr.concat(getDischargedPatientReport(firstDate, lastDate, dischargedPatient) + reportSeparatorStr);
+        for(Patient dischargedPatient: getDischargedPatients()){
+            String patientReportStr = getDischargedPatientReport(firstDate, lastDate, dischargedPatient);
+            if(patientReportStr != "")
+                reportStr = reportStr.concat(patientReportStr + reportSeparatorStr);
         }
-*/
+
         return reportStr;
     }
 
