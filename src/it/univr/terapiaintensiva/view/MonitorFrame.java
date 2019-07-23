@@ -160,34 +160,36 @@ class MonitorFrame extends JFrame implements ActionListener {
                 chiefMenu.setVisible(false);
             else if (model.getType() == Model.CHIEF && !monitors.isEmpty())
                 chiefMenu.setVisible(true);
-        } else if (e.getSource().equals(dischargeMenuItem)) {       // Discharge a patient
+        } else if (e.getSource().equals(dischargeMenuItem) && !monitors.isEmpty()) {       // Discharge a patient
             int monitorsize = 0;
             for (MonitorPanel m : monitors) {
                 if (!m.isEmpty())
                     monitorsize++;
             }
-            Object[] names = new Object[monitorsize];
-            for (int i = 0; i < monitorsize; i++) {
-                names[i] = monitors.get(i).getPatient().getName() +
-                        " " + monitors.get(i).getPatient().getSurname() +
-                        " " + monitors.get(i).getPatient().getCf();
+            if (monitorsize > 0) {
+                Object[] names = new Object[monitorsize];
+                for (int i = 0; i < monitorsize; i++) {
+                    names[i] = monitors.get(i).getPatient().getName() +
+                            " " + monitors.get(i).getPatient().getSurname() +
+                            " " + monitors.get(i).getPatient().getCf();
+                }
+                String patientString = (String) JOptionPane.showInputDialog(
+                        this,
+                        "Scegliere il paziente da dimettere",
+                        "Dimissioni",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        names,
+                        names[0]);
+                String[] arr = patientString.split(" ", 3);
+                Patient patient = null;
+                for (Patient p : model.getHospitalizedPatients()) {
+                    if (p.getCf().equals(arr[2]))
+                        patient = p;
+                }
+                dischargeLetterDialog = new DischargeLetterDialog(patient);
+                dischargeLetterDialog.setVisible(true);
             }
-            String patientString = (String) JOptionPane.showInputDialog(
-                    this,
-                    "Scegliere il paziente da dimettere",
-                    "Dimissioni",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    names,
-                    names[0]);
-            String[] arr = patientString.split(" ", 3);
-            Patient patient = null;
-            for (Patient p : model.getHospitalizedPatients()) {
-                if (p.getCf().equals(arr[2]))
-                    patient = p;
-            }
-            dischargeLetterDialog = new DischargeLetterDialog(patient);
-            dischargeLetterDialog.setVisible(true);
         } else if (e.getSource().equals(reportMenuItem)) {          // Get report
             getReportDialog = new GetReportDialog();
             getReportDialog.setVisible(true);
