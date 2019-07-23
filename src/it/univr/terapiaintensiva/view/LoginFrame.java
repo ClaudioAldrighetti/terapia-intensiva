@@ -73,7 +73,8 @@ public class LoginFrame extends JFrame implements ActionListener {
         if (e.getSource().equals(loginButton)) {    // Login
             String user = unameTField.getText();
             String psw = passField.getText();
-            if (model.authenticate(user.trim(), psw.trim()) != Model.GUEST) {
+            char userChar = model.authenticate(user.trim(), psw.trim());
+            if (userChar != Model.GUEST && userChar != 'e') {
                 MonitorFrame.getInstance().setVisible(true);
                 this.dispose();
             } else {

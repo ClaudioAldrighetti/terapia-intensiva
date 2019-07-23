@@ -94,6 +94,13 @@ public class Patient extends Person {
                 (dob != null);
     }
 
+    /**
+     * @return patient's medical records name.
+     */
+    String getMedicalRecordsName(){
+        return getName() + "_" + getSurname() + "_" + cf;
+    }
+
     public String toString(){
         return
                 (

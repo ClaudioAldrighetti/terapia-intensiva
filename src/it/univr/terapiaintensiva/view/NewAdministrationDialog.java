@@ -3,7 +3,6 @@ package it.univr.terapiaintensiva.view;
 import it.univr.terapiaintensiva.model.Administration;
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -108,7 +107,7 @@ class NewAdministrationDialog extends JDialog implements ActionListener {
         return new Administration(
                 medicineTextField.getText().trim(),
                 doseModel.getNumber().doubleValue(),
-                StringEscapeUtils.escapeCsv(notesPane.getText().trim()),
+                notesPane.getText().trim().replaceAll(",", "&comma"),
                 localDate,
                 localTime
         );

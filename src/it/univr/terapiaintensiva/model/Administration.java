@@ -41,12 +41,11 @@ public class Administration implements CsvWritable {
 
     public String toString() {
         String timeStr = time.getHour() + ":" + time.getMinute();
-        String noteStr = ( notes.equals("") ? "" : "\n" + notes + "\n");
         return
                 (
                  "\n\tFarmaco somministrato: " + medicine +
                  "\n\tDose somministrata: " + dose +
-                 "\n\tNote sulla somministrazione: " + noteStr +
+                 "\n\tNote sulla somministrazione: " + notes +
                  "\n\tData della somministrazione: " + date +
                  "\n\tOra della somministrazione: " + timeStr
                 );

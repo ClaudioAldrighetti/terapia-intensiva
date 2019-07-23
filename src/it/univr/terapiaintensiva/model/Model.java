@@ -276,7 +276,7 @@ public class Model {
 
             try {
                 // Create new patient's medical records
-                String pathNewPatient = pathPatients.concat(patient.getCf() + "/");
+                String pathNewPatient = pathPatients.concat(patient.getMedicalRecordsName() + "/");
                 Files.createDirectory(Paths.get(pathNewPatient));
 
                 // Create registry csv file
@@ -338,9 +338,10 @@ public class Model {
             return;
         }
 
+        Patient patient = patients.get(pEntry);
         try {
             // Check diagnosis file
-            String pathDiagnosis = pathPatients.concat(cf + "/" + pathDiagnosisFile);
+            String pathDiagnosis = pathPatients.concat(patient.getMedicalRecordsName() + "/" + pathDiagnosisFile);
             if (!Files.exists(Paths.get(pathDiagnosis)))
                 // Create diagnosis file if it doesn't exist
                 Files.createFile(Paths.get(pathDiagnosis));
@@ -349,7 +350,7 @@ public class Model {
             FilesEditor.write(pathDiagnosis, diagnosis, false);
 
             // set patient's diagnosis
-            patients.get(pEntry).setDiagnosis(diagnosis);
+            patient.setDiagnosis(diagnosis);
 
         } catch (IOException e){
             System.out.println("setDiagnosis() catches IOException");
@@ -372,11 +373,10 @@ public class Model {
             return;
         }
 
+        Patient patient = patients.get(pEntry);
         try {
-            Patient patient = patients.get(pEntry);
-
             // Check prescriptions file
-            String pathPrescriptions = pathPatients.concat(cf + "/" + pathPrescriptionsFile);
+            String pathPrescriptions = pathPatients.concat(patient.getMedicalRecordsName() + "/" + pathPrescriptionsFile);
             // File doesn't exist
             if (!Files.exists(Paths.get(pathPrescriptions))) {
                 // Create prescriptions csv file
@@ -413,11 +413,10 @@ public class Model {
             return;
         }
 
+        Patient patient = patients.get(pEntry);
         try {
-            Patient patient = patients.get(pEntry);
-
             // Check administrations file
-            String pathAdministrations = pathPatients.concat(cf + "/" + pathAdministrationsFile);
+            String pathAdministrations = pathPatients.concat(patient.getMedicalRecordsName() + "/" + pathAdministrationsFile);
             // File doesn't exist
             if(!Files.exists(Paths.get(pathAdministrations))) {
                 // Create administrations csv file
@@ -454,11 +453,7 @@ public class Model {
             return null;
         }
 
-        // Check valid userType
-        if(type!=GUEST && type!=NURSE && type!=DOCTOR && type!=CHIEF) {
-            System.out.println("Invalid user type");
-            return null;
-        }
+        Patient patient = patients.get(pEntry);
 
         LocalTime maxTime = LocalTime.now();
         int maxSeconds;
@@ -473,7 +468,7 @@ public class Model {
             ArrayList<VitalsLog> vitalsLogs = new ArrayList<>();
 
             // Search vitals log
-            String pathVitals = pathPatients.concat(cf + "/" + pathVitalsFile);
+            String pathVitals = pathPatients.concat(patient.getMedicalRecordsName() + "/" + pathVitalsFile);
             if (Files.exists(Paths.get(pathVitals))) {
                 BufferedReader vitalsFile = new BufferedReader(new FileReader(pathVitals));
                 FilesEditor.csvSkipRecord(vitalsFile);
@@ -527,12 +522,13 @@ public class Model {
             return;
         }
 
+        Patient patient = patients.get(pEntry);
         try {
             // Get discharged patient's medical records
-            String pathPatient = pathPatients.concat(cf + "/");
+            String pathPatient = pathPatients.concat(patient.getMedicalRecordsName() + "/");
 
             // Check patient's dir in discharged/
-            String pathDischargedPatient = pathDischarged.concat(cf + "/");
+            String pathDischargedPatient = pathDischarged.concat(patient.getMedicalRecordsName() + "/");
             if(!Files.exists(Paths.get(pathDischargedPatient)))
                 Files.createDirectory(Paths.get(pathDischargedPatient));
 
@@ -576,18 +572,19 @@ public class Model {
             return null;
         }
 
-        // Check valid userType
-        if (type != GUEST && type != NURSE && type != DOCTOR && type != CHIEF) {
-            System.out.println("Invalid user type");
-            return null;
-        }
-
-        String pathVitals = pathPatients.concat(cf + "/" + pathVitalsFile);
+        Patient patient = patients.get(pEntry);
+        String pathVitals = pathPatients.concat(patient.getMedicalRecordsName() + "/" + pathVitalsFile);
         if (Files.exists(Paths.get(pathVitals))) {
             try {
                 BufferedReader vitalsFile = new BufferedReader(new FileReader(pathVitals));
-                return FilesEditor.csvGetVitals(FilesEditor.csvReadLastRecord(vitalsFile));
-            } catch (FileNotFoundException e) {
+                FilesEditor.csvSkipRecord(vitalsFile);
+                Vitals currentVitals = FilesEditor.csvGetVitals(FilesEditor.csvReadLastRecord(vitalsFile));
+
+                patient.setVitals(currentVitals);
+                return currentVitals;
+
+            } catch (IOException e) {
+                System.out.println("getCurrentVitals() catches IOException");
                 e.printStackTrace();
             }
         }
@@ -609,8 +606,10 @@ public class Model {
             return null;
         }
 
+        Patient patient = patients.get(pEntry);
+
         ArrayList<Alarm> alarms = new ArrayList<>();
-        String pathPatient = pathPatients.concat(cf + "/");
+        String pathPatient = pathPatients.concat(patient.getMedicalRecordsName() + "/");
         if(Files.exists(Paths.get(pathPatient)) && Files.isDirectory(Paths.get(pathPatient))){
             File dirPatient = new File(pathPatient);
             String[] filesPatient = dirPatient.list();
@@ -681,9 +680,10 @@ public class Model {
             return;
         }
 
+        Patient patient = patients.get(pEntry);
         try {
             // Check alarms csv file
-            String pathAlarms = pathPatients.concat(cf + "/" + pathAlarmsFile);
+            String pathAlarms = pathPatients.concat(patient.getMedicalRecordsName() + "/" + pathAlarmsFile);
             if (!Files.exists(Paths.get(pathAlarms)))
                 FilesEditor.csvCreateFile(pathAlarms, Alarm.csvFormat().concat(",notes"));
 
@@ -695,7 +695,6 @@ public class Model {
             System.out.println("offAlarm() catches IOException");
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -705,6 +704,12 @@ public class Model {
      * @return list of {@link AlarmOff}s correlated to the {@link Patient}.
      */
     private ArrayList<AlarmOff> getPatientAlarmsOff(String cf, String pathEsternDir, boolean isHospitalized){
+        // Alarms list
+        ArrayList<AlarmOff> alarms = new ArrayList<>();
+
+        // Alarms csv file
+        String pathAlarms;
+
         if(isHospitalized) {
             // Find patient
             int pEntry = findPatient(cf);
@@ -714,19 +719,14 @@ public class Model {
                 System.out.println("Patient not found: invalid cf");
                 return null;
             }
-        }
+
+            Patient patient = patients.get(pEntry);
+            pathAlarms = pathEsternDir.concat(patient.getMedicalRecordsName() + "/" + pathAlarmsFile);
+
+        } else
+            pathAlarms = pathEsternDir.concat((pathEsternDir.endsWith("/")? "" : "/") + pathAlarmsFile);
 
         try {
-            // Alarms list
-            ArrayList<AlarmOff> alarms = new ArrayList<>();
-
-            // Alarms csv file
-            String pathAlarms;
-            if(isHospitalized)
-                pathAlarms = pathEsternDir.concat(cf + "/" + pathAlarmsFile);
-            else
-                pathAlarms = pathEsternDir.concat((pathEsternDir.endsWith("/")? "" : "/") + pathAlarmsFile);
-
             BufferedReader alarmsFile = new BufferedReader(new FileReader(pathAlarms));
             FilesEditor.csvSkipRecord(alarmsFile);
 
@@ -919,7 +919,7 @@ public class Model {
         String administrationsStr = "";
         String alarmsStr = "";
 
-        String pathPatient = pathDischarged.concat(patient.getCf() + "/");
+        String pathPatient = pathDischarged.concat(patient.getMedicalRecordsName() + "/");
         if(Files.exists(Paths.get(pathPatient))){
             File dirPatient = new File(pathPatient);
             if(dirPatient.isDirectory()){

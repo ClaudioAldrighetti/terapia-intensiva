@@ -1,7 +1,5 @@
 package it.univr.terapiaintensiva.view;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import javax.swing.*;
 
 /**
@@ -18,7 +16,7 @@ class ReportDialog extends JDialog {
         this.setResizable(false);
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.setTitle("Report");
-        JTextArea textArea = new JTextArea(StringEscapeUtils.unescapeCsv(report.replaceAll("\t", "            ")));
+        JTextArea textArea = new JTextArea(report.replaceAll("\t", "            ").replaceAll("&comma", ","));
         JScrollPane scrollPane = new JScrollPane(textArea);
         textArea.setEditable(false);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));

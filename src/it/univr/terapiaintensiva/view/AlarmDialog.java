@@ -3,7 +3,6 @@ package it.univr.terapiaintensiva.view;
 import it.univr.terapiaintensiva.model.Alarm;
 import it.univr.terapiaintensiva.model.Model;
 import it.univr.terapiaintensiva.model.Patient;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,8 +75,7 @@ class AlarmDialog extends JDialog implements ActionListener {
                     "Azioni",
                     JOptionPane.QUESTION_MESSAGE
             );
-            StringEscapeUtils.escapeCsv(actions.trim());
-            Model.getInstance().offAlarm(patient.getCf(), this.alarm, actions);
+            Model.getInstance().offAlarm(patient.getCf(), this.alarm, actions.trim().replaceAll(",", "&comma"));
             this.dispose();
         } else {                                        // Countdown
             if (remainingTime > 0) {
