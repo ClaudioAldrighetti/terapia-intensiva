@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
- * @author mizukami
  * Prescription of a medicine made by a doctor to a patient.
  * Class CsvWritable.
+ * @author mizukami
  */
 public class Prescription implements CsvWritable {
     private final int duration;

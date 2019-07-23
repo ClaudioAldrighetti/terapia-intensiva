@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
- * @author mizukami
  * Encapsulates an {@link Alarm}, contains notes of operations performed to resolve it.
+ * @author mizukami
  */
 public class AlarmOff extends Alarm {
     private String notes;

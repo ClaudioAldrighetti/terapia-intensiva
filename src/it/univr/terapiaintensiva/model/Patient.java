@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
- * @author mizukami
  * Patient hospitalized or that has been hospitalized.
  * Class CsvWritable.
+ * @author mizukami
  */
 public class Patient extends Person {
 
@@ -31,7 +31,6 @@ public class Patient extends Person {
     }
 
     /**
-     * @author mizukami
      * Sets all registry fields null, used during the loading of a medical records, when registry csv file is not found.
      */
     public Patient(){
@@ -54,7 +53,7 @@ public class Patient extends Person {
         return this.diagnosis;
     }
 
-    public void setDiagnosis(String diagnosis){
+    void setDiagnosis(String diagnosis){
         this.diagnosis = diagnosis;
     }
 
@@ -83,9 +82,8 @@ public class Patient extends Person {
     }
 
     /**
-     * @author mizukami
+     * Used to check if {@link Patient} is initialized with registry.
      * @return true if all patient's registry field are null.
-     * Used to check if {@link Patient} is initialized with null values.
      */
     boolean hasRegistry(){
         return

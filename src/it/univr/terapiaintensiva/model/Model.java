@@ -8,9 +8,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 /**
- * @author mizukami
  * Model component of MVC pattern, this class is a singleton that manages memory of software (medical records, log files, registries, patients list etc..).
  * It meets Controller requests, archiving datas coming from View and extracting informations stored.
+ * @author mizukami
  */
 public class Model {
 
@@ -39,7 +39,6 @@ public class Model {
     private char type;
 
     /**
-     * @author mizukami
      * Loads medical records and patients list, searching informations about all hospitalized patients stored in files inside each medical records.
      */
     // Constructor
@@ -199,9 +198,8 @@ public class Model {
     }
 
     /**
-     * @return An instance of {@link Model}.
-     * @author ecavicc
      * Returns an instance of {@link Model}, initializing it if it is null. It makes {@link Model} a singleton.
+     * @return An instance of {@link Model}.
      */
     public static Model getInstance(){
         if (instance == null)
@@ -210,11 +208,10 @@ public class Model {
     }
 
     /**
+     * Authenticates user checking username and password and returns his user type.
      * @param username username.
      * @param password password.
      * @return User type (guest, doctor etc...). In case of exception, it returns 'e'.
-     * @author mizukami
-     * Authenticates user checking username and password and returns his user type.
      */
     public char authenticate(String username, String password) {
         try {
@@ -252,17 +249,15 @@ public class Model {
 
     /**
      * @return type of logged user.
-     * @author ecavicc
      */
     public char getType() {
         return type;
     }
 
     /**
+     * If it is possible, it hospitalizes patient, adds him to patients list and creates his medical records and logs files.
      * @param patient {@link Patient} to hospitalize.
      * @return success of operation.
-     * @author mizukami
-     * If it is possible, it hospitalizes patient, adds him to patients list and creates his medical records and logs files.
      */
     public boolean hospitalizePatient(Patient patient) {
         // Check if there is a free bed
@@ -329,10 +324,9 @@ public class Model {
     }
 
     /**
+     * Adds new diagnosis if patient hasn't a diagnosis or changes or modifies last diagnosis with new diagnosis.
      * @param cf codice fiscale of {@link Patient}.
      * @param diagnosis {@link String} diagnosis to add or change.
-     * @author mizukami
-     * Adds new diagnosis if patient hasn't a diagnosis or changes or modifies last diagnosis with new diagnosis.
      */
     public void setDiagnosis(String cf, String diagnosis) {
         // Find patient
@@ -364,10 +358,9 @@ public class Model {
     }
 
     /**
+     * Adds prescription to the patient and writes it on prescriptions csv file.
      * @param cf codice fiscale of {@link Patient}.
      * @param prescription {@link Prescription} to add.
-     * @author mizukami
-     * Adds prescription to the patient and writes it on prescriptions csv file.
      */
     public void addPrescription(String cf, Prescription prescription) {
         // Find patient
@@ -406,10 +399,9 @@ public class Model {
     }
 
     /**
+     * Adds adnministration to the patient and writes it on administrations csv file.
      * @param cf codice fiscale of {@link Patient}.
      * @param administration {@link Administration} to add.
-     * @author mizukami
-     * Adds adnministration to the patient and writes it on administrations csv file.
      */
     public void addAdministration(String cf, Administration administration) {
         // Find patient
@@ -448,10 +440,9 @@ public class Model {
     }
 
     /**
+     * Returns list of last vital parameters logs of the patient.
      * @param cf codice fiscale of {@link Patient}.
      * @return List of {@link VitalsLog} registered within 15 minutes for guests or 2 hours for authenticated users. Null in case of error.
-     * @author mizukami
-     * Returns list of last vital parameters logs of the patient.
      */
     public ArrayList<VitalsLog> getLastParameters(String cf) {
         // Find patient
@@ -521,61 +512,10 @@ public class Model {
         }
     }
 
-/*    /**
-     * @param cf codice fiscale of {@link Patient}.
-     * @return list of patient's prescriptions. Null in case of error.
-     * @author mizukami
-     * Returns list of patient's prescriptions if user is authenticated.
-     */
-/*    public ArrayList<Prescription> getPatientPrescriptions(String cf){
-        // Find patient
-        int pEntry = findPatient(cf);
-
-        // Wrong cf or patient isn't hospitalized
-        if (pEntry == -1) {
-            System.out.println("Patient not found: invalid cf");
-            return null;
-        }
-
-        // Check valid userType
-        if (type != NURSE && type != DOCTOR && type != CHIEF) {
-            System.out.println("Invalid user type");
-            return null;
-        }
-
-        return patients.get(pEntry).getPrescriptions();
-    }
-
     /**
-     * @param cf codice fiscale of {@link Patient}.
-     * @return list of patient's administrations. Null in case of error.
-     * @author mizukami
-     * Returns list of patient's administrations if user is authenticated.
-     */
-/*    public ArrayList<Administration> getPatientAdministrations(String cf){
-        // Find patient
-        int pEntry = findPatient(cf);
-
-        // Wrong cf or patient isn't hospitalized
-        if (pEntry == -1) {
-            System.out.println("Patient not found: invalid cf");
-            return null;
-        }
-
-        // Check valid userType
-        if (type != GUEST && type != NURSE && type != DOCTOR && type != CHIEF) {
-            System.out.println("Invalid user type");
-            return null;
-        }
-
-        return patients.get(pEntry).getAdministrations();
-    }
-*/
-    /**
+     * Discharges the hospitalized patient archiving his medical records, creating a discharge letter and removing him from patients list.
      * @param cf codice fiscale of {@link Patient}.
      * @param letterText text of resignation letter.
-     * @author mizukami
-     * Discharges the hospitalized patient archiving his medical records, creating a discharge letter and removing him from patients list.
      */
     public void dischargePatient(String cf, String letterText) {
         // Find patient
@@ -621,53 +561,10 @@ public class Model {
         }
     }
 
-/*    /**
-     * @param cf codice fiscale of {@link Patient}.
-     * @param vitals new {@link Vitals} registered.
-     * @return success of operation.
-     * @author mizukami
-     * Changes vital parameters of the patient and adds log in vitals csv file.
-     */
-/*    public boolean changeVitals(String cf, Vitals vitals) {
-        // Find patient
-        int pEntry = findPatient(cf);
-
-        // Wrong cf or patient isn't hospitalized
-        if(pEntry == -1) {
-            System.out.println("Patient not found: invalid cf");
-            return false;
-        }
-
-        try {
-            Patient patient = patients.get(pEntry);
-
-            // Check vitals csv file
-            String pathVitals = pathPatients.concat(cf + "/" + pathVitalsFile);
-            // File doesn't exist
-            if (!Files.exists(Paths.get(pathVitals)))
-                // Create vitals csv file
-                FilesEditor.csvCreateFile(pathVitals, Vitals.csvFormat());
-
-            // Write vitals
-            FilesEditor.csvWriteRecord(pathVitals, vitals);
-
-            // Change vitals value
-            patient.setVitals(vitals);
-
-            return true;
-
-        } catch (IOException e) {
-            System.out.println("changeVitals() catch IOException!");
-            e.printStackTrace();
-            return false;
-        }
-    }
-*/
     /**
+     * Returns the current parameters of the given patient.
      * @param cf codice fiscale of {@link Patient}.
      * @return the most recent instance of {@link Vitals}. Null in case of error.
-     * @author ecavicc
-     * Returns the current parameters of the given patient.
      */
     public Vitals getCurrentVitals(String cf) {
         // Find patient
@@ -698,10 +595,9 @@ public class Model {
     }
 
     /**
+     * Looks for new {@link Alarm}s of patient and returns their list.
      * @param cf codice fiscale of {@link Patient}.
      * @return list of new {@link Alarm}s.
-     * @author mizukami
-     * Looks for new {@link Alarm}s of patient and returns their list.
      */
     public ArrayList<Alarm> checkNewAlarms(String cf){
         // Find patient
@@ -729,11 +625,10 @@ public class Model {
     }
 
     /**
+     * Returns new {@link Alarm} and deletes its file.
      * @param cf codice fiscale of {@link Patient}.
      * @param pathAlarmFile path of new alarm file.
      * @return {@link Alarm} extracted.
-     * @author mizukami
-     * Returns new {@link Alarm} and deletes its file.
      */
     private Alarm readAlarm(String cf, String pathAlarmFile) {
         // Find patient
@@ -771,11 +666,10 @@ public class Model {
     }
 
     /**
+     * Writes alarm on alarms csv file to archive it as resolved.
      * @param cf codice fiscale of {@link Patient}.
      * @param alarm resolved {@link Alarm}.
      * @param notes information about how alarm was offed.
-     * @author mizukami
-     * Writes alarm on alarms csv file to archive it as resolved.
      */
     public void offAlarm(String cf, Alarm alarm, String notes) {
         // Find patient
@@ -809,7 +703,6 @@ public class Model {
      * @param pathEsternDir directory that contains hospitalized patient's medical records or that is discharged patient's archived medical records.
      * @param isHospitalized true if patient is hospitalized.
      * @return list of {@link AlarmOff}s correlated to the {@link Patient}.
-     * @author mizukami
      */
     private ArrayList<AlarmOff> getPatientAlarmsOff(String cf, String pathEsternDir, boolean isHospitalized){
         if(isHospitalized) {
@@ -853,10 +746,9 @@ public class Model {
     }
 
     /**
+     * Selects default directory that contains patients medical records as pathPatientsDir.
      * @param cf codice fiscale of {@link Patient}.
      * @return list of {@link Alarm}s correlated to the {@link Patient}.
-     * @author mizukami
-     * Selects default directory that contains patients medical records as pathPatientsDir.
      */
     private ArrayList<AlarmOff> getPatientAlarmsOff(String cf){
         return getPatientAlarmsOff(cf, pathPatients, true);
@@ -864,7 +756,6 @@ public class Model {
 
     /**
      * @return list of hospitalized {@link Patient}s.
-     * @author mizukami
      */
     // Return hospitalized patients list
     public ArrayList<Patient> getHospitalizedPatients(){
@@ -872,9 +763,8 @@ public class Model {
     }
 
     /**
-     * @return list of discharged {@link Patient}s.
-     * @author mizukami
      * Returns discharged patients found searching their registry file in their archived medical records.
+     * @return list of discharged {@link Patient}s.
      */
     private ArrayList<Patient> getDischargedPatients(){
         ArrayList<Patient> dischargedPatients = new ArrayList<>();
@@ -958,7 +848,6 @@ public class Model {
      * @param lastDate the latest date of report.
      * @param patient {@link Patient} to report.
      * @return patient's report.
-     * @author mizukami
      */
     private String getHospitalizedPatientReport(LocalDate firstDate, LocalDate lastDate, Patient patient) {
         // Patient string
@@ -1020,7 +909,6 @@ public class Model {
      * @param lastDate the latest date of report.
      * @param patient {@link Patient} to report.
      * @return patient's report.
-     * @author mizukami
      */
     private String getDischargedPatientReport(LocalDate firstDate, LocalDate lastDate, Patient patient) {
         // Patient string
@@ -1153,12 +1041,12 @@ public class Model {
 
         return patientStr;
     }
+
     /**
+     * Generates a report of happened events between firstDate and lastDate.
      * @param firstDate the less recent date of report.
      * @param lastDate the latest date of report.
      * @return report of selected time lapse.
-     * @author mizukami
-     * Generates a report of happened events between firstDate and lastDate.
      */
     public String getReport(LocalDate firstDate, LocalDate lastDate){
         // Check user

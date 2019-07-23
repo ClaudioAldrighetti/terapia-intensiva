@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
- * @author mizukami
  * Encapsulates {@link Vitals}, this class also contains date and time of vital parameters registration.
  * Class CsvWritable.
+ * @author mizukami
  */
 public class VitalsLog extends Vitals {
     private LocalDate date;
