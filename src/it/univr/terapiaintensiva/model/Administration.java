@@ -31,18 +31,6 @@ public class Administration implements CsvWritable {
         this.time = time;
     }
 
-    public String getMedicine() {
-        return medicine;
-    }
-
-    public double getDose() {
-        return dose;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
     public LocalDate getDate() {
         return date;
     }

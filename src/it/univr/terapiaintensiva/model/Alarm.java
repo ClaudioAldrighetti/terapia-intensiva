@@ -12,7 +12,7 @@ import java.time.LocalTime;
 public class Alarm implements CsvWritable {
 
     // Const alarm status
-    public static final char ALARM_ON = 'n';
+    static final char ALARM_ON = 'n';
     public static final char ALARM_OFF_INT = 'i';
     public static final char ALARM_OFF_OUTT = 'o';
 
@@ -66,11 +66,7 @@ public class Alarm implements CsvWritable {
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public char getStatus() {
+    char getStatus() {
         return status;
     }
 

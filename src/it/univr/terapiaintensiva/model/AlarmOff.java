@@ -15,14 +15,6 @@ public class AlarmOff extends Alarm {
         this.notes = notes;
     }
 
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
     public String toString() {
         String strStatus = (getStatus() == ALARM_ON)? "Acceso" : ( (getStatus() == ALARM_OFF_INT)? "Spento in tempo" : "Spento fuori tempo" );
         return

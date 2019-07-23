@@ -25,22 +25,6 @@ public class Prescription implements CsvWritable {
         this.time = time;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public String getMedicine() {
-        return medicine;
-    }
-
-    public int getnDoses() {
-        return nDoses;
-    }
-
-    public double getDose() {
-        return dose;
-    }
-
     public LocalDate getDate() {
         return date;
     }

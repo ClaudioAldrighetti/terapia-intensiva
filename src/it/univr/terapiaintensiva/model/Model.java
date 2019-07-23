@@ -177,7 +177,7 @@ public class Model {
                             }
 
                             // Without registry file it's impossible to register foundPatient
-                            if (!foundPatient.noRegistry()) {
+                            if (foundPatient.hasRegistry()) {
                                 // Found patient
                                 foundPatient.setVitals(foundVitals);
                                 foundPatient.setDiagnosis(foundDiagnosis);
@@ -941,7 +941,7 @@ public class Model {
                                     }
                                 }
                                 // Set diagnosis if patient is found
-                                if (!foundPatient.noRegistry())
+                                if (foundPatient.hasRegistry())
                                     foundPatient.setDiagnosis(diagnosis);
                             }
                         }

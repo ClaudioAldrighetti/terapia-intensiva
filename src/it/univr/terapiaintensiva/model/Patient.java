@@ -42,14 +42,6 @@ public class Patient extends Person {
         return cf;
     }
 
-    public String getPob(){
-        return pob;
-    }
-
-    public LocalDate getDob(){
-        return dob;
-    }
-
     public Vitals getVitals() {
         return vitals;
     }
@@ -66,27 +58,27 @@ public class Patient extends Person {
         this.diagnosis = diagnosis;
     }
 
-    public ArrayList<Prescription> getPrescriptions() {
+    ArrayList<Prescription> getPrescriptions() {
         return prescriptions;
     }
 
-    public void addPrescription(Prescription prescription){
+    void addPrescription(Prescription prescription){
         prescriptions.add(prescription);
     }
 
-    public void setPrescriptions(ArrayList<Prescription> prescriptions) {
+    void setPrescriptions(ArrayList<Prescription> prescriptions) {
         this.prescriptions = prescriptions;
     }
 
-    public ArrayList<Administration> getAdministrations() {
+    ArrayList<Administration> getAdministrations() {
         return administrations;
     }
 
-    public void addAdministration(Administration administration){
+    void addAdministration(Administration administration){
         administrations.add(administration);
     }
 
-    public void setAdministrations(ArrayList<Administration> administrations) {
+    void setAdministrations(ArrayList<Administration> administrations) {
         this.administrations = administrations;
     }
 
@@ -95,13 +87,13 @@ public class Patient extends Person {
      * @return true if all patient's registry field are null.
      * Used to check if {@link Patient} is initialized with null values.
      */
-    public boolean noRegistry(){
+    boolean hasRegistry(){
         return
-                (super.getName() == null) &&
-                (super.getSurname() == null) &&
-                (cf == null) &&
-                (pob == null) &&
-                (dob == null);
+                (super.getName() != null) ||
+                (super.getSurname() != null) ||
+                (cf != null) ||
+                (pob != null) ||
+                (dob != null);
     }
 
     public String toString(){
