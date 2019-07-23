@@ -14,11 +14,6 @@ import java.time.LocalTime;
  */
 public final class FilesEditor {
 
-    // DEFAULT SEPARATORS
-    private static String csvSeparator = ",";
-    private static String dateSeparator = "-";
-    private static String timeSeparator = ":";
-
     // CSV INTERACTIONS
 
     /**
@@ -28,7 +23,7 @@ public final class FilesEditor {
      * Creates csv file and writes in its first line the format that records must have.
      */
     // Create csv file and write in first line record fields
-    public static void csvCreateFile(String pathCsvFile, String csvFormat) throws IOException {
+    static void csvCreateFile(String pathCsvFile, String csvFormat) throws IOException {
         Files.createFile(Paths.get(pathCsvFile));
         write(pathCsvFile, csvFormat.concat("\n"));
     }
@@ -40,7 +35,10 @@ public final class FilesEditor {
      * Returns values of read record.
      */
     // Return one record from csvFile as String[]
-    public static String[] csvReadRecord(BufferedReader csvFile) {
+    static String[] csvReadRecord(BufferedReader csvFile) {
+        // DEFAULT SEPARATORS
+        String csvSeparator = ",";
+
         try {
             String line = csvFile.readLine();
             return (line != null)?
@@ -59,7 +57,7 @@ public final class FilesEditor {
      * Returns values of last record.
      */
     // Return last record of csvFile
-    public static String[] csvReadLastRecord(BufferedReader csvFile) {
+    static String[] csvReadLastRecord(BufferedReader csvFile) {
         String[] lastRecord= null;
 
         String[] record = csvReadRecord(csvFile);
@@ -73,12 +71,12 @@ public final class FilesEditor {
 
     /**
      * @param csvFile {@link BufferedReader} of csv file.
-     * @throws IOException
+     * @throws IOException wrong csvFile
      * @author mizukami
      * Skip current record of csv file (usually is used to skip format line).
      */
     // Skip next record of csvFile
-    public static void csvSkipRecord(BufferedReader csvFile) throws IOException {
+    static void csvSkipRecord(BufferedReader csvFile) throws IOException {
         csvFile.readLine();
     }
 
@@ -88,7 +86,7 @@ public final class FilesEditor {
      * @author mizukami
      * Returns {@link Patient} from values in registryData.
      */
-    public static Patient csvGetPatient(String[] registryData){
+    static Patient csvGetPatient(String[] registryData){
         String name = registryData[0];
         String surname = registryData[1];
         String cf = registryData[2];
@@ -104,7 +102,7 @@ public final class FilesEditor {
      * @author mizukami
      * Returns {@link Vitals} from values in vitalsData.
      */
-    public static Vitals csvGetVitals(String[] vitalsData){
+    static Vitals csvGetVitals(String[] vitalsData){
         int heartBeat = Integer.parseInt(vitalsData[0]);
         double temperature = Double.parseDouble(vitalsData[1]);
         int sbp = Integer.parseInt(vitalsData[2]);
@@ -119,7 +117,7 @@ public final class FilesEditor {
      * @author mizukami
      * Returns {@link VitalsLog} from values in vitalsLogData.
      */
-    public static VitalsLog csvGetVitalsLog(String[] vitalsLogData){
+    static VitalsLog csvGetVitalsLog(String[] vitalsLogData){
         LocalDate date = strToLocalDate(vitalsLogData[4]);
         LocalTime time = strToLocalTime(vitalsLogData[5]);
 
@@ -132,7 +130,7 @@ public final class FilesEditor {
      * @author mizukami
      * Returns {@link Prescription} from values in prescriptionData.
      */
-    public  static Prescription csvGetPrescription(String[] prescriptionData) {
+    static Prescription csvGetPrescription(String[] prescriptionData) {
         int duration = Integer.parseInt(prescriptionData[0]);
         String medicine = prescriptionData[1];
         int nDoses = Integer.parseInt(prescriptionData[2]);
@@ -149,7 +147,7 @@ public final class FilesEditor {
      * @author mizukami
      * Returns {@link Administration} from values in administrationData.
      */
-    public static Administration csvGetAdministration(String[] administrationData) {
+    static Administration csvGetAdministration(String[] administrationData) {
         String medicine = administrationData[0];
         double dose = Double.parseDouble(administrationData[1]);
         String notes = (administrationData.length == 5)? administrationData[2] : "";
@@ -165,7 +163,7 @@ public final class FilesEditor {
      * @author mizukami
      * Returns {@link Alarm} from values in alarmData.
      */
-    public static Alarm csvGetAlarm(String[] alarmData){
+    static Alarm csvGetAlarm(String[] alarmData){
         String name = alarmData[0];
         int level = Integer.parseInt(alarmData[1]);
         char status = alarmData[2].charAt(0);
@@ -181,7 +179,7 @@ public final class FilesEditor {
      * @author mizukami
      * Returns {@link AlarmOff} from values in alarmData.
      */
-    public static AlarmOff csvGetAlarmOff(String[] alarmData){
+    static AlarmOff csvGetAlarmOff(String[] alarmData){
         String name = alarmData[0];
         int level = Integer.parseInt(alarmData[1]);
         char status = alarmData[2].charAt(0);
@@ -196,14 +194,13 @@ public final class FilesEditor {
     /**
      * @param pathCsvFile file on wich write operation is performed.
      * @param csvObject {@link CsvWritable} object that has to be written on csv file.
-     * @param append if true, new record is written at the end of file, else at the start.
-     * @throws IOException
+     * @throws IOException wrong pathFile
      * @author mizukami
      * Writes csvObject on csv file as a new record.
      */
     // Write CsvWritable object on csvFile using path
-    public static void csvWriteRecord(String pathCsvFile, CsvWritable csvObject, boolean append) throws IOException {
-        FileWriter csvFileWriter = new FileWriter(pathCsvFile, append);
+    static void csvWriteRecord(String pathCsvFile, CsvWritable csvObject) throws IOException {
+        FileWriter csvFileWriter = new FileWriter(pathCsvFile, true);
         String endLine = "\n";
         if(csvObject instanceof Vitals)
             endLine = "," + LocalDate.now().toString() + "," + LocalTime.now().toString() + endLine;
@@ -212,24 +209,13 @@ public final class FilesEditor {
         csvFileWriter.close();
     }
 
-    /**
-     * @param pathCsvFile file on wich write operation is performed.
-     * @param csvObject {@link CsvWritable} object that has to be written on csv file.
-     * @throws IOException
-     * @author mizukami
-     * Writes csvObject on csv file as a new record, always at the end of the file.
-     */
-    public static void csvWriteRecord(String pathCsvFile, CsvWritable csvObject) throws IOException {
-        csvWriteRecord(pathCsvFile, csvObject, true);
-    }
-
     // GENERIC TEXT FILE INTERACTIONS
 
     /**
      * @param pathFile file on wich write operation is performed.
      * @param str {@link String} that has to be written on file.
      * @param append if true, str is written at the end of file, else at the start.
-     * @throws IOException
+     * @throws IOException wrong pathFile
      * @author mizukami
      * Write {@link String} str on file.
      */
@@ -244,7 +230,7 @@ public final class FilesEditor {
     /**
      * @param pathFile file on wich write operation is performed.
      * @param str {@link String} that has to be written on file.
-     * @throws IOException
+     * @throws IOException wrong pathFile
      * @author mizukami
      * Write {@link String} str on file, always at the end of it.
      */
@@ -259,7 +245,8 @@ public final class FilesEditor {
      * @return {@link LocalDate} got from dateStr.
      * @author mizukami
      */
-    public static LocalDate strToLocalDate(String dateStr) {
+    static LocalDate strToLocalDate(String dateStr) {
+        String dateSeparator = "-";
         return LocalDate.of(
             Integer.parseInt(dateStr.split(dateSeparator)[0]),
             Integer.parseInt(dateStr.split(dateSeparator)[1]),
@@ -272,7 +259,8 @@ public final class FilesEditor {
      * @return {@link LocalTime} got from timeStr in hours, minutes and seconds.
      * @author mizukami
      */
-    public static LocalTime strToLocalTime(String timeStr) {
+    static LocalTime strToLocalTime(String timeStr) {
+        String timeSeparator = ":";
         return LocalTime.of(
             Integer.parseInt(timeStr.split(timeSeparator)[0]),
             Integer.parseInt(timeStr.split(timeSeparator)[1]),
