@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/</output-path>
     <root id="archive" name="Terapia intensiva.jar">
       <element id="module-output" name="Terapia intensiva" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-lang3-3.9/commons-lang3-3.9.jar" path-in-jar="/" />
+      <element id="library" level="project" name="commons-lang3-3" />
     </root>
   </artifact>
 </component>
