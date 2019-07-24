@@ -67,6 +67,8 @@ class GetReportDialog extends JDialog implements ActionListener {
             if (report.length() > 0) {
                 reportDialog = new ReportDialog(report);
                 reportDialog.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Il report per le date selezionate è vuoto", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         }
         this.dispose();
