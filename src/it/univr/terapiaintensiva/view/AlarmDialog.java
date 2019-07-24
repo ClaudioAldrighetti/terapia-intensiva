@@ -75,7 +75,11 @@ class AlarmDialog extends JDialog implements ActionListener {
                     "Azioni",
                     JOptionPane.QUESTION_MESSAGE
             );
-            Model.getInstance().offAlarm(patient.getCf(), this.alarm, actions.trim().replaceAll(",", "&comma"));
+            if (actions != null)
+                actions = actions.trim().replaceAll(",", "&comma");
+            else
+                actions = "Nessuna operazione";
+            Model.getInstance().offAlarm(patient.getCf(), this.alarm, actions);
             this.dispose();
         } else {                                        // Countdown
             if (remainingTime > 0) {
