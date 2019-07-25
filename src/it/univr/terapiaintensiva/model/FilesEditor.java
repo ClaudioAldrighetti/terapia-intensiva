@@ -175,7 +175,7 @@ public final class FilesEditor {
         char status = alarmData[2].charAt(0);
         LocalDate date = strToLocalDate(alarmData[3]);
         LocalTime time = strToLocalTime(alarmData[4]);
-        String notes = alarmData[5];
+        String notes = (alarmData.length == 6)? alarmData[5] : "";
 
         return new AlarmOff(name, level, status, date, time, notes);
 
@@ -244,10 +244,11 @@ public final class FilesEditor {
      */
     static LocalTime strToLocalTime(String timeStr) {
         String timeSeparator = ":";
+        String[] timeData = timeStr.split(timeSeparator);
         return LocalTime.of(
-            Integer.parseInt(timeStr.split(timeSeparator)[0]),
-            Integer.parseInt(timeStr.split(timeSeparator)[1]),
-            Integer.parseInt((timeStr.split(timeSeparator)[2]).substring(0,2))
+            (timeData.length >= 1)? Integer.parseInt(timeData[0]) : 0,
+            (timeData.length >= 2)? Integer.parseInt(timeData[1]) : 0,
+            (timeData.length == 3)? Integer.parseInt(timeData[2].substring(0,2)) : 0
         );
     }
 }
